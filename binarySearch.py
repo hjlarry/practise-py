@@ -1,6 +1,4 @@
-a = [10, 30, 40, 70, 100, 120, 130, 190, 200]
-
-
+# 方法一：自己想的实现
 def binSearch(data, value, pos=None, direction=1):
     mid = len(data) // 2
     if not pos:
@@ -40,6 +38,7 @@ def binSearch(data, value, pos=None, direction=1):
 #
 #     return -1
 
+# 方法二
 def binary_search_recursive(sorted_array, beg, end, val):
     if beg >= end:
         return False
@@ -52,13 +51,15 @@ def binary_search_recursive(sorted_array, beg, end, val):
         return binary_search_recursive(sorted_array, mid + 1, end, val)
 
 
-print(binary_search_recursive(a, 0, len(a), 200))
-assert binSearch(a, 10) == 0
-assert binSearch(a, 200) == 8
-assert binSearch(a, 130) == 6
-assert binSearch(a, 135) == False
+def test_bin_search():
+    a = [10, 30, 40, 70, 100, 120, 130, 190, 200]
+    print(binary_search_recursive(a, 0, len(a), 200))
+    assert binSearch(a, 10) == 0
+    assert binSearch(a, 200) == 8
+    assert binSearch(a, 130) == 6
+    assert binSearch(a, 135) == False
 
-assert binary_search_recursive(a, 0, len(a), 10) == 0
-assert binary_search_recursive(a, 0, len(a), 200) == 8
-assert binary_search_recursive(a, 0, len(a), 130) == 6
-assert binary_search_recursive(a, 0, len(a), 135) == False
+    assert binary_search_recursive(a, 0, len(a), 10) == 0
+    assert binary_search_recursive(a, 0, len(a), 200) == 8
+    assert binary_search_recursive(a, 0, len(a), 130) == 6
+    assert binary_search_recursive(a, 0, len(a), 135) == False
