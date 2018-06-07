@@ -1,3 +1,4 @@
+# 时间复杂度O(n log(n))
 def merge_sort(arr):
     if len(arr) <= 1:
         return arr

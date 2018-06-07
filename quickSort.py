@@ -1,42 +1,55 @@
-a = [30, 10, 40, 50, 25, 9, 7, 100]
+import random
 
 
-def sort(arr, low=None, high=None):
-    l = low if low else 0
-    h = high if high else len(arr) - 1
-    key = arr[l]
-    if l >= h:
-        return arr
-    while l < h:
-        while l < h and arr[h] >= key:
-            h -= 1
-        arr[l], arr[h] = arr[h], arr[l]
-        while l < h and arr[l] <= key:
-            l += 1
-        arr[h], arr[l] = arr[l], arr[h]
-        print(arr)
-    arr[l] = key
-    sort(arr, low, l - 1)
-    sort(arr, h + 1, high)
-    print(1)
-    return arr
-
-
-def sort2(arr):
-    print(arr)
+# 额外空间快排
+def quick_sort(arr):
     if len(arr) < 2:
         return arr
-    pivot = arr[0]
+
+    pivot_index = 0
+    pivot = arr[pivot_index]
     less = []
     high = []
-    for i in range(1, len(arr)):
-        if arr[i] > pivot:
-            high.append(arr[i])
-        else:
-            less.append(arr[i])
-    return less, high
+
+    for i in arr[pivot_index + 1:]:
+        if i > pivot:
+            high.append(i)
+        elif i < pivot:
+            less.append(i)
+
+    return quick_sort(less) + [pivot] + quick_sort(high)
 
 
-print(sort2(a))
+# 原地快排，不占用额外空间
+def inplace_sort(arr, low, high):
+    if low < high:
+        pivot_index = low
+        l = pivot_index + 1
+        h = high - 1
+        while True:
+            while l <= h and arr[l] < arr[pivot_index]:
+                l += 1
+            while l <= h and arr[h] >= arr[pivot_index]:
+                h -= 1
 
-dict
+            if l > h:
+                break
+            else:
+                arr[h], arr[l] = arr[l], arr[h]
+        arr[pivot_index], arr[h] = arr[h], arr[pivot_index]
+        inplace_sort(arr, low, h)
+        inplace_sort(arr, h + 1, high)
+
+
+def test_quick_sort():
+    arr = list(range(20))
+    random.shuffle(arr)
+    assert sorted(arr) == quick_sort(arr)
+
+
+def test_inplace_sort():
+    arr = list(range(20))
+    random.shuffle(arr)
+    sorted_arr = sorted(arr)
+    inplace_sort(arr, 0, len(arr))
+    assert sorted_arr == arr
