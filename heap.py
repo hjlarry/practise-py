@@ -3,8 +3,8 @@ from array import Array
 
 class MaxHeap:
     def __init__(self, maxsize=None):
-        self.maxsize = maxsize
-        self._elements = Array(maxsize)
+        self.maxsize = maxsize or 32
+        self._elements = Array(self.maxsize)
         self._count = 0
 
     def __len__(self):
@@ -55,3 +55,4 @@ def test_maxheap():
         h.add(i)
     for i in reversed(range(n)):
         assert i == h.extract()
+
