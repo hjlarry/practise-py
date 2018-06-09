@@ -10,12 +10,12 @@ class BinTree:
         self.root = root
 
     @classmethod
-    def build_from_list(cls, list):
+    def build_from_list(cls, arr):
         node_dict = {}
-        for item in list:
+        for item in arr:
             data = item['data']
             node_dict[data] = Node(data)
-        for item in list:
+        for item in arr:
             data = item['data']
             node = node_dict[data]
             if item['is_root']:
