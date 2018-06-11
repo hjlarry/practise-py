@@ -34,15 +34,15 @@ class BinTree:
     # 中序遍历
     def iter_tree_midorder(self, subtree):
         if subtree is not None:
-            self.iter_tree_preorder(subtree.left)
+            self.iter_tree_midorder(subtree.left)
             print(subtree.data)
-            self.iter_tree_preorder(subtree.right)
+            self.iter_tree_midorder(subtree.right)
 
     # 后序遍历
     def iter_tree_afterorder(self, subtree):
         if subtree is not None:
-            self.iter_tree_preorder(subtree.left)
-            self.iter_tree_preorder(subtree.right)
+            self.iter_tree_afterorder(subtree.left)
+            self.iter_tree_afterorder(subtree.right)
             print(subtree.data)
 
     # 翻转二叉树

@@ -93,7 +93,7 @@ class BST:
             else:
                 successor_node = self._bst_min_key(subtree.right)
                 subtree.key, subtree.value = successor_node.key, successor_node.value
-                self._bst_remove(subtree.right, successor_node.key)
+                subtree.right = self._bst_remove(subtree.right, successor_node.key)  # 赋值的原因是删除具有两个叶子节点的父节点时
                 return subtree
 
     def remove(self, key):
@@ -107,6 +107,12 @@ class BST:
             callback(subtree.key)
             self.iter_tree_preorder(subtree.left, callback)
             self.iter_tree_preorder(subtree.right, callback)
+
+    def inorder_trav(self, subtree):
+        if subtree is not None:
+            self.inorder_trav(subtree.left)
+            print(subtree.key)
+            self.inorder_trav(subtree.right)
 
 
 NODE_LIST = [
@@ -131,12 +137,11 @@ def test_bst_tree():
         key = node_dict['key']
         assert bst.get(key) == key * 2
     assert bst.size == len(NODE_LIST)
-    assert bst.get(-1) is None  # 单例的 None 我们用 is 来比较
+    assert bst.get(-1) is None
 
     assert bst.get_min_key() == 1
 
     bst.add(0, 0)
-    bst.iter_tree_preorder(bst.root)
     assert bst.get_min_key() == 0
 
     bst.remove(12)
@@ -145,5 +150,7 @@ def test_bst_tree():
     bst.remove(1)
     assert bst.get(1) is None
 
-    bst.remove(29)
+    bst.iter_tree_preorder(bst.root)
+    bst.remove(12)
+    bst.iter_tree_preorder(bst.root)
     assert bst.get(29) is None
