@@ -17,6 +17,8 @@
 - 视频：http://pc-shop.xiaoe-tech.com/appv72m4Msi7516/video_details?id=v_5af249d71f9c7_1ewqSyEt
 - 标准代码：https://code.pycourses.com/courses/introduction-python/src/master/49
 
+##homework_introduction_python
+
 ##interpreter 
 - 教程：http://aosabook.org/en/500L/pages/a-python-interpreter-written-in-python.html
 - 中文教程：https://linux.cn/article-7753-1.html
