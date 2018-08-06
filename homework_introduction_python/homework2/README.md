@@ -117,3 +117,4 @@ Out: 14
 开放性题目，如果Python读取一个10G文件, 你觉得怎么样的方式更快，更省内存呢？
 
 ### 参考答案
+https://talk.pycourses.com/topic/33/python%E5%85%A5%E9%97%A8-%E4%BD%9C%E4%B8%9A-%E4%BA%8C-%E7%AD%94%E6%A1%88/8
