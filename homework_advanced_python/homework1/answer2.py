@@ -1,9 +1,13 @@
-class classproperty():
-    def __init__(self):
-        pass
+class classproperty:
+    def __init__(self, fn=None):
+        if fn:
+            self.fn = fn
 
-    def __get__(self, obj, klass):
-        pass
+    def getter(cls, fn):
+        return fn(cls)
+
+    def __get__(self, instance, owner):
+        return self.fn(owner)
 
 
 class Subject:
