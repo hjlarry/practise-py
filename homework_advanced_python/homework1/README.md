@@ -194,3 +194,6 @@ article.content  # 会返回Redis数据库存的正文内容，多次请求使�
 del article.content  # 删除对应数据库中id为10001的Article的文本
 article.content  # 返回空
 ```
+
+### 参考答案
+https://talk.pycourses.com/topic/46/python%E8%BF%9B%E9%98%B6-%E4%BD%9C%E4%B8%9A-%E4%B8%80/2
