@@ -30,7 +30,7 @@ class RPCHandler(asyncore.dispatcher_with_send):
 
     def handle_read(self):
         while True:
-            content = self.recv(1024)
+            content = self.recv(1024).decode()
             if content:
                 self.rbuf.write(content)
             if len(content) < 1024:
@@ -40,10 +40,10 @@ class RPCHandler(asyncore.dispatcher_with_send):
     def handle_rpc(self):
         while True:
             self.rbuf.seek(0)
-            length_prefix = self.rbuf.read(4)
+            length_prefix = self.rbuf.read(4).encode()
             if len(length_prefix) < 4:
                 break
-            length, _ = struct.unpack("I", length_prefix)
+            length, = struct.unpack("I", length_prefix)
             body = self.rbuf.read(length)
             if len(body) < length:
                 break
@@ -73,7 +73,7 @@ class RPCHandler(asyncore.dispatcher_with_send):
         body = json.dumps(response)
         length_prefix = struct.pack("I", len(body))
         self.send(length_prefix)
-        self.send(body)
+        self.send(body.encode())
 
 
 class RPCServer(asyncore.dispatcher):
@@ -111,7 +111,7 @@ class RPCServer(asyncore.dispatcher):
         self.zk = KazooClient()
         self.zk.start()
         self.zk.ensure_path(self.zk_root)
-        value = json.dumps({"host": self.host, "port": self.port})
+        value = json.dumps({"host": self.host, "port": self.port}).encode()
         self.zk.create(self.zk_rpc, value, ephemeral=True, sequence=True)
 
     def exit_parent(self, sig, frame):

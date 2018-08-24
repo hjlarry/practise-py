@@ -31,10 +31,10 @@ class RemoteServer:
         request = json.dumps({"in": in_, "params": params})
         length_prefix = struct.pack("I", len(request))
         sock.send(length_prefix)
-        sock.sendall(request)
+        sock.sendall(request.encode())
         length_prefix = sock.recv(4)
-        length, _ = struct.unpack("I", length_prefix)
-        body = sock.recv(length)
+        length, = struct.unpack("I", length_prefix)
+        body = sock.recv(length).decode()
         response = json.loads(body)
         return response["out"], response["result"]
 
