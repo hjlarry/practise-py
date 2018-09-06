@@ -1,4 +1,4 @@
-from array import Array
+from array_ import Array
 
 
 class MaxHeap:
