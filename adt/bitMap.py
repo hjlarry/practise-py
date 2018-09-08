@@ -44,16 +44,17 @@ bitmap.set(50)
 print(bitmap.data)
 bitmap.clean(50)
 print(bitmap.data)
+import time
 
-MAX = 1000000
+t1 = time.time()
+
+MAX = 10000000
 suffle_array = [45, 2, 78, 35, 67, 90, 879, 0, 340, 123, 46]
-result = []
 bitmap = BitMap(MAX)
 for num in suffle_array:
     bitmap.set(num)
-
-for i in range(MAX + 1):
-    if bitmap.is_set(i):
-        result.append(i)
+    
+result = [i for i in range(MAX + 1) if bitmap.is_set(i)]
 
 print(result)
+print(time.time() - t1)
