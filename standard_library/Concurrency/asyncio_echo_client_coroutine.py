@@ -3,7 +3,7 @@ import functools
 import logging
 import sys
 
-MESSAGES = [b'This is the message', b'it will be sent', b'a part']
+MESSAGES = [b"This is the message", b"it will be sent", b"a part"]
 SERVER_ADDRESS = ("localhost", 10000)
 logging.basicConfig(
     level=logging.DEBUG, format="%(name)s: %(message)s", stream=sys.stderr
@@ -12,18 +12,30 @@ log = logging.getLogger("main")
 event_loop = asyncio.get_event_loop()
 
 
-async def echo_client():
-    pass
+async def echo_client(address, messages):
+    log = logging.getLogger("echo_client")
+    log.debug("connection to {} on {}".format(*address))
+    reader, writer = await asyncio.open_connection(*address)
+    for msg in messages:
+        writer.write(msg)
+        log.debug(f"sending {msg!r}")
+    if writer.can_write_eof():
+        writer.write_eof()
+    await writer.drain()
+    log.debug("waiting for response")
+    while True:
+        data = await reader.read(128)
+        if data:
+            log.debug(f"received {data!r}")
+        else:
+            log.debug("closing")
+            writer.close()
+            return
 
-client_completed = asyncio.Future()
-client_factory = functools.partial(EchoClient, messages=MESSAGES, future=client_completed)
-factory_cor = event_loop.create_connection(client_factory, *SERVER_ADDRESS)
 
-log.debug('waiting for client to complete')
 try:
-    event_loop.run_until_complete(factory_cor)
-    event_loop.run_until_complete(client_completed)
+    event_loop.run_until_complete(echo_client(SERVER_ADDRESS, MESSAGES))
 finally:
-    log.debug('closing event loop')
+    log.debug("closing event loop")
     event_loop.close()
-    
+

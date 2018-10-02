@@ -27,7 +27,7 @@ async def echo(reader, writer):
             return
 
 
-factory = event_loop.create_server(echo, *SERVER_ADDRESS)
+factory = asyncio.start_server(echo, *SERVER_ADDRESS)
 server = event_loop.run_until_complete(factory)
 log.debug(f"starting up on {SERVER_ADDRESS[0]} port {SERVER_ADDRESS[1]}")
 try:
