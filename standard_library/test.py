@@ -46,4 +46,25 @@ for line in end_of_pipe:
     print(line)
 
 import string
+import os
 
+os.system('pwd')
+# import sys
+
+# workers = []
+# for i in range(2):
+#     print(f"Parent {os.getpid()} : Forking {i}")
+#     worker_pid = os.fork()
+#     if not worker_pid:
+#         print(f"Worker {i} starting")
+#         time.sleep(2+i)
+#         print(f"Worker {i} finish")
+#         sys.exit(i)
+#     workers.append(worker_pid)
+
+# for pid in workers:
+#     print('Parent waiting for pid', pid)
+#     done = os.waitpid(pid,0)
+#     print('Parent child done ', done)
+
+os.spawnlp(os.P_WAIT, 'pwd', 'pwd', '-P')
