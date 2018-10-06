@@ -1,4 +1,4 @@
-package com.company; /******************************************************************************
+package com.algorithms; /******************************************************************************
  *  Compilation:  javac StdOut.java
  *  Execution:    java StdOut
  *  Dependencies: none
