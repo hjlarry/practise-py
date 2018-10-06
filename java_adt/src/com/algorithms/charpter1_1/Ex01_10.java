@@ -1,6 +1,6 @@
 package com.algorithms.charpter1_1;
 
-import com.algorithms.StdOut;
+import com.princeton.StdOut;
 
 public class Ex01_10 {
     public static void main(String[] args) {

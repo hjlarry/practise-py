@@ -1,6 +1,6 @@
 package com.algorithms.charpter1_1;
 
-import com.algorithms.StdOut;
+import com.princeton.StdOut;
 
 public class Ex11_13 {
     private static void printMatrix(boolean[][] matrix) {
@@ -33,7 +33,7 @@ public class Ex11_13 {
         boolean[][] a = {{true, false, true}, {false, true, false}};
         printMatrix(a);
 
-        int[][] b = {{100, 300, 500}, {10, 50, 90}, };
+        int[][] b = {{100, 300, 500}, {10, 50, 90},};
         printTransposedMatrix(b);
     }
 }

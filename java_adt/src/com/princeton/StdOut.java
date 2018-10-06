@@ -1,4 +1,4 @@
-package com.algorithms; /******************************************************************************
+/******************************************************************************
  *  Compilation:  javac StdOut.java
  *  Execution:    java StdOut
  *  Dependencies: none
@@ -6,7 +6,7 @@ package com.algorithms; /*******************************************************
  *  Writes data of various types to standard output.
  *
  ******************************************************************************/
-
+package com.princeton;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;

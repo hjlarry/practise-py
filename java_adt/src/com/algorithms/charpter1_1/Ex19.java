@@ -1,6 +1,6 @@
 package com.algorithms.charpter1_1;
 
-import com.algorithms.StdOut;
+import com.princeton.StdOut;
 
 public class Ex19 {
     private static long[] F(int N) {
