@@ -36,7 +36,7 @@ public class ListFeatures {
         List<Pet> copy = new ArrayList<Pet>(pets);
         sub = Arrays.asList(pets.get(1), pets.get(4));
         print("sub:"+sub);
-        copy.retainAll(sub);
+        copy.retainAll(sub); // 求交集
         print("13:"+copy);
         copy = new ArrayList<Pet>(pets);
         copy.remove(2);
