@@ -12,17 +12,32 @@ public class FixedCapacityStack<Item> {
     public boolean isEmpty(){
         return N == 0;
     }
+    private void resize(int max){
+        Item[] temp = (Item[]) new Object[max];
+        for (int i=0;i<N;i++){
+            temp[i] = a[i];
+        }
+        a = temp;
+    }
     public int size(){
         return N;
     }
     public void push(Item item){
+        if (N == a.length){
+            resize(N*2);
+        }
         a[N++] = item;
     }
     public Item pop(){
-        return a[--N];
+        Item item = a[--N];
+        a[N] = null; // 对象游离
+        if (N>0 && N==a.length/4){
+            resize(N/2);
+        }
+        return item;
     }
     public static void main(String[] args){
-        FixedCapacityStack<String> s = new FixedCapacityStack<>(100);
+        FixedCapacityStack<String> s = new FixedCapacityStack<>(10);
         while (!StdIn.isEmpty()){
             String item = StdIn.readString();
             if (!item.equals("-")){
