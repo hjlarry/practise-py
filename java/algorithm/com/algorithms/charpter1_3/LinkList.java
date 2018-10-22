@@ -4,7 +4,7 @@ import com.princeton.StdOut;
 
 import java.util.Iterator;
 
-public class ex20<Item> implements Iterable<Item> {
+public class LinkList<Item> implements Iterable<Item> {
     private Node first;
     private Node last;
     private int N;
@@ -36,7 +36,7 @@ public class ex20<Item> implements Iterable<Item> {
         return N == 0; // first==null也可以
     }
 
-    public void enqueue(Item item) {
+    public void add(Item item) {
         Node old_last = last;
         last = new Node();
         last.item = item;
@@ -73,12 +73,13 @@ public class ex20<Item> implements Iterable<Item> {
             return true;
         }
     }
-    private static void testDelete(){
-        ex20<String> s = new ex20<>();
-        s.enqueue("as");
-        s.enqueue("bp");
-        s.enqueue("c9");
-        s.enqueue("d9");
+
+    private static void testDelete() {
+        LinkList<String> s = new LinkList<>();
+        s.add("as");
+        s.add("bp");
+        s.add("c9");
+        s.add("d9");
         for (String t : s) {
             StdOut.println(t);
         }
@@ -89,7 +90,26 @@ public class ex20<Item> implements Iterable<Item> {
         }
     }
 
+    private boolean find(Item item) {
+        Node curr = first;
+        while (curr != null && !curr.item.equals(item)) {
+            curr = curr.next;
+        }
+        return curr != null;
+
+    }
+    private static void testFind() {
+        LinkList<String> s = new LinkList<>();
+        s.add("as");
+        s.add("bp");
+        s.add("c9");
+        s.add("d9");
+        StdOut.println(s.find("c9"));
+
+    }
+
     public static void main(String[] args) {
         testDelete();
+        testFind();
     }
 }
