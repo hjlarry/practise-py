@@ -90,6 +90,7 @@ public class LinkList<Item> implements Iterable<Item> {
         }
     }
 
+    // ex 1.3.21
     private boolean find(Item item) {
         Node curr = first;
         while (curr != null && !curr.item.equals(item)) {
@@ -105,11 +106,39 @@ public class LinkList<Item> implements Iterable<Item> {
         s.add("c9");
         s.add("d9");
         StdOut.println(s.find("c9"));
+    }
 
+    private boolean removeAfter(Item item){
+        Node curr = first;
+        while (curr != null && !curr.item.equals(item)) {
+            curr = curr.next;
+        }
+        if (curr != null){
+            curr.next = null;
+            return true;
+        }
+        return false;
+    }
+
+    private static void testRemoveAfter() {
+        LinkList<String> s = new LinkList<>();
+        s.add("as");
+        s.add("bp");
+        s.add("c9");
+        s.add("d9");
+        for (String t : s) {
+            StdOut.println(t);
+        }
+        StdOut.println();
+        s.removeAfter("bp");
+        for (String t : s) {
+            StdOut.println(t);
+        }
     }
 
     public static void main(String[] args) {
         testDelete();
         testFind();
+        testRemoveAfter();
     }
 }
