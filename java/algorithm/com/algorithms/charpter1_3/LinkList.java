@@ -3,6 +3,7 @@ package com.algorithms.charpter1_3;
 import com.princeton.StdOut;
 
 import java.util.Iterator;
+import java.util.LinkedList;
 
 public class LinkList<Item> implements Iterable<Item> {
     private Node first;
@@ -12,6 +13,14 @@ public class LinkList<Item> implements Iterable<Item> {
     private class Node {
         Item item;
         Node next;
+    }
+
+    public Node getFirst() {
+        return first;
+    }
+
+    public Node getLast() {
+        return last;
     }
 
     public Iterator<Item> iterator() {
@@ -99,6 +108,7 @@ public class LinkList<Item> implements Iterable<Item> {
         return curr != null;
 
     }
+
     private static void testFind() {
         LinkList<String> s = new LinkList<>();
         s.add("as");
@@ -108,16 +118,28 @@ public class LinkList<Item> implements Iterable<Item> {
         StdOut.println(s.find("c9"));
     }
 
-    private boolean removeAfter(Item item){
-        Node curr = first;
-        while (curr != null && !curr.item.equals(item)) {
-            curr = curr.next;
+    public Node node(int k){
+        if (k > N || k < 1) {
+            return null;
+        } else {
+            int i = 1;
+            Node curr = first;
+            while (i < k && curr != null) {
+                curr = curr.next;
+                i++;
+            }
+            return curr;
         }
-        if (curr != null){
-            curr.next = null;
-            return true;
+    }
+
+    // ex 1.3.24
+    private void removeAfter(Node node) {
+        if(node != null && node.next != null){
+            if (node.next.next == null){
+                last = node.next;
+            }
+            node.next = node.next.next;
         }
-        return false;
     }
 
     private static void testRemoveAfter() {
@@ -130,10 +152,14 @@ public class LinkList<Item> implements Iterable<Item> {
             StdOut.println(t);
         }
         StdOut.println();
-        s.removeAfter("bp");
+        s.removeAfter(s.node(2));
         for (String t : s) {
             StdOut.println(t);
         }
+    }
+
+    private void insertAfter(Node a, Node b) {
+
     }
 
     public static void main(String[] args) {
