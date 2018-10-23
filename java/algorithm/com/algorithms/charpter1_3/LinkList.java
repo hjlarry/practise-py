@@ -118,7 +118,7 @@ public class LinkList<Item> implements Iterable<Item> {
         StdOut.println(s.find("c9"));
     }
 
-    public Node node(int k){
+    public Node node(int k) {
         if (k > N || k < 1) {
             return null;
         } else {
@@ -132,13 +132,21 @@ public class LinkList<Item> implements Iterable<Item> {
         }
     }
 
+    public Node createNode(Item item)
+    {
+        Node node = new Node();
+        node.item = item;
+        return node;
+    }
+
     // ex 1.3.24
     private void removeAfter(Node node) {
-        if(node != null && node.next != null){
-            if (node.next.next == null){
+        if (node != null && node.next != null) {
+            if (node.next.next == null) {
                 last = node.next;
             }
             node.next = node.next.next;
+            N--;
         }
     }
 
@@ -159,12 +167,37 @@ public class LinkList<Item> implements Iterable<Item> {
     }
 
     private void insertAfter(Node a, Node b) {
+        if (a != null && b != null) {
+            if (last == a) {
+                last = b;
+            }
+            b.next = a.next;
+            a.next = b;
+            N++;
+        }
+    }
 
+    private static void testInsertAfter() {
+        LinkList<String> s = new LinkList<>();
+        s.add("as");
+        s.add("bp");
+        s.add("c9");
+        s.add("d9");
+        for (String t : s) {
+            StdOut.println(t);
+        }
+        StdOut.println();
+
+        s.insertAfter(s.node(2), s.createNode("ssss"));
+        for (String t : s) {
+            StdOut.println(t);
+        }
     }
 
     public static void main(String[] args) {
         testDelete();
         testFind();
         testRemoveAfter();
+        testInsertAfter();
     }
 }
