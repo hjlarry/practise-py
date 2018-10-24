@@ -3,7 +3,6 @@ package com.algorithms.charpter1_3;
 import com.princeton.StdOut;
 
 import java.util.Iterator;
-import java.util.LinkedList;
 
 public class LinkList<Item> implements Iterable<Item> {
     private Node first;
