@@ -33,11 +33,8 @@ public class UF {
         if (idP == idQ) {
             return;
         }
-        id[q] = idP;
-        for (int i : id) {
-            if (i == idQ) {
-                i = idP;
-            }
+        for (int i=0; i<id.length;i++){
+            if (id[i] == idP) id[i] = idQ;
         }
         count -- ;
     }
