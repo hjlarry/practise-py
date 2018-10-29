@@ -3,11 +3,11 @@ package com.algorithms.charpter1_5;
 import com.princeton.StdIn;
 import com.princeton.StdOut;
 import com.princeton.Stopwatch;
-public class UF {
+public class QuickUnion {
     private int[] id; // 分量ID
     private int count; // 分量数量
 
-    public UF(int N) {
+    public QuickUnion(int N) {
         count = N;
         id = new int[N];
         for (int i = 0; i < N; i++) {
@@ -24,25 +24,26 @@ public class UF {
     }
 
     public int find(int p) {
-        return id[p];
+        while(p!= id[p]){
+            p = id[p];
+        }
+        return p;
     }
 
     public void union(int p, int q) {
-        int idP = id[p];
-        int idQ = id[q];
-        if (idP == idQ) {
+        int pRoot = find(p);
+        int qRoot = find(q);
+        if(pRoot == qRoot){
             return;
         }
-        for (int i=0; i<id.length;i++){
-            if (id[i] == idP) id[i] = idQ;
-        }
+        id[pRoot] = qRoot;
         count -- ;
     }
 
     public static void main(String[] args) {
         Stopwatch timer = new Stopwatch();
         int N = StdIn.readInt();
-        UF uf = new UF(N);
+        QuickUnion uf = new QuickUnion(N);
         while (!StdIn.isEmpty()) {
             int p = StdIn.readInt();
             int q = StdIn.readInt();
@@ -56,6 +57,4 @@ public class UF {
         double time1 = timer.elapsedTime();
         StdOut.println(time1);
     }
-
-
 }
