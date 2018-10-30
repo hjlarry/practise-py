@@ -54,7 +54,7 @@ public class UF {
         }
         StdOut.println(uf.count() + "compoents");
         double time1 = timer.elapsedTime();
-        StdOut.println(time1);
+        StdOut.println(time1);  //36.451 of 10w data
     }
 
 

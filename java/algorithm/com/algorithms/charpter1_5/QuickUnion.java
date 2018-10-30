@@ -55,6 +55,6 @@ public class QuickUnion {
         }
         StdOut.println(uf.count() + "compoents");
         double time1 = timer.elapsedTime();
-        StdOut.println(time1);
+        StdOut.println(time1); // 0.91 of 10w data
     }
 }

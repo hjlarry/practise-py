@@ -65,6 +65,6 @@ public class WeightQuickUnion {
         }
         StdOut.println(uf.count() + "compoents");
         double time1 = timer.elapsedTime();
-        StdOut.println(time1);
+        StdOut.println(time1); // 0.94 of 10w data
     }
 }
