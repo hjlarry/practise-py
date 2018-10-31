@@ -33,11 +33,15 @@ public class BaseSort {
         return true;
     }
 
-    public static void main(String[] args) {
+    public static void testSort(){
         String[] a = {"s", "o", "r", "t", "e", "x", "a", "m", "p", "l", "e"};
         sort(a);
         assert isSorted(a);
         show(a);
+    }
+
+    public static void main(String[] args) {
+
     }
 
 }

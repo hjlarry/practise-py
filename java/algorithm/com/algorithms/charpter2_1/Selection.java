@@ -1,6 +1,6 @@
 package com.algorithms.charpter2_1;
 
-public class Selecttion extends BaseSort {
+public class Selection extends BaseSort {
     public static void sort(Comparable[] a) {
 
         int len = a.length;
