@@ -105,5 +105,3 @@ venv.bak/
 .idea/
 .DS_Store/
 
-# java
-*.class
