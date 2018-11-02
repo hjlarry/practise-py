@@ -79,7 +79,7 @@ async def run_df(loop):
     proc = loop.subprocess_exec(factory, 'df','-hl', stdin=None, stderr=None)
     try:
         print('launching process')
-        transport, protocol = await proc
+        transport, _ = await proc
         print('wait process to complete')
         await cmd_done
     finally:
