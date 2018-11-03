@@ -1,0 +1,135 @@
+DEBUG:root:this msg should goto the log file
+DEBUG:root:this msg should goto the log file
+DEBUG:MyLogger:i=0
+DEBUG:MyLogger:i=1
+DEBUG:MyLogger:i=2
+DEBUG:MyLogger:i=3
+DEBUG:MyLogger:i=4
+DEBUG:MyLogger:i=5
+DEBUG:MyLogger:i=6
+DEBUG:MyLogger:i=7
+DEBUG:MyLogger:i=8
+DEBUG:MyLogger:i=9
+DEBUG:MyLogger:i=10
+DEBUG:MyLogger:i=11
+DEBUG:MyLogger:i=12
+DEBUG:MyLogger:i=13
+DEBUG:MyLogger:i=14
+DEBUG:MyLogger:i=15
+DEBUG:MyLogger:i=16
+DEBUG:MyLogger:i=17
+DEBUG:MyLogger:i=18
+DEBUG:MyLogger:i=19
+DEBUG:MyLogger:i=0
+DEBUG:MyLogger:i=1
+DEBUG:MyLogger:i=2
+DEBUG:MyLogger:i=3
+DEBUG:MyLogger:i=4
+DEBUG:MyLogger:i=5
+DEBUG:MyLogger:i=6
+DEBUG:MyLogger:i=7
+DEBUG:MyLogger:i=8
+DEBUG:MyLogger:i=9
+DEBUG:MyLogger:i=10
+DEBUG:MyLogger:i=11
+DEBUG:MyLogger:i=12
+DEBUG:MyLogger:i=13
+DEBUG:MyLogger:i=14
+DEBUG:MyLogger:i=15
+DEBUG:MyLogger:i=16
+DEBUG:MyLogger:i=17
+DEBUG:MyLogger:i=18
+DEBUG:MyLogger:i=19
+DEBUG:MyLogger:i=20
+DEBUG:MyLogger:i=21
+DEBUG:MyLogger:i=22
+DEBUG:MyLogger:i=23
+DEBUG:MyLogger:i=24
+DEBUG:MyLogger:i=25
+DEBUG:MyLogger:i=26
+DEBUG:MyLogger:i=27
+DEBUG:MyLogger:i=28
+DEBUG:MyLogger:i=29
+DEBUG:MyLogger:i=30
+DEBUG:MyLogger:i=31
+DEBUG:MyLogger:i=32
+DEBUG:MyLogger:i=33
+DEBUG:MyLogger:i=34
+DEBUG:MyLogger:i=35
+DEBUG:MyLogger:i=36
+DEBUG:MyLogger:i=37
+DEBUG:MyLogger:i=38
+DEBUG:MyLogger:i=39
+DEBUG:MyLogger:i=40
+DEBUG:MyLogger:i=41
+DEBUG:MyLogger:i=42
+DEBUG:MyLogger:i=43
+DEBUG:MyLogger:i=44
+DEBUG:MyLogger:i=45
+DEBUG:MyLogger:i=46
+DEBUG:MyLogger:i=47
+DEBUG:MyLogger:i=48
+DEBUG:MyLogger:i=49
+DEBUG:MyLogger:i=50
+DEBUG:MyLogger:i=51
+DEBUG:MyLogger:i=52
+DEBUG:MyLogger:i=53
+DEBUG:MyLogger:i=54
+DEBUG:MyLogger:i=55
+DEBUG:MyLogger:i=56
+DEBUG:MyLogger:i=57
+DEBUG:MyLogger:i=58
+DEBUG:MyLogger:i=59
+DEBUG:MyLogger:i=60
+DEBUG:MyLogger:i=61
+DEBUG:MyLogger:i=62
+DEBUG:MyLogger:i=63
+DEBUG:MyLogger:i=64
+DEBUG:MyLogger:i=65
+DEBUG:MyLogger:i=66
+DEBUG:MyLogger:i=67
+DEBUG:MyLogger:i=68
+DEBUG:MyLogger:i=69
+DEBUG:MyLogger:i=70
+DEBUG:MyLogger:i=71
+DEBUG:MyLogger:i=72
+DEBUG:MyLogger:i=73
+DEBUG:MyLogger:i=74
+DEBUG:MyLogger:i=75
+DEBUG:MyLogger:i=76
+DEBUG:MyLogger:i=77
+DEBUG:MyLogger:i=78
+DEBUG:MyLogger:i=79
+DEBUG:MyLogger:i=80
+DEBUG:MyLogger:i=81
+DEBUG:MyLogger:i=82
+DEBUG:MyLogger:i=83
+DEBUG:MyLogger:i=84
+DEBUG:MyLogger:i=85
+DEBUG:MyLogger:i=86
+DEBUG:MyLogger:i=87
+DEBUG:MyLogger:i=88
+DEBUG:MyLogger:i=89
+DEBUG:MyLogger:i=90
+DEBUG:MyLogger:i=91
+DEBUG:MyLogger:i=92
+DEBUG:MyLogger:i=93
+DEBUG:MyLogger:i=94
+DEBUG:MyLogger:i=95
+DEBUG:MyLogger:i=96
+DEBUG:MyLogger:i=97
+DEBUG:MyLogger:i=98
+DEBUG:MyLogger:i=99
+WARNING:package1.module1:this msg comes from one module
+WARNING:package2.module2:this msg comes from another module
+WARNING:package1.module1:this msg comes from one module
+WARNING:package2.module2:this msg comes from another module
+WARNING:package1.module1:this msg comes from one module
+WARNING:package2.module2:this msg comes from another module
+DEBUG:root:this msg should goto the log file
+WARNING:package1.module1:this msg comes from one module
+WARNING:package2.module2:this msg comes from another module
+WARNING:py.warnings:/home/hejl/.local/lib/python3.6/site-packages/ipykernel_launcher.py:6: UserWarning: this msg go to log
+  
+
+DEBUG:root:this msg should goto the log file
