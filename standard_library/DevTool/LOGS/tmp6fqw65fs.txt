@@ -1,0 +1,59 @@
+MyException
+Python 3.6.5: /usr/local/opt/python/bin/python3.6
+Tue Nov  6 11:08:30 2018
+
+A problem occurred in a Python script.  Here is the sequence of
+function calls leading up to the error, in the order they occurred.
+
+ /Users/hejl/JianGuo/practise-py/standard_library/DevTool/cgitb_log_exception.py in <module>()
+   20         return
+   21 
+   22 
+   23 raise MyException("Normal message", bad_value=99)
+   24 
+MyException = <class '__main__.MyException'>
+bad_value undefined
+MyException: Normal message
+    __cause__ = None
+    __class__ = <class '__main__.MyException'>
+    __context__ = None
+    __delattr__ = <method-wrapper '__delattr__' of MyException object>
+    __dict__ = {'bad_value': 99}
+    __dir__ = <built-in method __dir__ of MyException object>
+    __doc__ = '\n    为自定义异常添加一个额外的属性。\n    '
+    __eq__ = <method-wrapper '__eq__' of MyException object>
+    __format__ = <built-in method __format__ of MyException object>
+    __ge__ = <method-wrapper '__ge__' of MyException object>
+    __getattribute__ = <method-wrapper '__getattribute__' of MyException object>
+    __gt__ = <method-wrapper '__gt__' of MyException object>
+    __hash__ = <method-wrapper '__hash__' of MyException object>
+    __init__ = <bound method MyException.__init__ of MyException('Normal message',)>
+    __init_subclass__ = <built-in method __init_subclass__ of type object>
+    __le__ = <method-wrapper '__le__' of MyException object>
+    __lt__ = <method-wrapper '__lt__' of MyException object>
+    __module__ = '__main__'
+    __ne__ = <method-wrapper '__ne__' of MyException object>
+    __new__ = <built-in method __new__ of type object>
+    __reduce__ = <built-in method __reduce__ of MyException object>
+    __reduce_ex__ = <built-in method __reduce_ex__ of MyException object>
+    __repr__ = <method-wrapper '__repr__' of MyException object>
+    __setattr__ = <method-wrapper '__setattr__' of MyException object>
+    __setstate__ = <built-in method __setstate__ of MyException object>
+    __sizeof__ = <built-in method __sizeof__ of MyException object>
+    __str__ = <method-wrapper '__str__' of MyException object>
+    __subclasshook__ = <built-in method __subclasshook__ of type object>
+    __suppress_context__ = False
+    __traceback__ = <traceback object>
+    __weakref__ = None
+    args = ('Normal message',)
+    bad_value = 99
+    with_traceback = <built-in method with_traceback of MyException object>
+
+The above is a description of an error in a Python program.  Here is
+the original traceback:
+
+Traceback (most recent call last):
+  File "cgitb_log_exception.py", line 23, in <module>
+    raise MyException("Normal message", bad_value=99)
+MyException: Normal message
+
