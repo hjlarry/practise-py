@@ -43,7 +43,7 @@ print("Instance:", isinstance(SubclassImplementation(), PluginBase))
 for sc in PluginBase.__subclasses__():
     print(sc.__name__)
 
-
+# 类和静态方法同样可被标记为抽象的
 class Base(abc.ABC):
     @property
     @abc.abstractmethod
