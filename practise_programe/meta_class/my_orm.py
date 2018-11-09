@@ -60,6 +60,16 @@ class BaseModel(metaclass=MetaModel):
             setattr(self, k, v)
         super().__init__()
 
+    def save(self):
+        fields = []
+        values = []
+        for k, v in self.fields.items():
+            fields.append(v.col_name)
+            values.append(str(v._value))
+        sql = f"insert {self._meta['table']}({','.join(fields)}) values ({','.join(values)})"
+        print(sql)
+
+
 
 class User(BaseModel):
     name = CharField("name", max_length=100)
@@ -72,4 +82,4 @@ class User(BaseModel):
 u = User()
 u.name = "hejl"
 u.age = 28
-# u.save()
+u.save()
