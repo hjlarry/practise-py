@@ -81,9 +81,21 @@ print(sorted(animals, key=len))
 for length, group in itertools.groupby(reversed(animals), len):
     print(length, "->", list(group))
 
-print(list(itertools.tee('abc', 3)))
-g1, g2, g3 = itertools.tee('abc', 3)
+print(list(itertools.tee("abc", 3)))
+g1, g2, g3 = itertools.tee("abc", 3)
 print(next(g1))
 print(next(g1))
 print(next(g2))
 
+import random
+
+
+def d6():
+    return random.randint(1, 6)
+
+
+# iter()可以接受第二个参数作为哨符，第一个参数不断调用直到遇到哨符会抛出StopIteration异常，而不产出哨符
+d6_iter = iter(d6, 1)
+print(d6_iter)
+for roll in d6_iter:
+    print(roll)
