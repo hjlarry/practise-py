@@ -32,3 +32,21 @@ def artiprog_gen(begin, step, end=None):
         yield result
         index += 1
         result = begin + step * index
+
+
+import itertools
+
+
+def artiprog_gen_v2(begin, step, end=None):
+    first = type(begin + step)(begin)
+    ap_gen = itertools.count(first, step)
+    if end is not None:
+        ap_gen = itertools.takewhile(lambda n: n < end, ap_gen)
+    return ap_gen
+
+ap = artiprog_gen_v2(0, 1, 3)
+print(list(ap))
+ap = artiprog_gen_v2(1, 0.5, 3)
+print(list(ap))
+ap = artiprog_gen_v2(0, 1 / 3, 3)
+print(list(ap))
