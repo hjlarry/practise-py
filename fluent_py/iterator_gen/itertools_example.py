@@ -95,6 +95,8 @@ def d6():
 
 
 # iter()可以接受第二个参数作为哨符，第一个参数不断调用直到遇到哨符会抛出StopIteration异常，而不产出哨符
+# 所以可以用任意函数构建迭代器
+
 d6_iter = iter(d6, 1)
 print(d6_iter)
 for roll in d6_iter:
