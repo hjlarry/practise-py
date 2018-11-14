@@ -1,10 +1,16 @@
 from collections import abc
-from osconfeed import load
+from keyword import iskeyword
 
 
 class FrozenJson:
     def __init__(self, raw_data):
-        self.__data = dict(raw_data)
+        self.__data = {}
+        for key, value in raw_data.items():
+            # if iskeyword(key):
+            #     key = key + "_"
+            if key.isidentifier():
+                key = "_" + key
+            self.__data[key] = value
 
     def __getattr__(self, name):
         if hasattr(self.__data, name):
@@ -22,14 +28,10 @@ class FrozenJson:
             return obj
 
 
-raw_feed = load()
-feed = FrozenJson(raw_feed)
-print(len(feed.Schedule.speakers))
-print(feed.Schedule.keys())
-print(feed.Schedule.events[40].name)
-# 未处理key error
-# print(feed.not_exist)
-# 未处理保留字
-# print(feed.class)
-grad = FrozenJson({"name": "hehe", "class": 1982})
-print(getattr(grad, 'class'))
+grad = FrozenJson({"name": "hehe", "class": 1982, "2be": "not to be"})
+print(grad._class)
+print(grad.__dict__)
+# SyntaxError: invalid syntax
+# print(grad.2be)
+# 尝试了不同方法，无法简便的识别出2be的无效性
+
