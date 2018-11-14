@@ -29,4 +29,7 @@ if 'conference.115' not in db:
 speaker = db['speaker.3471']
 print(speaker.name)
 print(speaker.twitter)
+event = db["event.33950"]
+print(event)
+print(event.speakers)
 db.close()
