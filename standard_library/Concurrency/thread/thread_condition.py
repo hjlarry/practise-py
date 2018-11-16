@@ -3,6 +3,8 @@ Condition实际上是两级锁，创建Condition对象时会存储一个可重�
 with进入的时候，实际上调用了self._lock.acquire()。
 后续使用时调用wait(), 会新拿一个锁放在self._waiters双端队列中。
 notify()时会从self._waiters中拿出锁去释放。
+
+基于Condition实现的有:Semaphore, Barrier, Event, queue.Queue
 """
 
 
