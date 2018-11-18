@@ -24,6 +24,7 @@ print("main:waiting for real results")
 real_res = f.result()
 print("main:real results", real_res)
 print("main:future after results", f)
+# done 会立即判断某个任务是否完成
 print("is task finish?", f.done())
 print()
 
