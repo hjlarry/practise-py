@@ -42,3 +42,9 @@ print("main:real results", real_res)
 ex.shutdown()
 print()
 
+"""
+submit+as_complete 会比 map 更加灵活：
+1. 因为map只能处理参数不同的同一个可调用对象，而submit可以是不同调用对象
+2. map返回的是生成器，因其结果按顺序返回，for循环遍历时，如果第一个调用10秒，
+其他调用1秒，则会先阻塞10秒其他不阻塞顺序返回，而as_complete则可以有了结果就返回
+"""
