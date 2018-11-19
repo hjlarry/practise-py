@@ -11,8 +11,9 @@ def fib(n):
         return 1
     return fib(n - 1) + fib(n - 2)
 
-# ThreadPoolExecutor运行37秒, ProcessPoolExecutor运行 11秒
-with futures.ProcessPoolExecutor(max_workers=7) as ex:
+
+# ThreadPoolExecutor运行37秒, ProcessPoolExecutor运行 11秒, pypy运行ProcessPoolExecutor只需2.4秒, ThreadPoolExecutor只需2.5秒
+with futures.ThreadPoolExecutor(max_workers=7) as ex:
     tasks = [ex.submit(fib, (i)) for i in range(25, 40)]
     start = time.time()
     for future in futures.as_completed(tasks):
