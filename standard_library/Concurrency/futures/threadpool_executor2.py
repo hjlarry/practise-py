@@ -21,8 +21,9 @@ print()
 # wait 会阻塞等待传入的第一个参数的任务去执行， 而return_when默认是所有任务结束后则不阻塞
 all_tasks = [ex.submit(task, i) for i in range(2, 5)]
 futures.wait(all_tasks, return_when=futures.FIRST_COMPLETED)
-print('wait start')
+print("wait start")
 print()
+time.sleep(10)
 
 # 回调
 def task_callback(n):
@@ -44,10 +45,16 @@ def done(fn):
             print(f"{fn.arg}: value returned:{result}")
 
 
-print("main starting")
+def done_test_callback():
+    print(111)
+    return 222
+
+
+print("task_callback example starting")
 f = ex.submit(task_callback, 5)
 f.arg = 5
-f.add_done_callback(done)
+# add_done_callback传入的方法必须是一个以Future对象为参数的方法
+f.add_done_callback(done_test_callback)
 result = f.result()
 print()
 
@@ -57,10 +64,10 @@ def task_exec(n):
     raise ValueError(f"the value {n} is not good")
 
 
-print("main starting")
+print("task_exec example starting")
 f = ex.submit(task_exec, 5)
 error = f.exception()
-print("main error ", error)
+print("task_exec error ", error)
 try:
     result = f.result()
 except ValueError as e:
@@ -69,7 +76,7 @@ print()
 
 # 上下文管理器
 with futures.ThreadPoolExecutor(max_workers=2) as ex:
-    print("main starting")
+    print("context manager main starting")
     ex.submit(task_callback, 1)
     ex.submit(task_callback, 2)
     ex.submit(task_callback, 3)
