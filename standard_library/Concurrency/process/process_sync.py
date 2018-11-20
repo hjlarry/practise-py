@@ -1,4 +1,4 @@
-## Event, Lock, Condition, Semaphore Example
+## Event, Lock, Condition, Semaphore, Pipe Example
 import sys
 import multiprocessing
 import time
@@ -143,3 +143,25 @@ while True:
     if alive == 0:
         print("Done")
         break
+print()
+
+print("***Pipe example:")
+# Pipe 性能是高于 Queue的
+def producer1(pipe):
+    pipe.send("hello larry")
+
+
+def consumer1(pipe):
+    print(pipe.recv())
+
+receive_pipe, send_pipe = multiprocessing.Pipe()
+p = multiprocessing.Process(target=producer1, args=(send_pipe, ))
+c = multiprocessing.Process(target=consumer1, args=(receive_pipe, ))
+
+c.start()
+p.start()
+
+c.join()
+p.join()
+
+
