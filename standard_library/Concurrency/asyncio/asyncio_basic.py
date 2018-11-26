@@ -23,7 +23,6 @@ async def coroutine_result():
     return 1234
 
 
-# 经过尝试 一个python文件不能用多次get_event_loop，new_event_loop貌似是可以的
 event_loop = asyncio.new_event_loop()
 try:
     result = event_loop.run_until_complete(coroutine_result())
