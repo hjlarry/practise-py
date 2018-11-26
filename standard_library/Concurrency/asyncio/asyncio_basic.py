@@ -108,6 +108,7 @@ def callback2(n, loop):
 
 
 async def main2(loop):
+    # 必须是事件循环的时间, call_later实际上也是调用call_at
     now = loop.time()
     print("clock time ", time.time())
     print("loop time ", now)
