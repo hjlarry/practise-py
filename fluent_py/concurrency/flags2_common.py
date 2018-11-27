@@ -23,6 +23,7 @@ COUNTRY_CODES_FILE = "country_codes.txt"
 def save_flag(img, filename):
     path = os.path.join(DEST_DIR, filename)
     with open(path, "wb") as fp:
+        # 修改为 fp.write(img*10)可以用来测试不同flags.py对于硬盘写入时的性能差异
         fp.write(img)
 
 
