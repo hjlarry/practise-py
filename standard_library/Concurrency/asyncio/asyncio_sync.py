@@ -1,5 +1,20 @@
 import asyncio
 import functools
+import aiohttp
+
+# 锁的意义，因为协程本身是单线程运行的，不需要数据间的同步，但考虑如下场景
+# 如果有多个caller同时调用该协程，锁能保证http请求只发生一次
+# 所以asyncio的锁和thread中的锁实现有很大不同
+cache = {}
+
+
+async def html_get(url, lock):
+    async with lock:
+        if url in cache:
+            return cache[url]
+        cache[url] = await aiohttp.get(url)
+        return cache[url]
+
 
 print("*** Locks")
 
