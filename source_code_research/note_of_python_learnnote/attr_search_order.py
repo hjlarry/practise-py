@@ -31,6 +31,7 @@ def object_getattr(obj, name):
     if v is not None:
         if hasattr(v, "__get__"):
             # Function-like descriptor.
+            # 如果v是一个方法，那么func本身实现了描述符协议，应该会走这里处理
             return v.__get__(obj, cls)
         else:
             # Normal data member in class
