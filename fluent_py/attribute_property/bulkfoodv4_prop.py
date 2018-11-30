@@ -1,6 +1,4 @@
 # 使用描述符时 无需再传入名称
-
-
 class Quantity:
     __counter = 0
 
@@ -21,6 +19,29 @@ class Quantity:
             raise ValueError("value must > 0")
 
 
+# 也可以使用特性工厂函数实现，像 bulkfoodv2_prop.py 一样
+
+
+def quantity():
+    try:
+        quantity.__counter += 1
+    except AttributeError:
+        quantity.__counter = 0
+
+    storage_name = f"_quantity:{quantity.__counter}"
+
+    def qty_getter(instance):
+        return getattr(instance, storage_name)
+
+    def qty_setter(instance, value):
+        if value > 0:
+            setattr(instance, storage_name, value)
+        else:
+            raise ValueError("value must > 0")
+
+    return property(qty_getter, qty_setter)
+
+
 class LineItem:
     weight = Quantity()
     price = Quantity()
@@ -37,3 +58,4 @@ nutmeg = LineItem(9, 15.3)
 print(nutmeg.price)
 print(sorted(vars(nutmeg).items()))
 print(LineItem.weight)
+
