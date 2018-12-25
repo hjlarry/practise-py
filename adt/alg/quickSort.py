@@ -11,7 +11,7 @@ def quick_sort(arr):
     less = []
     high = []
 
-    for i in arr[pivot_index + 1:]:
+    for i in arr[pivot_index + 1 :]:
         if i > pivot:
             high.append(i)
         elif i < pivot:
@@ -24,18 +24,18 @@ def quick_sort(arr):
 def inplace_sort(arr, low, high):
     if low < high:
         pivot_index = low
-        l = pivot_index + 1
+        lo = pivot_index + 1
         h = high - 1
         while True:
-            while l <= h and arr[l] < arr[pivot_index]:
-                l += 1
-            while l <= h and arr[h] >= arr[pivot_index]:
+            while lo <= h and arr[lo] < arr[pivot_index]:
+                lo += 1
+            while lo <= h and arr[h] >= arr[pivot_index]:
                 h -= 1
 
-            if l > h:
+            if lo > h:
                 break
             else:
-                arr[h], arr[l] = arr[l], arr[h]
+                arr[h], arr[lo] = arr[lo], arr[h]
         arr[pivot_index], arr[h] = arr[h], arr[pivot_index]
         inplace_sort(arr, low, h)
         inplace_sort(arr, h + 1, high)

@@ -62,7 +62,10 @@ class HashTable:
         return None
 
     def _slot_can_insert(self, index):
-        return self._table[index] is HashTable.UNUSED or self._table[index] is HashTable.EMPTY
+        return (
+            self._table[index] is HashTable.UNUSED
+            or self._table[index] is HashTable.EMPTY
+        )
 
     def _find_slot_for_insert(self, key):
         index = self._hash(key)
@@ -73,7 +76,7 @@ class HashTable:
     def _rehash(self):
         old_table = self._table
         new_table_size = len(old_table) * 2
-        self._table = new_table = Array(new_table_size, HashTable.UNUSED)
+        self._table = Array(new_table_size, HashTable.UNUSED)
         self.length = 0
         for slot in old_table:
             if slot is not HashTable.UNUSED and slot is not HashTable.EMPTY:
@@ -84,14 +87,14 @@ class HashTable:
         if key in self:
             index = self._find_key(key)
             self._table[index].value = value
-            return 'modify'
+            return "modify"
         else:
             index = self._find_slot_for_insert(key)
             self._table[index] = Slot(key, value)
             self.length += 1
             if self._load_factor > 0.8:
                 self._rehash()
-            return 'add'
+            return "add"
 
     def get(self, key, default=None):
         if key in self:
@@ -104,7 +107,7 @@ class HashTable:
         if key in self:
             index = self._find_key(key)
             self._table[index] = HashTable.EMPTY
-            self.length -=1
+            self.length -= 1
             return True
         else:
             return False
@@ -117,18 +120,18 @@ class HashTable:
 
 def test_hash_table():
     h = HashTable()
-    h.set('a', 0)
-    h.set('b', 1)
-    h.set('c', 2)
+    h.set("a", 0)
+    h.set("b", 1)
+    h.set("c", 2)
     assert len(h) == 3
-    assert h.get('a') == 0
-    assert h.get('b') == 1
-    assert h.get('hehe') is None
+    assert h.get("a") == 0
+    assert h.get("b") == 1
+    assert h.get("hehe") is None
 
-    h.remove('a')
-    assert h.get('a') is None
+    h.remove("a")
+    assert h.get("a") is None
     print(list(h))
-    assert sorted(list(h)) == ['b', 'c']
+    assert sorted(list(h)) == ["b", "c"]
 
     n = 50
     for i in range(n):

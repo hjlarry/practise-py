@@ -69,4 +69,3 @@ def test_double_link_list():
     assert list(dll) == [0, 1, 2]
 
     assert [node.value for node in dll.iter_node()] == [0, 1, 2]
-

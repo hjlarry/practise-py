@@ -1,3 +1,6 @@
+import time
+
+
 class BitMap:
     def __init__(self, max=90):
         # 因为单个整型只能使用31位，所以需要的位数除以31并向上取整则可得知需要几个数组元素
@@ -44,7 +47,7 @@ bitmap.set(50)
 print(bitmap.data)
 bitmap.clean(50)
 print(bitmap.data)
-import time
+
 
 t1 = time.time()
 
@@ -53,7 +56,7 @@ suffle_array = [45, 2, 78, 35, 67, 90, 879, 0, 340, 123, 46]
 bitmap = BitMap(MAX)
 for num in suffle_array:
     bitmap.set(num)
-    
+
 result = [i for i in range(MAX + 1) if bitmap.is_set(i)]
 
 print(result)

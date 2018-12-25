@@ -55,4 +55,3 @@ def test_maxheap():
         h.add(i)
     for i in reversed(range(n)):
         assert i == h.extract()
-

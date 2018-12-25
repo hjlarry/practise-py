@@ -46,7 +46,9 @@ def binary_search_recursive(sorted_array, beg, end, val):
     if sorted_array[mid] == val:
         return mid
     elif sorted_array[mid] > val:
-        return binary_search_recursive(sorted_array, beg, mid, val)  # 注意我依然假设 beg, end 区间是左闭右开的
+        return binary_search_recursive(
+            sorted_array, beg, mid, val
+        )  # 注意我依然假设 beg, end 区间是左闭右开的
     else:
         return binary_search_recursive(sorted_array, mid + 1, end, val)
 
@@ -57,9 +59,9 @@ def test_bin_search():
     assert binSearch(a, 10) == 0
     assert binSearch(a, 200) == 8
     assert binSearch(a, 130) == 6
-    assert binSearch(a, 135) == False
+    assert binSearch(a, 135) is False
 
     assert binary_search_recursive(a, 0, len(a), 10) == 0
     assert binary_search_recursive(a, 0, len(a), 200) == 8
     assert binary_search_recursive(a, 0, len(a), 130) == 6
-    assert binary_search_recursive(a, 0, len(a), 135) == False
+    assert binary_search_recursive(a, 0, len(a), 135) is False

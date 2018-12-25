@@ -31,18 +31,19 @@ class DictAdt(HashTable):
 
 def test_dict_adt():
     import random
+
     d = DictAdt()
 
-    d['a'] = 1
-    assert d['a'] == 1
-    d.remove('a')
+    d["a"] = 1
+    assert d["a"] == 1
+    d.remove("a")
 
-    l = list(range(30))
-    random.shuffle(l)
-    for i in l:
+    ll = list(range(30))
+    random.shuffle(ll)
+    for i in ll:
         d.set(i, i)
 
     for i in range(30):
         assert d.get(i) == i
 
-    assert sorted(list(d.keys())) == sorted(l)
+    assert sorted(list(d.keys())) == sorted(ll)

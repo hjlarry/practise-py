@@ -13,9 +13,10 @@ def heap_sort(arr):
 
 def test_heapsort_reverse():
     import random
-    l = list(range(10))
-    random.shuffle(l)
-    assert heap_sort(l) == sorted(l, reverse=True)
+
+    ll = list(range(10))
+    random.shuffle(ll)
+    assert heap_sort(ll) == sorted(ll, reverse=True)
 
 
 test_heapsort_reverse()

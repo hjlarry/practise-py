@@ -10,8 +10,8 @@ def merge_sort(arr):
 
 
 def merge_sorted_list(arr1, arr2):
-    a , b = 0, 0
-    a_max , b_max = len(arr1), len(arr2)
+    a, b = 0, 0
+    a_max, b_max = len(arr1), len(arr2)
     new_arr = []
 
     while a < a_max and b < b_max:
@@ -32,6 +32,7 @@ def merge_sorted_list(arr1, arr2):
 
 def test_merge_sort():
     import random
+
     seq = list(range(10))
     random.shuffle(seq)
     assert merge_sort(seq) == sorted(seq)
