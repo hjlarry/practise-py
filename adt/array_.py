@@ -2,47 +2,53 @@
 class Array:
     def __init__(self, size=32):
         self._size = size
-        self._item = []
+        self._items = [None] * size
 
     def __getitem__(self, index):
-        return self._item[index]
+        return self._items[index]
 
     def __setitem__(self, index, value):
-        self._item[index] = value
+        self._items[index] = value
 
     def __len__(self):
-        return len(self._item)
+        return self._size
+
+    def __repr__(self):
+        return f"{self.__class__}[{','.join(list(str(item) for item in self))}]"
 
     def clear(self):
         for i in range(len(self)):
             self[i] = None
 
     def __iter__(self):
-        for item in self._item:
-            yield item
+        for item in self._items:
+            if item:
+                yield item
 
     def find(self, index):
         try:
-            return self._item[index]
+            return self._items[index]
         except IndexError:
             return None
 
     def delete(self, index):
         try:
-            self._item.pop(index)
+            self._items.pop(index)
+            self._items.append(None)  # 保持固定长度
             return True
         except IndexError:
             return False
 
     def insert(self, index, value):
-        if len(self) >= self._size:
-            return False
+        if None in self._items:
+            self._items.insert(index, value)
+            self._items.pop()
+            return True
         else:
-            return self._item.insert(index, value)
+            return False
 
     def print_all(self):
-        for item in self:
-            print(item)
+        print(self)
 
 
 def test_array():
