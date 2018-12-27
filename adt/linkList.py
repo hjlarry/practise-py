@@ -1,45 +1,81 @@
+import abc
+
+
 class Node:
+    __slots__ = ("value", "prev_ref", "next_ref")
+
     def __init__(self, value=None, next_ref=None, prev_ref=None):
-        self.value = value
-        self.next_ref = next_ref
-        self.prev_ref = prev_ref
+        self.value, self.next_ref, self.prev_ref = value, next_ref, prev_ref
 
 
-# 单链表
-class SingleLinkList:
-    def __init__(self):
-        self.root = Node()  # 哨兵节点
-        self.head_node = self.root
-        self.tail_node = self.root
-        self.length = 0
+class LinkList(abc.ABC):
+    def __init__(self, root=None, max_size=None):
+        self.root = root if root else Node()  # 哨兵节点
+        self.max_size = max_size  # 链表最大长度
+        self.length = 0  # 链表长度
+        self.tail_node = self.root  # 链表尾节点
+
+    @property
+    def head_node(self):
+        """链表头节点"""
+        return self.root.next_ref
 
     def __len__(self):
         return self.length
 
     def iter_node(self):
+        """迭代生成节点"""
+        length = self.length
         cur_node = self.root.next_ref
-        while cur_node is not None:
+        while length:
             yield cur_node
             cur_node = cur_node.next_ref
+            length -= 1
 
     def __iter__(self):
+        """迭代生成节点的值"""
         for node in self.iter_node():
             yield node.value
 
+    def check_full(self):
+        """检查是否链表已满"""
+        if self.max_size is not None and len(self) >= self.max_size:
+            raise Exception("LinkedList is Full")
+
+    @abc.abstractmethod
+    def append(self, value) -> None:
+        """链表尾部追加元素"""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def appendleft(self, value) -> None:
+        """链表头部追加元素"""
+        raise NotImplementedError
+
+    @abc.abstractmethod
+    def insert(self, k: int, value) -> bool:
+        """链表第K个位置后插入元素"""
+        raise NotImplementedError
+
+
+# 单链表
+class SingleLinkList(LinkList):
     def append(self, value):
+        self.check_full()
         new_node = Node(value)
         self.tail_node.next_ref = new_node
         self.tail_node = new_node
         self.length += 1
 
     def appendleft(self, value):
+        self.check_full()
         tmp_node = self.root.next_ref
         new_node = Node(value, tmp_node)
         self.root.next_ref = new_node
         self.length += 1
 
     def insert(self, k, value):
-        # 在第K个位置后插入节点
+        self.check_full()
         if k == 0:
             self.appendleft(value)
             return True
@@ -79,42 +115,28 @@ class SingleLinkList:
 
 
 # 循环链表
-class CircleLinkList:
-    def __init__(self):
-        self.root = Node(next_ref=self)
-        self.head_node = self.root
-        self.tail_node = self.root
-        self.length = 0
-
-    def __len__(self):
-        return self.length
-
-    def iter_node(self):
-        cur_node = self.root.next_ref
-        length = self.length
-        while length:  # 和单链表不同
-            yield cur_node
-            cur_node = cur_node.next_ref
-            length -= 1
-
-    def __iter__(self):
-        for node in self.iter_node():
-            yield node.value
+class CircleLinkList(LinkList):
+    def __init__(self, max_size=None):
+        node = Node(next_ref=self)
+        super().__init__(root=node, max_size=max_size)
 
     def append(self, value):
+        self.check_full()
         tmp_node = self.tail_node.next_ref  # 和单链表不同
-        new_node = Node(value, tmp_node)
+        new_node = Node(value, next_ref=tmp_node)
         self.tail_node.next_ref = new_node
         self.tail_node = new_node
         self.length += 1
 
     def appendleft(self, value):
+        self.check_full()
         tmp_node = self.root.next_ref
         new_node = Node(value, tmp_node)
         self.root.next_ref = new_node
         self.length += 1
 
     def insert(self, k, value):
+        self.check_full()
         if k == 0:
             self.appendleft(value)
             return True
@@ -154,33 +176,16 @@ class CircleLinkList:
 
 
 # 双向链表
-class DoubleLinkList:
-    def __init__(self):
-        self.root = Node()
-        self.head_node = self.root
-        self.tail_node = self.root
-        self.length = 0
-
-    def __len__(self):
-        return self.length
-
-    def iter_node(self):
-        cur_node = self.root.next_ref
-        while cur_node:
-            yield cur_node
-            cur_node = cur_node.next_ref
-
-    def __iter__(self):
-        for node in self.iter_node():
-            yield node.value
-
+class DoubleLinkList(LinkList):
     def append(self, value):
+        self.check_full()
         new_node = Node(value, prev_ref=self.tail_node)
         self.tail_node.next_ref = new_node
         self.tail_node = new_node
         self.length += 1
 
     def appendleft(self, value):
+        self.check_full()
         tmp_node = self.root.next_ref
         new_node = Node(value, next_ref=tmp_node, prev_ref=self.root)
         tmp_node.prev_ref = new_node
@@ -188,6 +193,7 @@ class DoubleLinkList:
         self.length += 1
 
     def insert(self, k, value):
+        self.check_full()
         if k == 0:
             self.appendleft(value)
             return True
@@ -221,6 +227,8 @@ class DoubleLinkList:
 
     def remove_node(self, node):
         # 已知晓节点，可以做到 O(1) 的删除
+        if node is self.root:
+            return False
         prev_node = node.prev_ref
         next_node = node.next_ref
         prev_node.next_ref = next_node
@@ -228,6 +236,15 @@ class DoubleLinkList:
         del node
         self.length -= 1
         return True
+
+    def iter_node_reverse(self):
+        """可以反向遍历"""
+        length = self.length
+        cur_node = self.tail_node
+        while length:
+            yield cur_node
+            cur_node = cur_node.prev_ref
+            length -= 1
 
 
 def test_linked_list(ll):
@@ -260,8 +277,11 @@ def test_linked_list(ll):
 
 if __name__ == "__main__":
     l1 = SingleLinkList()
-    l2 = DoubleLinkList()
-    l3 = CircleLinkList()
+    l2 = CircleLinkList()
+    l3 = DoubleLinkList()
     test_linked_list(l1)
     test_linked_list(l2)
     test_linked_list(l3)
+    print([i.value for i in l3.iter_node_reverse()])
+    print(l3.head_node.value)
+    print(l3.tail_node.value)
