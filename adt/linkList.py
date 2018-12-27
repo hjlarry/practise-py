@@ -9,6 +9,8 @@ class Node:
 
 
 class LinkList(abc.ABC):
+    """抽象基类，定义链表API"""
+
     def __init__(self, root=None, max_size=None):
         self.root = root if root else Node()  # 哨兵节点
         self.max_size = max_size  # 链表最大长度
@@ -57,9 +59,15 @@ class LinkList(abc.ABC):
         """链表第K个位置后插入元素"""
         raise NotImplementedError
 
+    @abc.abstractmethod
+    def remove(self, value) -> bool:
+        """删除值为value的元素"""
+        raise NotImplementedError
 
-# 单链表
+
 class SingleLinkList(LinkList):
+    """单链表"""
+
     def append(self, value):
         self.check_full()
         new_node = Node(value)
@@ -114,8 +122,9 @@ class SingleLinkList(LinkList):
         return False
 
 
-# 循环链表
 class CircleLinkList(LinkList):
+    """循环链表"""
+
     def __init__(self, max_size=None):
         node = Node(next_ref=self)
         super().__init__(root=node, max_size=max_size)
@@ -175,8 +184,9 @@ class CircleLinkList(LinkList):
         return False
 
 
-# 双向链表
 class DoubleLinkList(LinkList):
+    """双向链表"""
+
     def append(self, value):
         self.check_full()
         new_node = Node(value, prev_ref=self.tail_node)
@@ -226,13 +236,17 @@ class DoubleLinkList(LinkList):
         return False
 
     def remove_node(self, node):
-        # 已知晓节点，可以做到 O(1) 的删除
+        """已知晓节点，可以做到 O(1) 的删除"""
         if node is self.root:
             return False
         prev_node = node.prev_ref
         next_node = node.next_ref
-        prev_node.next_ref = next_node
-        next_node.prev_ref = prev_node
+        if node is self.tail_node:
+            prev_node.next_ref = None
+            self.tail_node = prev_node
+        else:
+            prev_node.next_ref = next_node
+            next_node.prev_ref = prev_node
         del node
         self.length -= 1
         return True
