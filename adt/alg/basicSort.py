@@ -1,7 +1,7 @@
 import random
 
 
-def bubbleSort(arr):
+def bubble_sort(arr):
     for i in range(1, len(arr)):
         n = 0
         while n < len(arr) - i:
@@ -10,7 +10,7 @@ def bubbleSort(arr):
             n += 1
 
 
-def insertSort(arr):
+def insert_sort(arr):
     for i in range(1, len(arr)):
         value = arr[i]  # 保存当前位置的值，因为转移的过程中它的值可能会被覆盖
         pos = i  # 定义位置，确保[0,i]有序的
@@ -20,7 +20,7 @@ def insertSort(arr):
         arr[pos] = value
 
 
-def selectSort(arr):
+def select_sort(arr):
     for i in range(1, len(arr)):
         posOfMax = 0  # 寻找最大元素的位置
         n = 0
@@ -32,7 +32,7 @@ def selectSort(arr):
         arr[posOfMax], arr[lastElement] = arr[lastElement], arr[posOfMax]
 
 
-def shortBubbleSort(arr):
+def short_bubble_sort(arr):
     exchanges = True  # 短冒泡排序再检测一次列表遍历后没有交换元素，则表明已经排序成功，不再继续冒泡
     passnum = len(arr) - 1
     while passnum > 0 and exchanges:
@@ -53,7 +53,7 @@ def test_sort(func):
 
 
 if __name__ == "__main__":
-    test_sort(bubbleSort)
-    test_sort(insertSort)
-    test_sort(selectSort)
-    test_sort(shortBubbleSort)
+    test_sort(bubble_sort)
+    test_sort(insert_sort)
+    test_sort(select_sort)
+    test_sort(short_bubble_sort)
