@@ -1,8 +1,8 @@
 import random
 
 
-# 额外空间快排
 def quick_sort(arr):
+    """额外空间快排"""
     if len(arr) < 2:  # 递归出口
         return arr
 
@@ -20,12 +20,12 @@ def quick_sort(arr):
     return quick_sort(less_part) + [pivot] + quick_sort(great_part)
 
 
-# 原地快排，不占用额外空间
 def inplace_quick_sort(arr, begin, end):
+    """原地快排，不占用额外空间"""
     if begin < end:
-        pivot = partition(arr, begin, end)
-        inplace_quick_sort(arr, begin, pivot)
-        inplace_quick_sort(arr, pivot + 1, end)
+        pivot_index = partition(arr, begin, end)
+        inplace_quick_sort(arr, begin, pivot_index)
+        inplace_quick_sort(arr, pivot_index + 1, end)
 
 
 def partition(arr, begin, end):
@@ -49,6 +49,18 @@ def partition(arr, begin, end):
     return right  # 新的基准点位置
 
 
+def nth_element(arr, begin, end, nth):
+    """查找一个数组第N小的元素"""
+    if begin < end:
+        pivot_index = partition(arr, begin, end)
+        if pivot_index > nth - 1:
+            return nth_element(arr, begin, pivot_index, nth)
+        elif pivot_index < nth - 1:
+            return nth_element(arr, pivot_index + 1, end, nth)
+        else:
+            return arr[pivot_index]
+
+
 def test_quick_sort():
     arr = list(range(20))
     random.shuffle(arr)
@@ -63,6 +75,13 @@ def test_inplace_sort():
     assert sorted_arr == arr
 
 
+def test_nth():
+    arr = list(range(10))
+    random.shuffle(arr)
+    assert nth_element(arr, 0, len(arr), 3) == 2
+
+
 if __name__ == "__main__":
     test_quick_sort()
     test_inplace_sort()
+    test_nth()
