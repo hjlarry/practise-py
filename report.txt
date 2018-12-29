@@ -1,0 +1,27 @@
+*** Report ***
+http://doc.1.com/platform/realname/ 200 text/html utf-8 14825 15/16
+http://doc.1.com/platform/error_code.html 200 text/html utf-8 11122 0/15
+http://doc.1.com/platform/quick_start.html 200 text/html utf-8 15082 0/15
+http://doc.1.com/platform/realname/realname-sdk-ios-dev.html 200 text/html utf-8 30038 0/15
+http://doc.1.com/platform/rest_api.html 200 text/html utf-8 11031 0/15
+http://doc.1.com/platform/gitbook/gitbook-plugin-fontsettings/website.css 200 text/css utf-8 8596
+http://doc.1.com/platform/gitbook/images/favicon.ico 200 image/x-icon utf-8 4286
+http://doc.1.com/platform/gitbook/gitbook-plugin-highlight/website.css 200 text/css utf-8 31446
+http://doc.1.com/platform/realname/realname-sdk-android.html 200 text/html utf-8 29127 0/15
+http://doc.1.com/platform/gitbook/images/apple-touch-icon-precomposed-152.png 200 image/png utf-8 4817
+http://doc.1.com/platform/gitbook/gitbook-plugin-search/search.css 200 text/css utf-8 974
+http://doc.1.com/platform/realname/realname-sdk-ios.html 200 text/html utf-8 21102 0/15
+http://doc.1.com/platform/gitbook/style.css 200 text/css utf-8 51107
+http://doc.1.com/realname 301 redirect http://doc.1.com/realname/
+http://doc.1.com/platform/api_security.html 200 text/html utf-8 13651 0/15
+http://doc.1.com/platform/ 200 text/html utf-8 10244 0/15
+http://doc.1.com/realname/ 200 text/html utf-8 104803 0/1
+Finished 17 urls in 0.051 secs, (max_tasks=10) (speed=33.28703917238933)
+10 html
+261025 html_bytes
+6 other
+101226 other_bytes
+1 redirect
+Todo: 0
+Done: 17
+Date: Sat Dec 29 18:03:47 2018 local time

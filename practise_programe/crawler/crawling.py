@@ -9,6 +9,8 @@ import sys
 
 import aiohttp
 
+from reporting import report
+
 LOGGER = logging.getLogger(__name__)
 logging.basicConfig(level=logging.DEBUG)
 FetchStatistic = collections.namedtuple(
@@ -243,7 +245,7 @@ class Crawler:
 
 def main():
     loop = asyncio.get_event_loop()
-    roots = ("http://www.baidu.com",)
+    roots = ("http://doc.1.com/platform/realname/",)
     crawler = Crawler(roots)
     try:
         loop.run_until_complete(crawler.crawl())
@@ -251,6 +253,8 @@ def main():
         sys.stderr.flush()
         print("\nInterrupted\n")
     finally:
+        f = open("report.txt", "w+")
+        report(crawler, file=f)
         crawler.close()
         loop.stop()
         loop.run_forever()
