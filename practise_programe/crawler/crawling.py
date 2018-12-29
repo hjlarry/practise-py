@@ -5,10 +5,12 @@ import re
 import time
 import urllib
 import cgi
+import sys
 
 import aiohttp
 
 LOGGER = logging.getLogger(__name__)
+logging.basicConfig(level=logging.DEBUG)
 FetchStatistic = collections.namedtuple(
     "FetchStatistic",
     [
@@ -76,6 +78,9 @@ class Crawler:
         self.t0 = time.time()
         self.t1 = None
 
+    def close(self):
+        self.session.close()
+
     def add_url(self, url, max_redirect=None):
         if max_redirect is None:
             max_redirect = self.max_redirect
@@ -136,7 +141,7 @@ class Crawler:
                 if urls:
                     LOGGER.info(f"got {len(urls)} distinct urls from {response.url}")
                 for url in urls:
-                    normalized = urllib.parse.urljoin(response.url, url)
+                    normalized = urllib.parse.urljoin(str(response.url), url)
                     defragmented, frag = urllib.parse.urldefrag(normalized)
                     if self.url_allowed(defragmented):
                         links.add(defragmented)
@@ -234,3 +239,23 @@ class Crawler:
         self.t1 = time.time()
         for w in workers:
             w.cancel()
+
+
+def main():
+    loop = asyncio.get_event_loop()
+    roots = ("http://www.baidu.com",)
+    crawler = Crawler(roots)
+    try:
+        loop.run_until_complete(crawler.crawl())
+    except KeyboardInterrupt:
+        sys.stderr.flush()
+        print("\nInterrupted\n")
+    finally:
+        crawler.close()
+        loop.stop()
+        loop.run_forever()
+        loop.close()
+
+
+if __name__ == "__main__":
+    main()
