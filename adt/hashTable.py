@@ -128,16 +128,20 @@ class HashTable:
 
 
 class HashTableWithLinklist:
-    def __init__(self):
+    def __init__(self, factor=0.8):
         self._table = Array(size=8)
         self.length = 0
+        self.factor = factor
 
     def _hash(self, key):
-        # return ord(key) % len(self._table)
         return abs(hash(key)) % len(self._table)
 
     def __len__(self):
         return self.length
+
+    @property
+    def _load_factor(self):
+        return self.length / float(len(self._table))
 
     def _find_slot(self, key):
         index = self._hash(key)
@@ -166,6 +170,8 @@ class HashTableWithLinklist:
             new_slot.prev = slot
             slot.next = new_slot
         self.length += 1
+        if self._load_factor > self.factor:
+            self._rehash()
         return True
 
     def get(self, key, default=None):
@@ -185,6 +191,14 @@ class HashTableWithLinklist:
             self._table[self._hash(key)] = None
         self.length -= 1
         return value
+
+    def _rehash(self):
+        old_values = list(self)
+        newsize = len(self._table) * 2
+        self._table = Array(newsize, None)
+        self.length = 0
+        for slot in old_values:
+            self.add(slot.key, slot.value)
 
     def __iter__(self):
         for slot in self._table:
