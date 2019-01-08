@@ -1,23 +1,23 @@
 class Array:
     def __init__(self, size=32, init=None):
         self._size = size
-        self._item = [init] * self._size
+        self._items = [init] * self._size
 
     def __getitem__(self, index):
-        return self._item[index]
+        return self._items[index]
 
     def __setitem__(self, index, value):
-        self._item[index] = value
+        self._items[index] = value
 
     def __len__(self):
         return self._size
 
     def clear(self):
         for i in range(len(self)):
-            self[i] = None
+            self._items[i] = None
 
     def __iter__(self):
-        for item in self._item:
+        for item in self._items:
             yield item
 
 
@@ -25,15 +25,24 @@ class Slot:
     def __init__(self, key, value):
         self.key = key
         self.value = value
+        self.next = None
+        self.prev = None
+
+    def __repr__(self):
+        return f"<{self.key}>{self.value}[{self.next}]"
 
 
 class HashTable:
-    UNUSED = None
-    EMPTY = Slot(None, None)
+    """使用开放寻址法的线性探测处理哈希冲突"""
 
-    def __init__(self):
+    UNUSED = None
+    EMPTY = Slot(None, None)  # 使用过但已删除
+
+    def __init__(self, factor=0.8):
         self._table = Array(size=8, init=HashTable.UNUSED)
         self.length = 0
+        self.factor = factor
+        assert 0 < self.factor < 1
 
     def _hash(self, key):
         return abs(hash(key)) % len(self._table)
@@ -80,21 +89,21 @@ class HashTable:
         self.length = 0
         for slot in old_table:
             if slot is not HashTable.UNUSED and slot is not HashTable.EMPTY:
-                self.set(slot.key, slot.value)
+                self.add(slot.key, slot.value)
                 self.length += 1
 
-    def set(self, key, value):
+    def add(self, key, value):
         if key in self:
             index = self._find_key(key)
             self._table[index].value = value
-            return "modify"
+            return False
         else:
             index = self._find_slot_for_insert(key)
             self._table[index] = Slot(key, value)
             self.length += 1
-            if self._load_factor > 0.8:
+            if self._load_factor > self.factor:
                 self._rehash()
-            return "add"
+            return True
 
     def get(self, key, default=None):
         if key in self:
@@ -118,11 +127,80 @@ class HashTable:
                 yield slot.key
 
 
+class HashTableWithLinklist:
+    def __init__(self):
+        self._table = Array(size=8)
+        self.length = 0
+
+    def _hash(self, key):
+        # return ord(key) % len(self._table)
+        return abs(hash(key)) % len(self._table)
+
+    def __len__(self):
+        return self.length
+
+    def _find_slot(self, key):
+        index = self._hash(key)
+        current = self._table[index]
+        is_find = False
+        if current is None:
+            return None, is_find
+        while not is_find:
+            if current.key == key:
+                is_find = True
+            elif current.next is not None:
+                current = current.next
+            else:
+                break
+        return current, is_find
+
+    def add(self, key, value):
+        slot, is_find = self._find_slot(key)
+        if is_find:
+            slot.value = value
+            return False
+        new_slot = Slot(key, value)
+        if slot is None:
+            self._table[self._hash(key)] = new_slot
+        else:
+            new_slot.prev = slot
+            slot.next = new_slot
+        self.length += 1
+        return True
+
+    def get(self, key, default=None):
+        slot, is_find = self._find_slot(key)
+        if is_find and slot:
+            return slot.value
+        return default
+
+    def remove(self, key):
+        slot, is_find = self._find_slot(key)
+        if not is_find:
+            raise KeyError()
+        value = slot.value
+        if slot.prev:
+            slot.prev.next = slot.next
+        else:
+            self._table[self._hash(key)] = None
+        self.length -= 1
+        return value
+
+    def __iter__(self):
+        for slot in self._table:
+            if slot:
+                current = slot
+                yield current
+                while current.next:
+                    current = current.next
+                    yield current
+
+
 def test_hash_table():
     h = HashTable()
-    h.set("a", 0)
-    h.set("b", 1)
-    h.set("c", 2)
+    h.add("a", 0)
+    h.add("b", 1)
+    h.add("c", 2)
     assert len(h) == 3
     assert h.get("a") == 0
     assert h.get("b") == 1
@@ -135,7 +213,34 @@ def test_hash_table():
 
     n = 50
     for i in range(n):
-        h.set(i, i)
+        h.add(i, i)
 
     for i in range(n):
         assert h.get(i) == i
+
+
+def test_hash_table_ll():
+    h = HashTableWithLinklist()
+    h.add("a", 0)
+    h.add("b", 1)
+    h.add("c", 2)
+
+    assert len(h) == 3
+    assert h.get("a") == 0
+    assert h.get("b") == 1
+    assert h.get("hehe") is None
+
+    h.remove("a")
+    assert h.get("a") is None
+
+    n = 50
+    for i in range(n):
+        h.add(i, i)
+
+    for i in range(n):
+        assert h.get(i) == i
+
+
+if __name__ == "__main__":
+    test_hash_table()
+    test_hash_table_ll()
