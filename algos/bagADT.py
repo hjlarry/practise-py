@@ -36,4 +36,5 @@ def test_bag():
         print(i)
 
 
-test_bag()
+if __name__ == "__main__":
+    test_bag()

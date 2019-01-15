@@ -1,7 +1,7 @@
 import abc
 
-from array_ import Array
-from linkList import DoubleLinkList
+from arrayADT import Array
+from linkListADT import DoubleLinkList
 
 
 class Stack(abc.ABC):

@@ -1,4 +1,4 @@
-from array_ import Array
+from arrayADT import Array
 
 
 class ArrayQueue:

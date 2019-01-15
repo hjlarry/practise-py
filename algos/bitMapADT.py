@@ -40,24 +40,28 @@ class BitMap:
         return False
 
 
-bitmap = BitMap(87)
-bitmap.set(10)
-bitmap.set(34)
-bitmap.set(50)
-print(bitmap.data)
-bitmap.clean(50)
-print(bitmap.data)
+def test_bitmap():
+    bitmap = BitMap(87)
+    bitmap.set(10)
+    bitmap.set(34)
+    bitmap.set(50)
+    print(bitmap.data)
+    bitmap.clean(50)
+    print(bitmap.data)
+
+    t1 = time.time()
+
+    MAX = 10000000
+    suffle_array = [45, 2, 78, 35, 67, 90, 879, 0, 340, 123, 46]
+    bitmap = BitMap(MAX)
+    for num in suffle_array:
+        bitmap.set(num)
+
+    result = [i for i in range(MAX + 1) if bitmap.is_set(i)]
+
+    print(result)
+    print(time.time() - t1)
 
 
-t1 = time.time()
-
-MAX = 10000000
-suffle_array = [45, 2, 78, 35, 67, 90, 879, 0, 340, 123, 46]
-bitmap = BitMap(MAX)
-for num in suffle_array:
-    bitmap.set(num)
-
-result = [i for i in range(MAX + 1) if bitmap.is_set(i)]
-
-print(result)
-print(time.time() - t1)
+if __name__ == "__main__":
+    test_bitmap()

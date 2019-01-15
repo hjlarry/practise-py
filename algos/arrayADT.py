@@ -1,8 +1,8 @@
 # 固定长度数组实现
 class Array:
-    def __init__(self, size=32):
+    def __init__(self, size=32, init=None):
         self._size = size
-        self._items = [None] * size
+        self._items = [init] * size
 
     def __getitem__(self, index):
         return self._items[index]

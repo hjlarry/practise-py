@@ -1,3 +1,6 @@
+import random
+
+
 # 时间复杂度O(n log(n))
 def merge_sort(arr):
     if len(arr) <= 1:
@@ -31,8 +34,10 @@ def merge_sorted_list(arr1, arr2):
 
 
 def test_merge_sort():
-    import random
-
     seq = list(range(10))
     random.shuffle(seq)
     assert merge_sort(seq) == sorted(seq)
+
+
+if __name__ == "__main__":
+    test_merge_sort()

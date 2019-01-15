@@ -5,7 +5,7 @@ class Node:
         self.right = right
 
 
-class BinTree:
+class BinaryTree:
     def __init__(self, root=None):
         self.root = root
 
@@ -13,15 +13,15 @@ class BinTree:
     def build_from_list(cls, arr):
         node_dict = {}
         for item in arr:
-            data = item['data']
+            data = item["data"]
             node_dict[data] = Node(data)
         for item in arr:
-            data = item['data']
+            data = item["data"]
             node = node_dict[data]
-            if item['is_root']:
+            if item["is_root"]:
                 root = node
-            node.left = node_dict.get(item['left'])
-            node.right = node_dict.get(item['right'])
+            node.left = node_dict.get(item["left"])
+            node.right = node_dict.get(item["right"])
         return cls(root)
 
     # 先序遍历
@@ -55,23 +55,27 @@ class BinTree:
 
 def test_btree():
     node_list = [
-        {'data': 'A', 'left': 'B', 'right': 'C', 'is_root': True},
-        {'data': 'B', 'left': 'D', 'right': 'E', 'is_root': False},
-        {'data': 'D', 'left': None, 'right': None, 'is_root': False},
-        {'data': 'E', 'left': 'H', 'right': None, 'is_root': False},
-        {'data': 'H', 'left': None, 'right': None, 'is_root': False},
-        {'data': 'C', 'left': 'F', 'right': 'G', 'is_root': False},
-        {'data': 'F', 'left': None, 'right': None, 'is_root': False},
-        {'data': 'G', 'left': 'I', 'right': 'J', 'is_root': False},
-        {'data': 'I', 'left': None, 'right': None, 'is_root': False},
-        {'data': 'J', 'left': None, 'right': None, 'is_root': False},
+        {"data": "A", "left": "B", "right": "C", "is_root": True},
+        {"data": "B", "left": "D", "right": "E", "is_root": False},
+        {"data": "D", "left": None, "right": None, "is_root": False},
+        {"data": "E", "left": "H", "right": None, "is_root": False},
+        {"data": "H", "left": None, "right": None, "is_root": False},
+        {"data": "C", "left": "F", "right": "G", "is_root": False},
+        {"data": "F", "left": None, "right": None, "is_root": False},
+        {"data": "G", "left": "I", "right": "J", "is_root": False},
+        {"data": "I", "left": None, "right": None, "is_root": False},
+        {"data": "J", "left": None, "right": None, "is_root": False},
     ]
-    btree = BinTree.build_from_list(node_list)
+    btree = BinaryTree.build_from_list(node_list)
     btree.iter_result = []
     btree.iter_tree_preorder(btree.root, btree.iter_result.append)
-    assert btree.iter_result == ['A', 'B', 'D', 'E', 'H', 'C', 'F', 'G', 'I', 'J']
+    assert btree.iter_result == ["A", "B", "D", "E", "H", "C", "F", "G", "I", "J"]
 
     btree.reverse_res = []
     btree.reverse(btree.root)
     btree.iter_tree_preorder(btree.root, btree.reverse_res.append)
-    assert btree.reverse_res == ['A', 'C', 'G', 'J', 'I', 'F', 'B', 'E', 'H', 'D']
+    assert btree.reverse_res == ["A", "C", "G", "J", "I", "F", "B", "E", "H", "D"]
+
+
+if __name__ == "__main__":
+    test_btree()

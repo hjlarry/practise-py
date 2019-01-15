@@ -1,4 +1,5 @@
-from array_ import Array
+import random
+from arrayADT import Array
 
 
 class MaxHeap:
@@ -12,7 +13,7 @@ class MaxHeap:
 
     def add(self, item):
         if self._count >= self.maxsize:
-            raise Exception('full heap')
+            raise Exception("full heap")
         self._elements[self._count] = item
         self._count += 1
         self._sift_up(self._count - 1)
@@ -21,12 +22,15 @@ class MaxHeap:
         if cur > 0:
             parent = int((cur - 1) / 2)
             if self._elements[cur] > self._elements[parent]:
-                self._elements[cur], self._elements[parent] = self._elements[parent], self._elements[cur]
+                self._elements[cur], self._elements[parent] = (
+                    self._elements[parent],
+                    self._elements[cur],
+                )
                 self._sift_up(parent)
 
     def extract(self):
         if self._count < 1:
-            raise Exception('empty heap')
+            raise Exception("empty heap")
         value = self._elements[0]
         self._count -= 1
         self._elements[0] = self._elements[self._count]
@@ -37,14 +41,20 @@ class MaxHeap:
         left = 2 * cur + 1
         right = 2 * cur + 2
         largest = cur
-        if left < self._count and self._elements[left] > self._elements[cur] and self._elements[left] > \
-                self._elements[right]:
+        if (
+            left < self._count
+            and self._elements[left] > self._elements[cur]
+            and self._elements[left] > self._elements[right]
+        ):
             largest = left
         elif right < self._count and self._elements[right] > self._elements[cur]:
             largest = right
 
         if largest != cur:
-            self._elements[cur], self._elements[largest] = self._elements[largest], self._elements[cur]
+            self._elements[cur], self._elements[largest] = (
+                self._elements[largest],
+                self._elements[cur],
+            )
             self._sift_down(largest)
 
 
@@ -55,3 +65,25 @@ def test_maxheap():
         h.add(i)
     for i in reversed(range(n)):
         assert i == h.extract()
+
+
+# 堆排序
+def heap_sort(arr):
+    m = MaxHeap()
+    result = []
+    for i in arr:
+        m.add(i)
+    for _ in range(len(arr)):
+        result.append(m.extract())
+    return result
+
+
+def test_heapsort_reverse():
+    ll = list(range(10))
+    random.shuffle(ll)
+    assert heap_sort(ll) == sorted(ll, reverse=True)
+
+
+if __name__ == "__main__":
+    test_maxheap()
+    test_heapsort_reverse()

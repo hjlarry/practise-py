@@ -1,4 +1,4 @@
-from hashTable import HashTable
+from hashTableADT import HashTable
 
 
 class DictAdt(HashTable):

@@ -6,7 +6,7 @@ class Node:
         self.right = right
 
 
-class BST:
+class BinarySearchTree:
     size = 0
 
     def __init__(self, root=None):
@@ -16,15 +16,15 @@ class BST:
     def build_from_list(cls, arr):
         node_dict = {}
         for item in arr:
-            data = item['key']
+            data = item["key"]
             node_dict[data] = Node(data, value=data * 2)
         for item in arr:
-            data = item['key']
+            data = item["key"]
             node = node_dict[data]
-            if item['is_root']:
+            if item["is_root"]:
                 root = node
-            node.left = node_dict.get(item['left'])
-            node.right = node_dict.get(item['right'])
+            node.left = node_dict.get(item["left"])
+            node.right = node_dict.get(item["right"])
             cls.size += 1
         return cls(root)
 
@@ -67,11 +67,11 @@ class BST:
         node = self._bst_search(self.root, key)
         if node:
             node.value = value
-            return 'modify'
+            return "modify"
         else:
             self._insert_node(self.root, key, value)
             self.size += 1
-            return 'add'
+            return "add"
 
     def _bst_remove(self, subtree, key):
         if subtree is None:
@@ -93,7 +93,9 @@ class BST:
             else:
                 successor_node = self._bst_min_key(subtree.right)
                 subtree.key, subtree.value = successor_node.key, successor_node.value
-                subtree.right = self._bst_remove(subtree.right, successor_node.key)  # 赋值的原因是删除具有两个叶子节点的父节点时
+                subtree.right = self._bst_remove(
+                    subtree.right, successor_node.key
+                )  # 赋值的原因是删除具有两个叶子节点的父节点时
                 return subtree
 
     def remove(self, key):
@@ -116,25 +118,25 @@ class BST:
 
 
 NODE_LIST = [
-    {'key': 60, 'left': 12, 'right': 90, 'is_root': True},
-    {'key': 12, 'left': 4, 'right': 41, 'is_root': False},
-    {'key': 4, 'left': 1, 'right': None, 'is_root': False},
-    {'key': 1, 'left': None, 'right': None, 'is_root': False},
-    {'key': 41, 'left': 29, 'right': None, 'is_root': False},
-    {'key': 29, 'left': 23, 'right': 37, 'is_root': False},
-    {'key': 23, 'left': None, 'right': None, 'is_root': False},
-    {'key': 37, 'left': None, 'right': None, 'is_root': False},
-    {'key': 90, 'left': 71, 'right': 100, 'is_root': False},
-    {'key': 71, 'left': None, 'right': 84, 'is_root': False},
-    {'key': 100, 'left': None, 'right': None, 'is_root': False},
-    {'key': 84, 'left': None, 'right': None, 'is_root': False},
+    {"key": 60, "left": 12, "right": 90, "is_root": True},
+    {"key": 12, "left": 4, "right": 41, "is_root": False},
+    {"key": 4, "left": 1, "right": None, "is_root": False},
+    {"key": 1, "left": None, "right": None, "is_root": False},
+    {"key": 41, "left": 29, "right": None, "is_root": False},
+    {"key": 29, "left": 23, "right": 37, "is_root": False},
+    {"key": 23, "left": None, "right": None, "is_root": False},
+    {"key": 37, "left": None, "right": None, "is_root": False},
+    {"key": 90, "left": 71, "right": 100, "is_root": False},
+    {"key": 71, "left": None, "right": 84, "is_root": False},
+    {"key": 100, "left": None, "right": None, "is_root": False},
+    {"key": 84, "left": None, "right": None, "is_root": False},
 ]
 
 
 def test_bst_tree():
-    bst = BST.build_from_list(NODE_LIST)
+    bst = BinarySearchTree.build_from_list(NODE_LIST)
     for node_dict in NODE_LIST:
-        key = node_dict['key']
+        key = node_dict["key"]
         assert bst.get(key) == key * 2
     assert bst.size == len(NODE_LIST)
     assert bst.get(-1) is None
@@ -151,6 +153,9 @@ def test_bst_tree():
     assert bst.get(1) is None
 
     bst.iter_tree_preorder(bst.root)
-    bst.remove(12)
-    bst.iter_tree_preorder(bst.root)
+    bst.remove(29)
     assert bst.get(29) is None
+
+
+if __name__ == "__main__":
+    test_bst_tree()
