@@ -133,3 +133,17 @@ def best_promo(order):
 print(Order(joe, long_order, best_promo))
 print(Order(joe, banana_cart, best_promo))
 print(Order(ann, cart, best_promo))
+
+
+# 使用装饰器得到所有promos
+promos2 = []
+
+
+def promotion(promo_func):
+    promos2.append(promo_func)
+    return promo_func
+
+
+@promotion
+def xx_promo(order):
+    pass
