@@ -1,4 +1,8 @@
-# template engine of 500lines
+"""
+- 教程：http://aosabook.org/en/500L/pages/a-template-engine.html
+- 中文教程：https://www.jianshu.com/p/b5d4aa45e771
+- 作者源码：https://github.com/aosabook/500lines/blob/master/template-engine/template-engine.markdown?1533540328619
+"""
 import re
 
 from exceptions import TempliteSyntaxError

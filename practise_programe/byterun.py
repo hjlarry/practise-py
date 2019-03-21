@@ -1,3 +1,10 @@
+"""
+- 教程：http://aosabook.org/en/500L/pages/a-python-interpreter-written-in-python.html
+- 中文教程：https://linux.cn/article-7753-1.html
+- 作者源码：https://github.com/aosabook/500lines/blob/master/interpreter/interpreter.markdown?1533539557726
+"""
+
+
 import types
 import inspect
 import dis

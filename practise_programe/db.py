@@ -1,3 +1,10 @@
+"""
+- 教程：http://aosabook.org/en/500L/pages/dbdb-dog-bed-database.html
+- 中文教程：https://github.com/HT524/500LineorLess_CN/blob/master/DBDB_Dog%20Bed%20Database/DBDB_%E9%9D%9E%E5%85%B3%E7%B3%BB%E5%9E%8B%E6%95%B0%E6%8D%AE%E5%BA%93.md
+- 作者源码：https://github.com/aosabook/500lines/blob/master/data-store/README.rst?1533538157736
+"""
+
+
 import os
 import struct
 import pickle
@@ -32,7 +39,7 @@ class Storage:
         self._seek_end()
         end_address = self._f.tell()
         if end_address < self.SUPERBLOCK_SIZE:
-            self._f.write(b'\x00' * (self.SUPERBLOCK_SIZE - end_address))
+            self._f.write(b"\x00" * (self.SUPERBLOCK_SIZE - end_address))
         self.unlock()
 
     def lock(self):
@@ -84,18 +91,18 @@ class BinaryNodeRef:
         d = pickle.loads(string)
         print(d)
         return BinaryNode(
-            BinaryNodeRef(address=d['left']),
-            d['key'],
-            ValueRef(address=d['value']),
-            BinaryNodeRef(address=d['right']),
-            d['length'],
+            BinaryNodeRef(address=d["left"]),
+            d["key"],
+            ValueRef(address=d["value"]),
+            BinaryNodeRef(address=d["right"]),
+            d["length"],
         )
 
 
 class ValueRef(object):
     @staticmethod
     def string_to_referent(string):
-        return string.decode('utf-8')
+        return string.decode("utf-8")
 
     def __init__(self, referent=None, address=0):
         self._referent = referent
@@ -111,16 +118,16 @@ class BinaryNode(object):
     @classmethod
     def from_node(cls, node, **kwargs):
         length = node.length
-        if 'left_ref' in kwargs:
-            length += kwargs['left_ref'].length - node.left_ref.length
-        if 'right_ref' in kwargs:
-            length += kwargs['right_ref'].length - node.right_ref.length
+        if "left_ref" in kwargs:
+            length += kwargs["left_ref"].length - node.left_ref.length
+        if "right_ref" in kwargs:
+            length += kwargs["right_ref"].length - node.right_ref.length
 
         return cls(
-            left_ref=kwargs.get('left_ref', node.left_ref),
-            key=kwargs.get('key', node.key),
-            value_ref=kwargs.get('value_ref', node.value_ref),
-            right_ref=kwargs.get('right_ref', node.right_ref),
+            left_ref=kwargs.get("left_ref", node.left_ref),
+            key=kwargs.get("key", node.key),
+            value_ref=kwargs.get("value_ref", node.value_ref),
+            right_ref=kwargs.get("right_ref", node.right_ref),
             length=length,
         )
 
@@ -162,13 +169,13 @@ class BinaryTree:
         return ref.get(self._storage)
 
 
-dbname = 'example.db'
+dbname = "example.db"
 try:
-    f = open(dbname, 'r+b')
+    f = open(dbname, "r+b")
 except IOError:
     fd = os.open(dbname, os.O_RDWR | os.O_CREAT)
-    f = os.fdopen(fd, 'r+b')
+    f = os.fdopen(fd, "r+b")
 #
 db = DBDB(f)
 # db['foo'] = 'jsjjsj'
-print(b'\x04Mk\x10X\x05\x00\x00\x00'.decode())
+print(b"\x04Mk\x10X\x05\x00\x00\x00".decode())
