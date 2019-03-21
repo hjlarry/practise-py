@@ -1,7 +1,6 @@
 import asyncio
 import itertools
 import sys
-import time
 
 
 async def spin(msg):

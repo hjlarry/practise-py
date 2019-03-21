@@ -1,4 +1,3 @@
-import sys
 import asyncio
 
 from charfinder import UnicodeNameIndex
@@ -49,4 +48,5 @@ def main(address="127.0.0.1", port=2323):
     loop.close()
 
 
-main()
+if __name__ == "__main__":
+    main()
