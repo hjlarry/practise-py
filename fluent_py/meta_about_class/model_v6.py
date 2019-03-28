@@ -1,4 +1,5 @@
 import abc
+import collections
 
 
 class AutoStorage:
@@ -62,3 +63,28 @@ class EntityMeta(type):
 
 class Entity(metaclass=EntityMeta):
     pass
+
+
+class EntityMetaWithPrepare(type):
+    # 添加了__prepare__方法后，__init__中的attrdict会从__prepare__中得到，但实际上貌似用处不大
+    @classmethod
+    def __prepare__(cls, name, bases):
+        return dict(a=222)
+        # return collections.OrderedDict()
+
+    def __init__(cls, name, bases, attr_dict):
+        super().__init__(name, bases, attr_dict)
+        cls._field_names = []
+        print(attr_dict.keys())
+        for key, attr in attr_dict.items():
+            if isinstance(attr, Validated):
+                type_name = type(attr).__name__
+                attr.storage_name = f"_{type_name}#{key}"
+                cls._field_names.append(key)
+
+
+class EntityPrepare(metaclass=EntityMetaWithPrepare):
+    @classmethod
+    def field_names(cls):
+        for name in cls._field_names:
+            yield name
