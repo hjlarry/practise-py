@@ -16,3 +16,17 @@ class LogicalBase:
     def _refresh_tree_ref(self):
         self._tree_ref = self.node_ref_class(address=self._storage.get_root_address())
 
+    def commit(self):
+        # 把所有脏状态写入内存中，然后保存磁盘地址为树的新的根节点
+        self._tree_ref.store(self._storage)
+        self._storage.commit_root_address(self._tree_ref.address)
+
+
+class ValueRef:
+    def store(self, storage):
+        if self._referent is not None and not self._address:
+            self.prepare_to_store(storage)
+            # 序列化这个节点，然后保存它的存储地址.
+            # 实际上更新地址是改变了ValueRef, 但它对用户可见的值没有影响，我们仍可认为它是不可变的
+            self._address = storage.write(self.referent_to_string(self._referent))
+
