@@ -63,4 +63,3 @@ print(fmt.format("a1 hex", "a1", "a2 hex", "a2"))
 print("-" * 51)
 for values in zip(to_hex(a1), a1, to_hex(a2), a2):
     print(fmt.format(*values))
-

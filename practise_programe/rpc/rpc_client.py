@@ -16,7 +16,7 @@ def rpc(sock: socket.socket, in_, params):
     return response["out"], response["result"]  # 返回响应类型和结果
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
     s.connect(("localhost", 8083))
     for i in range(10):  # 连续发送 10 个 rpc 请求

@@ -19,14 +19,14 @@ async def echo_client(address, messages):
 
     ssl_context = ssl.create_default_context(ssl.Purpose.SERVER_AUTH)
     ssl_context.check_hostname = False
-    ssl_context.load_verify_locations('pymotw.crt')
+    ssl_context.load_verify_locations("pymotw.crt")
 
     reader, writer = await asyncio.open_connection(*address, ssl=ssl_context)
     for msg in messages:
         writer.write(msg)
         log.debug(f"sending {msg!r}")
-    #SSL does not support eof ,so send a null byte to indicate the end of the message
-    writer.write(b'\x00')
+    # SSL does not support eof ,so send a null byte to indicate the end of the message
+    writer.write(b"\x00")
     await writer.drain()
     log.debug("waiting for response")
     while True:
@@ -44,4 +44,3 @@ try:
 finally:
     log.debug("closing event loop")
     event_loop.close()
-

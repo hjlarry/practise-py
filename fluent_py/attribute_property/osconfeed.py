@@ -17,10 +17,11 @@ def load():
     with open(JSON) as fp:
         return json.load(fp)
 
+
 if __name__ == "__main__":
     feed = load()
-    print(sorted(feed['Schedule'].keys()))
-    for key, value in feed['Schedule'].items():
+    print(sorted(feed["Schedule"].keys()))
+    for key, value in feed["Schedule"].items():
         print(f"{key} : {len(value)}")
-    print(feed['Schedule']['events'][40]['name'])
-    print(feed['Schedule']['speakers'][40]['name'])
+    print(feed["Schedule"]["events"][40]["name"])
+    print(feed["Schedule"]["speakers"][40]["name"])

@@ -22,7 +22,7 @@ ee = ADict2(one=1)
 print(dd)
 print(ee)
 
-dd['two'] = 2
-ee['two'] = 2
+dd["two"] = 2
+ee["two"] = 2
 print(dd)
 print(ee)

@@ -15,7 +15,7 @@ def consumer1(in_queue, event):
         if event.is_set():
             f, args = in_queue.get()
             res = f(args)
-            print(f'Consumer1: {res}')
+            print(f"Consumer1: {res}")
 
 
 def consumer2(in_queue, event):
@@ -23,7 +23,7 @@ def consumer2(in_queue, event):
         if not event.is_set():
             f, args = in_queue.get()
             res = f(args)
-            print(f'Consumer2: {res}')
+            print(f"Consumer2: {res}")
 
 
 def producer(in_queue, event):
@@ -31,7 +31,7 @@ def producer(in_queue, event):
     while 1:
         x = random.randint(1, 100)
         in_queue.put((re_num, x))
-        print(f'Produce: {x}')
+        print(f"Produce: {x}")
         n += 1
         if n > 5:
             event.set()

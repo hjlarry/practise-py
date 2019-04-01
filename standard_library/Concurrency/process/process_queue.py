@@ -125,4 +125,3 @@ while num_jobs:
     result = results.get()
     print("Result:", result)
     num_jobs -= 1
-

@@ -174,4 +174,3 @@ if return_code:
 else:
     print(f"Original: {MESSAGE!r}")
     print(f"Changed: {results!r}")
-

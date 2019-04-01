@@ -4,17 +4,17 @@ import struct
 import json
 import re
 
-HOST = '127.0.0.1'
+HOST = "127.0.0.1"
 PORT = 8003
 USER_MAP = {}
-MATCH_REGEX = re.compile(r'@(.*?)\W+(.*)')
+MATCH_REGEX = re.compile(r"@(.*?)\W+(.*)")
 
-logging.basicConfig(level=logging.DEBUG, format='%(name)s: %(message)s', )
+logging.basicConfig(level=logging.DEBUG, format="%(name)s: %(message)s")
 
 
 class CHatRequestHandler(socketserver.BaseRequestHandler):
     def __init__(self, request, client_address, server):
-        self.logger = logging.getLogger('EchoRequestHandler')
+        self.logger = logging.getLogger("EchoRequestHandler")
         socketserver.BaseRequestHandler.__init__(self, request, client_address, server)
 
     def handle(self):
@@ -28,38 +28,41 @@ class CHatRequestHandler(socketserver.BaseRequestHandler):
                 return
 
             addr = self.request.getpeername()
-            slen = struct.unpack('>L', chunk)[0]  # 获得本次传输的内容长度
+            slen = struct.unpack(">L", chunk)[0]  # 获得本次传输的内容长度
             chunk = self.request.recv(slen)
             while len(chunk) < slen:
                 chunk = chunk + self.request.recv(slen - len(chunk))
 
-            chunk = chunk.decode('utf8')
+            chunk = chunk.decode("utf8")
 
-            if chunk.startswith('/set'):
+            if chunk.startswith("/set"):
                 name = chunk.split()[1]
                 self.set_username(addr, name)
-                self.request.sendall(b'set ok')
+                self.request.sendall(b"set ok")
                 print(USER_MAP)
-            elif chunk.startswith('/list'):
+            elif chunk.startswith("/list"):
                 userlist = json.dumps(self.get_userlist())
-                self.request.sendall(userlist.encode('utf8'))
-            elif chunk == '/quit':
+                self.request.sendall(userlist.encode("utf8"))
+            elif chunk == "/quit":
                 self.request.close()
             else:
                 match = MATCH_REGEX.search(chunk)
                 if match:
                     username, content = match.groups()
-                    content = content.encode('utf8')
-                    if username == 'all':
+                    content = content.encode("utf8")
+                    if username == "all":
                         self.broadcast(content)
                     else:
                         sock = self.get_sock(username)
                         if not sock:
-                            self.request.sendall(b'User not exists')
+                            self.request.sendall(b"User not exists")
                         else:
-                            sock.sendall(f'{self.get_username(addr)} said:'.encode('utf8') + content)
+                            sock.sendall(
+                                f"{self.get_username(addr)} said:".encode("utf8")
+                                + content
+                            )
                 else:
-                    self.request.sendall(b'error cmd')
+                    self.request.sendall(b"error cmd")
 
     @staticmethod
     def set_username(addr, name):
@@ -84,17 +87,17 @@ class CHatRequestHandler(socketserver.BaseRequestHandler):
 
 class ChatServer(socketserver.TCPServer):
     def __init__(self, server_address, handler_class=CHatRequestHandler):
-        self.logger = logging.getLogger('EchoServer')
-        self.logger.debug('__init__')
+        self.logger = logging.getLogger("EchoServer")
+        self.logger.debug("__init__")
         socketserver.TCPServer.__init__(self, server_address, handler_class)
 
     def serve_forever(self, poll_interval=0.5):
-        self.logger.debug('waiting for request')
-        self.logger.info('Handling requests, press <Ctrl-C> to quit')
+        self.logger.debug("waiting for request")
+        self.logger.info("Handling requests, press <Ctrl-C> to quit")
         socketserver.TCPServer.serve_forever(self, poll_interval)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     server = ChatServer((HOST, PORT), CHatRequestHandler)
     ip, port = server.server_address
     server.serve_forever()

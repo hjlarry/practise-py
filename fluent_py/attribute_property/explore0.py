@@ -32,4 +32,4 @@ print(feed.Schedule.events[40].name)
 # 未处理保留字
 # print(feed.class)
 grad = FrozenJson({"name": "hehe", "class": 1982})
-print(getattr(grad, 'class'))
+print(getattr(grad, "class"))

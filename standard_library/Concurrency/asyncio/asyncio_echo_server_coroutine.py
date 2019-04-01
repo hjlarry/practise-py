@@ -38,4 +38,3 @@ finally:
     event_loop.run_until_complete(server.wait_closed())
     log.debug("closing event loop")
     event_loop.close()
-

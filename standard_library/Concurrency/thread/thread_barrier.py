@@ -54,4 +54,3 @@ for t in threads:
 barrier.abort()
 for t in threads:
     t.join()
-

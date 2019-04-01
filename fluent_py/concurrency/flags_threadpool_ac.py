@@ -19,5 +19,6 @@ def download_many(cc_list):
 
     return len(results)
 
+
 if __name__ == "__main__":
     main(download_many)

@@ -2,6 +2,9 @@ import partalocker
 
 
 class Storage:
+    def __init__(self, f):
+        self._f = f
+
     def lock(self):
         if not self.locked:
             partalocker.lock(self._f, partalocker.LOCK_EX)

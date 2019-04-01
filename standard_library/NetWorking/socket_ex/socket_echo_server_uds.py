@@ -33,4 +33,3 @@ while True:
                 break
     finally:
         conn.close()
-

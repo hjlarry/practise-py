@@ -11,4 +11,3 @@ class Dictionary:
         # 使用itertools.groupby()可以将迭代迁移至C中
         grouped = itertools.groupby(words, key=operator.itemgetter(0))
         self.by_letter = {group[0][0]: group for group in grouped}
-

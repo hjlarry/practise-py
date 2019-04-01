@@ -29,4 +29,3 @@ with futures.ProcessPoolExecutor(max_workers=2) as ex:
         pid2 = f2.result()
     except futures.process.BrokenProcessPool as e:
         print("could not start new tasks ", e)
-

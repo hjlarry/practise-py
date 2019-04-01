@@ -11,16 +11,15 @@ while True:
     print("Wait a connection")
     conn, client_addr = sock.accept()
     try:
-        print('connection from ', conn)
+        print("connection from ", conn)
         while True:
             data = conn.recv(15)
-            print('received ', data)
+            print("received ", data)
             if data:
-                print('send back to client')
+                print("send back to client")
                 conn.sendall(data)
             else:
-                print('no data from ', client_addr)
+                print("no data from ", client_addr)
                 break
     finally:
         conn.close()
-

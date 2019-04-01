@@ -45,16 +45,16 @@ while True:
     if not first_line:
         break
 
-    incoming_digest, incoming_length = first_line.split(b' ')
-    incoming_length = int(incoming_length.decode('utf-8'))
-    print('\n Read:', incoming_digest, incoming_length)
+    incoming_digest, incoming_length = first_line.split(b" ")
+    incoming_length = int(incoming_length.decode("utf-8"))
+    print("\n Read:", incoming_digest, incoming_length)
 
     incoming_pickled_data = in_s.read(incoming_length)
     actual_digest = make_digest(incoming_pickled_data)
-    print('ACTUAL:', actual_digest)
+    print("ACTUAL:", actual_digest)
 
     if hmac.compare_digest(actual_digest, incoming_digest):
         obj = pickle.loads(incoming_pickled_data)
-        print('OK:', obj)
+        print("OK:", obj)
     else:
-        print('Warning: data corruption')
+        print("Warning: data corruption")

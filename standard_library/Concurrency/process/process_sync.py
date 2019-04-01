@@ -154,14 +154,13 @@ def producer1(pipe):
 def consumer1(pipe):
     print(pipe.recv())
 
+
 receive_pipe, send_pipe = multiprocessing.Pipe()
-p = multiprocessing.Process(target=producer1, args=(send_pipe, ))
-c = multiprocessing.Process(target=consumer1, args=(receive_pipe, ))
+p = multiprocessing.Process(target=producer1, args=(send_pipe,))
+c = multiprocessing.Process(target=consumer1, args=(receive_pipe,))
 
 c.start()
 p.start()
 
 c.join()
 p.join()
-
-

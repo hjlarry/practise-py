@@ -33,4 +33,3 @@ print(htmlize(abs))
 print(htmlize(42))
 print(htmlize("Heimlich & Co. \n- a game"))
 print(htmlize(["alpha", 66, {3, 2, 2}]))
-

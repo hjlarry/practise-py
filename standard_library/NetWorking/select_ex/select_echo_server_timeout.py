@@ -16,17 +16,17 @@ outputs = []
 messages_queues = {}
 
 while inputs:
-    print('wait for the next event', file=sys.stderr)
+    print("wait for the next event", file=sys.stderr)
     timeout = 1
     readable, writable, exceptional = select.select(inputs, outputs, inputs, timeout)
     if not (readable or writable or exceptional):
-        print('timeout , do some other work here', file=sys.stderr)
+        print("timeout , do some other work here", file=sys.stderr)
         continue
     for s in readable:
         if s is server:
             # a readable socket is ready to accept a conn
             conn, client_addr = s.accept()
-            print('conn from ', client_addr, file=sys.stderr)
+            print("conn from ", client_addr, file=sys.stderr)
             conn.setblocking(0)
             inputs.append(conn)
             # give the conn a queue for data we want to send
@@ -40,7 +40,7 @@ while inputs:
                 if s not in outputs:
                     outputs.append(s)
             else:
-                print('closing ', client_addr, file=sys.stderr)
+                print("closing ", client_addr, file=sys.stderr)
                 if s in outputs:
                     outputs.remove(s)
                 inputs.remove(s)

@@ -21,4 +21,3 @@ class MyException(Exception):
 
 
 raise MyException("Normal message", bad_value=99)
-

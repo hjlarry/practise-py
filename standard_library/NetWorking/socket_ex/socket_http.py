@@ -1,5 +1,6 @@
 import socket
 import time
+
 # 和select/select_http.py对比
 # 默认阻塞式IO, connect运行得到结果了才会运行send
 def block_io():
@@ -26,7 +27,7 @@ def non_block_io():
     client = socket.socket()
     client.setblocking(False)
     try:
-        client.connect(("www.baidu.com", 80)) 
+        client.connect(("www.baidu.com", 80))
     except BlockingIOError as e:
         pass
 

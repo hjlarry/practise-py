@@ -15,14 +15,16 @@ def loiter(n):
     display(msg.format("\t" * n, n))
     return n * 10
 
+
 def main():
-    display('Script starting')
+    display("Script starting")
     ex = futures.ThreadPoolExecutor(max_workers=3)
     results = ex.map(loiter, range(5))
-    display('results:', results)
-    display('Waiting for individual results:')
+    display("results:", results)
+    display("Waiting for individual results:")
     for i, result in enumerate(results):
         display(f"result {i}: {result}")
+
 
 if __name__ == "__main__":
     main()

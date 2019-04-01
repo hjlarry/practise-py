@@ -3,7 +3,7 @@ import functools
 import logging
 import sys
 
-MESSAGES = [b'This is the message', b'it will be sent', b'a part']
+MESSAGES = [b"This is the message", b"it will be sent", b"a part"]
 SERVER_ADDRESS = ("localhost", 10000)
 logging.basicConfig(
     level=logging.DEBUG, format="%(name)s: %(message)s", stream=sys.stderr
@@ -14,10 +14,10 @@ event_loop = asyncio.get_event_loop()
 
 class EchoClient(asyncio.Protocol):
     def __init__(self, messages, future):
-         super().__init__()
-         self.messages = messages
-         self.log = logging.getLogger('EchoClient')
-         self.f = future
+        super().__init__()
+        self.messages = messages
+        self.log = logging.getLogger("EchoClient")
+        self.f = future
 
     def connection_made(self, transport):
         self.transport = transport
@@ -25,7 +25,7 @@ class EchoClient(asyncio.Protocol):
         self.log.debug("connection to {} on {}".format(*self.address))
         for msg in self.messages:
             transport.write(msg)
-            self.log.debug(f'sending {msg!r}')
+            self.log.debug(f"sending {msg!r}")
         if transport.can_write_eof():
             transport.write_eof()
 
@@ -45,15 +45,17 @@ class EchoClient(asyncio.Protocol):
             self.f.set_result(True)
         super().connection_lost(exc)
 
+
 client_completed = asyncio.Future()
-client_factory = functools.partial(EchoClient, messages=MESSAGES, future=client_completed)
+client_factory = functools.partial(
+    EchoClient, messages=MESSAGES, future=client_completed
+)
 factory_cor = event_loop.create_connection(client_factory, *SERVER_ADDRESS)
 
-log.debug('waiting for client to complete')
+log.debug("waiting for client to complete")
 try:
     event_loop.run_until_complete(factory_cor)
     event_loop.run_until_complete(client_completed)
 finally:
-    log.debug('closing event loop')
+    log.debug("closing event loop")
     event_loop.close()
-    

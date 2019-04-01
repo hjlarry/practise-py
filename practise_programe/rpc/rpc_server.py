@@ -16,8 +16,8 @@ def handle_conn(conn, addr, handlers):
         length, = struct.unpack("I", length_prefix)
         body = conn.recv(length).decode()  # 请求消息体
         request = json.loads(body)
-        in_ = request['in']
-        params = request['params']
+        in_ = request["in"]
+        params = request["params"]
         print(in_, params)
         handler = handlers[in_]  # 查找请求处理器
         handler(conn, params)  # 处理请求
@@ -72,13 +72,11 @@ def send_result(conn, out, result):
     conn.sendall(response.encode())  # sendall = send + flush
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # 创建一个 TCP 套接字
     sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)  # 打开 reuse addr 选项
     sock.bind(("localhost", 8083))  # 绑定端口
     sock.listen(1)  # 监听客户端连接
-    handlers = {  # 注册请求处理器
-        "ping": ping
-    }
+    handlers = {"ping": ping}  # 注册请求处理器
     prefork(10)
     one_thread_loop(sock, handlers)  # 进入服务循环...

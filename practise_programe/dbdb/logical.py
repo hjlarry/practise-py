@@ -29,4 +29,3 @@ class ValueRef:
             # 序列化这个节点，然后保存它的存储地址.
             # 实际上更新地址是改变了ValueRef, 但它对用户可见的值没有影响，我们仍可认为它是不可变的
             self._address = storage.write(self.referent_to_string(self._referent))
-

@@ -29,6 +29,7 @@ from jinja2 import Markup, escape
 # 优先使用pkg_resource，如果无法工作则使用cwd。
 try:
     import pkg_resources
+
     pkg_resources.resource_stream
 except (ImportError, AttributeError):
     pkg_resources = None
@@ -54,7 +55,8 @@ class Response(ResponseBase):
 
     如果你想替换这个响应对象，你可以子类化这个类，然后将你的子类赋值给flask.Flask.response_class。
     """
-    default_mimetype = 'text/html'
+
+    default_mimetype = "text/html"
 
 
 class _RequestGlobals(object):
@@ -66,11 +68,14 @@ class _RequestContext(object):
     然后被推送到_request_ctx_stack，在请求结束时会被相应的移除。它会为提供的
     WSGI环境创建URL适配器（adapter）和请求对象。
     """
+
     # 会在flask.Flask.request_context和flask.Flask.test_requset_context方法中
     # 调用，以便生成请求上下文。
     def __init__(self, app, environ):
         self.app = app
-        self.url_adapter = app.url_map.bind_to_environ(environ)  # 绑定了当前环境信息，用于构建URL，在url_for函数中使用
+        self.url_adapter = app.url_map.bind_to_environ(
+            environ
+        )  # 绑定了当前环境信息，用于构建URL，在url_for函数中使用
         self.request = app.request_class(environ)  # 创建请求对象，包含请求信息
         self.session = app.open_session(self.request)  # 创建session对象，用于存储用户会话数据到cookie中
         self.g = _RequestGlobals()  # 创建g对象，用于在当前请求存储全局变量
@@ -94,7 +99,9 @@ def url_for(endpoint, **values):
     :param endpoint: URL的端点值（函数名）。
     :param values: URL规则的变量参数。
     """
-    return _request_ctx_stack.top.url_adapter.build(endpoint, values)  # 这里堆栈的栈顶（top）即上面的请求上下文对象实例
+    return _request_ctx_stack.top.url_adapter.build(
+        endpoint, values
+    )  # 这里堆栈的栈顶（top）即上面的请求上下文对象实例
 
 
 def flash(message):
@@ -103,7 +110,7 @@ def flash(message):
 
     :param message: 被闪现的消息。
     """
-    session['_flashes'] = (session.get('_flashes', [])) + [message]
+    session["_flashes"] = (session.get("_flashes", [])) + [message]
 
 
 def get_flashed_messages():
@@ -112,8 +119,7 @@ def get_flashed_messages():
     """
     flashes = _request_ctx_stack.top.flashes
     if flashes is None:
-        _request_ctx_stack.top.flashes = flashes = \
-            session.pop('_flashes', [])
+        _request_ctx_stack.top.flashes = flashes = session.pop("_flashes", [])
     return flashes
 
 
@@ -141,11 +147,7 @@ def _default_template_ctx_processor():
     """默认的模板上下文处理器（processor）。注入request、session和g。"""
     # 把request、session和g注入到模板上下文，以便可以直接在模板中使用这些变量。
     reqctx = _request_ctx_stack.top
-    return dict(
-        request=reqctx.request,
-        session=reqctx.session,
-        g=reqctx.g
-    )
+    return dict(request=reqctx.request, session=reqctx.session, g=reqctx.g)
 
 
 def _get_package_path(name):
@@ -182,19 +184,19 @@ class Flask(object):
 
     #: 静态文件的路径。如果你不想使用静态文件，可以将这个值设为None，这样不会添加
     #: 相应的URL规则，而且开发服务器将不再提供（serve）任何静态文件。
-    static_path = '/static'
+    static_path = "/static"
 
     #: 如果设置了密钥（secret key），加密组件可以使用它来为
     #: cookies或其他东西签名。比如，当你想使用安全的cookie时，把它设为一个复杂的随机值。
     secret_key = None
 
     #: 安全cookie使用这个值作为session cookie的名称。
-    session_cookie_name = 'session'  # 存储session对象数据的cookie名称
+    session_cookie_name = "session"  # 存储session对象数据的cookie名称
 
     #: 直接传入Jinja2环境的选项。
     jinja_options = dict(
         autoescape=True,  # 默认开启自动转义，即转义不安全字符为HTML实体，比如“>”、“<”等。
-        extensions=['jinja2.ext.autoescape', 'jinja2.ext.with_']
+        extensions=["jinja2.ext.autoescape", "jinja2.ext.with_"],
     )
 
     def __init__(self, package_name):
@@ -236,28 +238,36 @@ class Flask(object):
         #: 一个将被无参数调用以生成模板上下文的的函数列表。每一个函数应返回一个
         #: 用于更新模板上下文的字典。
         #: 要注册一个函数到这里，使用context_processor装饰器。
-        self.template_context_processors = [_default_template_ctx_processor]  # 默认的处理器用来注入session、request和g
+        self.template_context_processors = [
+            _default_template_ctx_processor
+        ]  # 默认的处理器用来注入session、request和g
 
         self.url_map = Map()
 
         if self.static_path is not None:
-            self.url_map.add(Rule(self.static_path + '/<filename>',
-                                  build_only=True, endpoint='static'))
+            self.url_map.add(
+                Rule(
+                    self.static_path + "/<filename>", build_only=True, endpoint="static"
+                )
+            )
             if pkg_resources is not None:
-                target = (self.package_name, 'static')
+                target = (self.package_name, "static")
             else:
-                target = os.path.join(self.root_path, 'static')
-            self.wsgi_app = SharedDataMiddleware(self.wsgi_app, {  # SharedDataMiddleware中间件用来为程序添加处理静态文件的能力
-                self.static_path: target  # URL路径和实际文件目录（static文件夹）的映射
-            })
+                target = os.path.join(self.root_path, "static")
+            self.wsgi_app = SharedDataMiddleware(
+                self.wsgi_app,
+                {  # SharedDataMiddleware中间件用来为程序添加处理静态文件的能力
+                    self.static_path: target  # URL路径和实际文件目录（static文件夹）的映射
+                },
+            )
 
         #: Jinja2环境。它通过jinja_options创建，加载器（loader）通过
         #: create_jinja_loader函数返回。
-        self.jinja_env = Environment(loader=self.create_jinja_loader(),
-                                     **self.jinja_options)
+        self.jinja_env = Environment(
+            loader=self.create_jinja_loader(), **self.jinja_options
+        )
         self.jinja_env.globals.update(  # 将url_for和get_flashed_messages函数作为全局对象注入到模板上下文，以便在模板中调用
-            url_for=url_for,
-            get_flashed_messages=get_flashed_messages
+            url_for=url_for, get_flashed_messages=get_flashed_messages
         )
 
     def create_jinja_loader(self):
@@ -265,7 +275,7 @@ class Flask(object):
         templates文件夹中寻找模板。要添加其他加载器，可以重载这个方法。
         """
         if pkg_resources is None:
-            return FileSystemLoader(os.path.join(self.root_path, 'templates'))
+            return FileSystemLoader(os.path.join(self.root_path, "templates"))
         return PackageLoader(self.package_name)
 
     def update_template_context(self, context):
@@ -274,10 +284,14 @@ class Flask(object):
         :param context: 包含额外添加的变量的字典，用来更新上下文。
         """
         reqctx = _request_ctx_stack.top
-        for func in self.template_context_processors:  # 调用所有使用context_processor装饰器注册的模板上下文处理函数，更新模板上下文
+        for (
+            func
+        ) in (
+            self.template_context_processors
+        ):  # 调用所有使用context_processor装饰器注册的模板上下文处理函数，更新模板上下文
             context.update(func())
 
-    def run(self, host='localhost', port=5000, **options):
+    def run(self, host="localhost", port=5000, **options):
         """在本地开发服务器上运行程序。如果debug标志被设置，这个服务器
         会在代码更改时自动重载，并会在异常发生时显示一个调试器。
         
@@ -287,15 +301,17 @@ class Flask(object):
                         参见werkzeug.run_simple。
         """
         from werkzeug.serving import run_simple
-        if 'debug' in options:
-            self.debug = options.pop('debug')
-        options.setdefault('use_reloader', self.debug)  # 如果debug为True，开启重载器（reloader）
-        options.setdefault('use_debugger', self.debug)  # 如果debug为True，开启调试器（debugger）
+
+        if "debug" in options:
+            self.debug = options.pop("debug")
+        options.setdefault("use_reloader", self.debug)  # 如果debug为True，开启重载器（reloader）
+        options.setdefault("use_debugger", self.debug)  # 如果debug为True，开启调试器（debugger）
         return run_simple(host, port, self, **options)
 
     def test_client(self):
         """为这个程序创建一个测试客户端。"""
         from werkzeug.test import Client
+
         return Client(self, self.response_class, use_cookies=True)
 
     def open_resource(self, resource):
@@ -319,7 +335,7 @@ class Flask(object):
         :param resource: 资源文件的名称。要获取子文件夹中的资源，使用斜线作为分界符。
         """
         if pkg_resources is None:
-            return open(os.path.join(self.root_path, resource), 'rb')
+            return open(os.path.join(self.root_path, resource), "rb")
         return pkg_resources.resource_stream(self.package_name, resource)
 
     def open_session(self, request):
@@ -330,8 +346,9 @@ class Flask(object):
         """
         key = self.secret_key
         if key is not None:
-            return SecureCookie.load_cookie(request, self.session_cookie_name,
-                                            secret_key=key)
+            return SecureCookie.load_cookie(
+                request, self.session_cookie_name, secret_key=key
+            )
 
     def save_session(self, session, response):
         """如果需要更新，保存session。默认实现参见open_session。
@@ -363,12 +380,12 @@ class Flask(object):
         :param endpoint: 对应被注册的URL规则的端点。Flask默认将视图函数名作为端点。
         :param options: 转发给底层的werkzeug.routing.Rule对象的选项。
         """
-        options['endpoint'] = endpoint
-        options.setdefault('methods', ('GET',))  #  默认监听GET方法
+        options["endpoint"] = endpoint
+        options.setdefault("methods", ("GET",))  #  默认监听GET方法
         self.url_map.add(Rule(rule, **options))
 
     ################################################################################
-    # 下面是几个用于注册各类回调函数的装饰器，函数对象存储到上面创建的几个字典和列表属性中  
+    # 下面是几个用于注册各类回调函数的装饰器，函数对象存储到上面创建的几个字典和列表属性中
     ################################################################################
 
     def route(self, rule, **options):
@@ -425,10 +442,14 @@ class Flask(object):
         :param strict_slashes: 可以用来为这个规则关闭严格的斜线设置，见上。
         :param options: 转发到底层的werkzeug.routing.Rule对象的其他选项。
         """
+
         def decorator(f):
             self.add_url_rule(rule, f.__name__, **options)
-            self.view_functions[f.__name__] = f  # 将端点（默认使用函数名，即f.__name__）和函数对象的映射存储到view_functions字典
+            self.view_functions[
+                f.__name__
+            ] = f  # 将端点（默认使用函数名，即f.__name__）和函数对象的映射存储到view_functions字典
             return f
+
         return decorator
 
     def errorhandler(self, code):
@@ -446,9 +467,11 @@ class Flask(object):
 
         :param code: 对应处理器的整型类型的错误代码。
         """
+
         def decorator(f):
             self.error_handlers[code] = f  # 将错误码和函数对象的映射存储到error_handlers字典
             return f
+
         return decorator
 
     def before_request(self, f):
@@ -465,7 +488,7 @@ class Flask(object):
         """注册一个模板上下文处理函数。"""
         self.template_context_processors.append(f)
         return f
-    
+
     #################################
     # 下面的几个方法用于处理请求和响应
     #################################
@@ -484,7 +507,9 @@ class Flask(object):
         """
         try:
             endpoint, values = self.match_request()
-            return self.view_functions[endpoint](**values)  # 根据端点在view_functions字典内获取对应的视图函数并调用，传入视图参数
+            return self.view_functions[endpoint](
+                **values
+            )  # 根据端点在view_functions字典内获取对应的视图函数并调用，传入视图参数
         except HTTPException as e:
             handler = self.error_handlers.get(e.code)
             if handler is None:

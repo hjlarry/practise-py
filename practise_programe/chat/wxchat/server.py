@@ -22,7 +22,7 @@ class ChatServer(asyncore.dispatcher):
         # 设置 socket 为可重用
         self.set_reuse_addr()
         # 监听端口
-        self.bind(('', port))
+        self.bind(("", port))
         self.listen(5)
         self.users = {}
         self.main_room = ChatRoom(self)
@@ -40,7 +40,7 @@ class ChatSession(asynchat.async_chat):
     def __init__(self, server, sock):
         asynchat.async_chat.__init__(self, sock)
         self.server = server
-        self.set_terminator(b'\n')
+        self.set_terminator(b"\n")
         self.data = []
         self.name = None
         self.enter(LoginRoom(server))
@@ -62,7 +62,7 @@ class ChatSession(asynchat.async_chat):
 
     def found_terminator(self):
         # 当客户端的一条数据结束时的处理
-        line = ''.join(self.data)
+        line = "".join(self.data)
         self.data = []
         try:
             self.room.handle(self, line.encode("utf-8"))
@@ -84,21 +84,21 @@ class CommandHandler:
     def unknown(self, session, cmd):
         # 响应未知命令
         # 通过 aynchat.async_chat.push 方法发送消息
-        session.push(('Unknown command {} \n'.format(cmd)).encode("utf-8"))
+        session.push(("Unknown command {} \n".format(cmd)).encode("utf-8"))
 
     def handle(self, session, line):
         line = line.decode()
         # 命令处理
         if not line.strip():
             return
-        parts = line.split(' ', 1)
+        parts = line.split(" ", 1)
         cmd = parts[0]
         try:
             line = parts[1].strip()
         except IndexError:
-            line = ''
+            line = ""
         # 通过协议代码执行相应的方法
-        method = getattr(self, 'do_' + cmd, None)
+        method = getattr(self, "do_" + cmd, None)
         try:
             method(session, line)
         except TypeError:
@@ -142,17 +142,17 @@ class LoginRoom(Room):
         # 用户连接成功的回应
         Room.add(self, session)
         # 使用 asynchat.asyn_chat.push 方法发送数据
-        session.push(b'Connect Success')
+        session.push(b"Connect Success")
 
     def do_login(self, session, line):
         # 用户登录逻辑
         name = line.strip()
         # 获取用户名称
         if not name:
-            session.push(b'UserName Empty')
+            session.push(b"UserName Empty")
         # 检查是否有同名用户
         elif name in self.server.users:
-            session.push(b'UserName Exist')
+            session.push(b"UserName Exist")
         # 用户名检查成功后，进入主聊天室
         else:
             session.name = name
@@ -179,28 +179,28 @@ class ChatRoom(Room):
 
     def add(self, session):
         # 广播新用户进入
-        session.push(b'Login Success')
-        self.broadcast((session.name + ' has entered the room.\n').encode("utf-8"))
+        session.push(b"Login Success")
+        self.broadcast((session.name + " has entered the room.\n").encode("utf-8"))
         self.server.users[session.name] = session
         Room.add(self, session)
 
     def remove(self, session):
         # 广播用户离开
         Room.remove(self, session)
-        self.broadcast((session.name + ' has left the room.\n').encode("utf-8"))
+        self.broadcast((session.name + " has left the room.\n").encode("utf-8"))
 
     def do_say(self, session, line):
         # 客户端发送消息
-        self.broadcast((session.name + ': ' + line + '\n').encode("utf-8"))
+        self.broadcast((session.name + ": " + line + "\n").encode("utf-8"))
 
     def do_look(self, session, line):
         # 查看在线用户
-        session.push(b'Online Users:\n')
+        session.push(b"Online Users:\n")
         for other in self.sessions:
-            session.push((other.name + '\n').encode("utf-8"))
+            session.push((other.name + "\n").encode("utf-8"))
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
 
     s = ChatServer(PORT)
     try:

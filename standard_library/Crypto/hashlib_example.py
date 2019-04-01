@@ -41,4 +41,3 @@ line_by_line = h3.hexdigest()
 print("all in once:", h1.hexdigest())
 print("line_by_line:", line_by_line)
 print("euqal:", h1.hexdigest() == line_by_line)
-

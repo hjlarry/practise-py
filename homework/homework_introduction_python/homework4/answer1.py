@@ -8,7 +8,7 @@ s = requests.session()
 
 
 def req(url):
-    return json.loads(s.get(url).content)['args']
+    return json.loads(s.get(url).content)["args"]
 
 
 class Worker(threading.Thread):
@@ -46,7 +46,7 @@ class ThreadPool:
 
 pool = ThreadPool()
 for i in range(10):
-    pool.add_task(req, 'http://httpbin.org/get?a=' + str(i))
+    pool.add_task(req, "http://httpbin.org/get?a=" + str(i))
 pool.wait_complete()
 
 result = collections.defaultdict(list)

@@ -37,7 +37,7 @@ class CharField(BaseField):
 
 class MetaModel(type):
     def __new__(cls, name, bases, attrs, **kwargs):
-        if name == 'BaseModel':
+        if name == "BaseModel":
             return super().__new__(cls, name, bases, attrs, **kwargs)
         fields = {}
         _meta = {}
@@ -68,7 +68,6 @@ class BaseModel(metaclass=MetaModel):
             values.append(str(v._value))
         sql = f"insert {self._meta['table']}({','.join(fields)}) values ({','.join(values)})"
         print(sql)
-
 
 
 class User(BaseModel):

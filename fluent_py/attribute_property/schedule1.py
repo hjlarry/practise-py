@@ -21,12 +21,13 @@ def load_db(db):
             record["serial"] = key
             db[key] = Record(**record)
 
+
 db = shelve.open(DB_NAME)
 # 判断数据库是否填充的一个方法
-if 'conference.115' not in db:
+if "conference.115" not in db:
     load_db(db)
 
-speaker = db['speaker.3471']
+speaker = db["speaker.3471"]
 print(speaker.name)
 print(speaker.twitter)
 event = db["event.33950"]

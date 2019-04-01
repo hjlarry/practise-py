@@ -34,8 +34,8 @@ def fib_seq1(n):
     seq.append(fib1(n))
     return seq
 
-if __name__ == '__main__':
+
+if __name__ == "__main__":
     profile.run("print(fib_seq(20))")
     profile.run("print(fib_seq1(20))")
-    profile.runctx('print(fib_seq1(n))', globals(), {'n':20})
-
+    profile.runctx("print(fib_seq1(n))", globals(), {"n": 20})

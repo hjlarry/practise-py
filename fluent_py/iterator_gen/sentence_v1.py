@@ -33,14 +33,21 @@ while True:
 
 print()
 from collections import abc
+
+
 class Foo:
     def __iter__(self):
         pass
+
+
 class Bar:
     def __next__(self):
         pass
+
     def __iter__(self):
         pass
+
+
 """
 Iterator和Iterable去检查是否可迭代实际是因其实现的subclasshook方法检查类有否实现__iter__, 大致如下:
 @classmethod

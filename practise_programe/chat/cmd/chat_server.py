@@ -4,10 +4,10 @@ import struct
 import json
 import re
 
-HOST = '127.0.0.1'
+HOST = "127.0.0.1"
 PORT = 8003
 USER_MAP = {}
-MATCH_REGEX = re.compile(r'@(.*?)\W+(.*)')
+MATCH_REGEX = re.compile(r"@(.*?)\W+(.*)")
 
 sel = selectors.DefaultSelector()
 
@@ -30,39 +30,41 @@ class ChatServer:
             return
 
         addr = conn.getpeername()
-        slen = struct.unpack('>L', chunk)[0]  # 获得本次传输的内容长度
+        slen = struct.unpack(">L", chunk)[0]  # 获得本次传输的内容长度
         chunk = conn.recv(slen)
         while len(chunk) < slen:
             chunk = chunk + conn.recv(slen - len(chunk))
 
-        chunk = chunk.decode('utf8')
+        chunk = chunk.decode("utf8")
 
-        if chunk.startswith('/set'):
+        if chunk.startswith("/set"):
             name = chunk.split()[1]
             self.set_username(addr, name)
-            conn.sendall(b'set ok')
+            conn.sendall(b"set ok")
             print(USER_MAP)
-        elif chunk.startswith('/list'):
+        elif chunk.startswith("/list"):
             userlist = json.dumps(self.get_userlist())
-            conn.sendall(userlist.encode('utf8'))
-        elif chunk == '/quit':
+            conn.sendall(userlist.encode("utf8"))
+        elif chunk == "/quit":
             sel.unregister(conn)
             conn.close()
         else:
             match = MATCH_REGEX.search(chunk)
             if match:
                 username, content = match.groups()
-                content = content.encode('utf8')
-                if username == 'all':
+                content = content.encode("utf8")
+                if username == "all":
                     self.broadcast(content)
                 else:
                     sock = self.get_sock(username)
                     if not sock:
-                        conn.sendall(b'User not exists')
+                        conn.sendall(b"User not exists")
                     else:
-                        sock.sendall(f'{self.get_username(addr)} said:'.encode('utf8') + content)
+                        sock.sendall(
+                            f"{self.get_username(addr)} said:".encode("utf8") + content
+                        )
             else:
-                conn.sendall(b'error cmd')
+                conn.sendall(b"error cmd")
 
     @staticmethod
     def set_username(addr, name):
@@ -84,7 +86,9 @@ class ChatServer:
             sock.sendall(content)
 
     def get_sock(self, username):
-        to_addr = next((addr for addr, name in USER_MAP.items() if name == username), None)
+        to_addr = next(
+            (addr for addr, name in USER_MAP.items() if name == username), None
+        )
         if not to_addr:
             return None
 
@@ -110,6 +114,6 @@ class ChatServer:
                 callback(key.fileobj, mask)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     server = ChatServer(HOST, PORT)
     server.server_forever()

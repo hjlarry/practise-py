@@ -52,6 +52,7 @@ class Fetcher:
         # 建立连接之后，使用socket的文件描述符注册监听其可写时，调用回调函数
         selector.register(self.client.fileno(), selectors.EVENT_WRITE, self.connected)
 
+
 # selector的回调是需要程序员去监听并执行回调的，所以这里建立事件循环不断去找到ready状态的socket并处理其回调
 def event_loop():
     while not stop:

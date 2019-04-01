@@ -58,4 +58,3 @@ class BinaryNodeRef(ValueRef):
                 "length": referent.length,
             }
         )
-

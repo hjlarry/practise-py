@@ -37,14 +37,13 @@ class EchoServer(asyncio.Protocol):
 
 factory = event_loop.create_server(EchoServer, *SERVER_ADDRESS)
 server = event_loop.run_until_complete(factory)
-log.debug(f'starting up on {SERVER_ADDRESS[0]} port {SERVER_ADDRESS[1]}')
+log.debug(f"starting up on {SERVER_ADDRESS[0]} port {SERVER_ADDRESS[1]}")
 
 try:
     event_loop.run_forever()
 finally:
-    log.debug('closing server')
+    log.debug("closing server")
     server.close()
     event_loop.run_until_complete(server.wait_closed())
-    log.debug('closing event loop')
+    log.debug("closing event loop")
     event_loop.close()
-    

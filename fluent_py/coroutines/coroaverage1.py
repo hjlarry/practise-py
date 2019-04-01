@@ -1,5 +1,6 @@
 from coroutil import coroutine
 
+
 @coroutine
 def average():
     total = 0
@@ -10,6 +11,7 @@ def average():
         total += recv
         count += 1
         average = total / count
+
 
 avg_cor = average()
 print(avg_cor.send(100))

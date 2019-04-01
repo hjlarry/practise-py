@@ -17,4 +17,3 @@ class LineItem:
 nutmeg = LineItem(9, 15.3)
 print(nutmeg.price)
 nutmeg.description = "   "
-

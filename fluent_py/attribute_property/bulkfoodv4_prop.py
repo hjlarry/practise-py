@@ -58,4 +58,3 @@ nutmeg = LineItem(9, 15.3)
 print(nutmeg.price)
 print(sorted(vars(nutmeg).items()))
 print(LineItem.weight)
-

@@ -80,7 +80,7 @@ except Exception as err:
     print(err)
 
 p = PartialImplementation()
-print('Partial Implement:', p.value)
+print("Partial Implement:", p.value)
 
 try:
     p.value = "haha"

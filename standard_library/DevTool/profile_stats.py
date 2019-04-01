@@ -20,8 +20,8 @@ stats.print_stats()
 stats.print_stats(r"\(fib")
 
 
-print('INCOMING CALLERS:')
-stats.print_callers(r'\(fib')
+print("INCOMING CALLERS:")
+stats.print_callers(r"\(fib")
 
-print('OUTGOING CALLEES:')
-stats.print_callees(r'\(fib')
+print("OUTGOING CALLEES:")
+stats.print_callees(r"\(fib")

@@ -28,7 +28,7 @@ def main(data):
     results = {}
     for k, values in data.items():
         group = grouper(results, k)
-        next(group) # 预激
+        next(group)  # 预激
         for value in values:
             group.send(value)
         group.send(None)

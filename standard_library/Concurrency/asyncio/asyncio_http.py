@@ -20,6 +20,7 @@ async def get_url(url):
         all_lines.append(line.decode("utf-8"))
     return "\n".join(all_lines)
 
+
 async def main():
     tasks = []
     for i in range(20):

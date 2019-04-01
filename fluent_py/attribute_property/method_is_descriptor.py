@@ -9,10 +9,10 @@ class Text(collections.UserString):
         return self[::-1]
 
 
-word = Text('forward')
+word = Text("forward")
 print(word)
 print(word.reverse())
-print(Text.reverse(Text('backward')))
+print(Text.reverse(Text("backward")))
 print(type(Text.reverse), type(word.reverse))
 print(Text.reverse.__get__(word))
 print(Text.reverse.__get__(None, Text))

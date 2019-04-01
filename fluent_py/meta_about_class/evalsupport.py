@@ -22,5 +22,5 @@ class MetaAlpha(type):
 
         cls.method_z = inner_2
 
-print("<700>")
 
+print("<700>")

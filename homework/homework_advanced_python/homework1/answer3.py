@@ -6,8 +6,8 @@ class ValidationMeta(type):
     def __new__(cls, name, bases, attrs, **kwargs):
         cls.validata_methods = {}
         for key in attrs.keys():
-            if key.startswith('validate'):
-                k = key.split('_')[1]
+            if key.startswith("validate"):
+                k = key.split("_")[1]
                 cls.validata_methods.update({k: attrs[key]})
         return type.__new__(cls, name, bases, attrs)
 
@@ -25,8 +25,8 @@ class Subject(metaclass=ValidationMeta):
 
     def validate_id(self, value):
         if not isinstance(value, int):
-            raise ValidatorError('Id must be integer')
+            raise ValidatorError("Id must be integer")
 
 
-s = Subject('x')
+s = Subject("x")
 print(s.id)

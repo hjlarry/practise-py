@@ -19,4 +19,3 @@ with futures.ThreadPoolExecutor(max_workers=7) as ex:
     for future in futures.as_completed(tasks):
         print("exe result:", future.result())
     print("use time:", time.time() - start)
-

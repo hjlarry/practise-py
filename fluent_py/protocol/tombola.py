@@ -48,7 +48,7 @@ class BingoCage(Tombola):
         try:
             return self._items.pop()
         except IndexError:
-            raise LookupError('pick from empty BingoCage')
+            raise LookupError("pick from empty BingoCage")
 
     def __call__(self):
         self.pick()
@@ -65,7 +65,7 @@ class LotteryBlower(Tombola):
         try:
             position = random.randrange(len(self._balls))
         except ValueError:
-            raise LookupError('pick from empty LotteryBlower')
+            raise LookupError("pick from empty LotteryBlower")
         return self._balls.pop(position)
 
     def loaded(self):
@@ -85,7 +85,7 @@ class TomboList(list):
             position = random.randrange(len(self))
             return self.pop(position)
         else:
-            raise LookupError('pop from empty TomboList')
+            raise LookupError("pop from empty TomboList")
 
     load = list.extend
 

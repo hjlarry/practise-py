@@ -13,19 +13,19 @@ async def arange(i):
 
 
 async def fetch(i):
-    res = await session.get('http://httpbin.org/get?a=' + str(i))
+    res = await session.get("http://httpbin.org/get?a=" + str(i))
     return await res.json()
 
 
 async def result():
     async for i in arange(10):
         res = await fetch(i)
-        print(res.get('args'))
+        print(res.get("args"))
         yield res
 
 
 async def main():
-    res = [res.get('args').get('a') async for res in result()]
+    res = [res.get("args").get("a") async for res in result()]
     print(res)
 
 

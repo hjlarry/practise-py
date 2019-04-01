@@ -5,8 +5,8 @@ import socket
 import random
 from kazoo.client import KazooClient
 
-zk_root = '/demo'
-G = {'servers': None}
+zk_root = "/demo"
+G = {"servers": None}
 
 
 class RemoteServer:
@@ -22,7 +22,7 @@ class RemoteServer:
 
     def connect(self):
         sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-        host, port = self.addr.split(':')
+        host, port = self.addr.split(":")
         sock.connect((host, int(port)))
         self._socket = sock
 
@@ -70,17 +70,17 @@ def get_servers():
 
         del_servers = []
         for addr in del_addrs:
-            for s in G['servers']:
+            for s in G["servers"]:
                 if s.addr == addr:
                     del_servers.append(s)
                     break
 
         for server in del_servers:
-            G['servers'].remove(server)
+            G["servers"].remove(server)
             current_addr.remove(server.addr)
 
         for addr in add_addrs:
-            G['servers'].append(RemoteServer(addr))
+            G["servers"].append(RemoteServer(addr))
             current_addr.add(addr)
 
     for child in zk.get_children(zk_root, watch=watch_servers):
@@ -88,26 +88,26 @@ def get_servers():
         addr = json.loads(node[0])
         current_addr.add(f"{addr['host']}:{addr['port']}")
 
-    G['servers'] = [RemoteServer(s) for s in current_addr]
-    return G['servers']
+    G["servers"] = [RemoteServer(s) for s in current_addr]
+    return G["servers"]
 
 
 def random_server():
-    if G['servers'] is None:
+    if G["servers"] is None:
         get_servers()
-    if not G['servers']:
+    if not G["servers"]:
         return
-    return random.choice(G['servers'])
+    return random.choice(G["servers"])
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     for i in range(100):
         server = random_server()
         if not server:
             break
         time.sleep(0.5)
         try:
-            out, result = server.ping(f'ireader {i}')
+            out, result = server.ping(f"ireader {i}")
             print(server.addr, out, result)
         except Exception as ex:
             server.close()

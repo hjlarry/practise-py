@@ -38,4 +38,3 @@ try:
 finally:
     log.debug("closing event loop")
     event_loop.close()
-

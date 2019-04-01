@@ -15,17 +15,14 @@ class RPCHandler(asyncore.dispatcher_with_send):
     def __init__(self, sock, addr):
         super().__init__(sock)
         self.addr = addr
-        self.handlers = {
-            'ping': self.ping,
-            'pi': self.pi
-        }
+        self.handlers = {"ping": self.ping, "pi": self.pi}
         self.rbuf = StringIO()
 
     def handle_connect(self):
-        print(self.addr, 'comes')
+        print(self.addr, "comes")
 
     def handle_close(self):
-        print(self.addr, 'bye')
+        print(self.addr, "bye")
         self.close()
 
     def handle_read(self):
@@ -48,25 +45,25 @@ class RPCHandler(asyncore.dispatcher_with_send):
             if len(body) < length:
                 break
             request = json.loads(body)
-            in_ = request['in']
-            params = request['params']
+            in_ = request["in"]
+            params = request["params"]
             print(os.getpid(), in_, params)
             handler = self.handlers[in_]
             handler(params)
-            left = self.rbuf.getvalue()[length + 4:]
+            left = self.rbuf.getvalue()[length + 4 :]
             self.rbuf = StringIO()
             self.rbuf.write(left)
         self.rbuf.seek(0, 2)
 
     def ping(self, params):
-        self.send_result('out', params)
+        self.send_result("out", params)
 
     def pi(self, n):
         s = 0.0
         for i in range(n + 1):
             s += 1.0 / (2 * i + 1) / (2 * i + 1)
         result = math.sqrt(8 * s)
-        self.send_result('pi_r', result)
+        self.send_result("pi_r", result)
 
     def send_result(self, out, result):
         response = {"out": out, "result": result}
@@ -168,7 +165,7 @@ class RPCServer(asyncore.dispatcher):
     def exit_child(self, sig, frame):
         self.close()
         asyncore.close_all()
-        print('all closed')
+        print("all closed")
 
     def register_child_signal(self):
         signal.signal(signal.SIGINT, self.exit_child)
@@ -181,7 +178,7 @@ class RPCServer(asyncore.dispatcher):
             RPCHandler(sock, addr)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     host = sys.argv[1]
     port = int(sys.argv[2])
     RPCServer(host, port)

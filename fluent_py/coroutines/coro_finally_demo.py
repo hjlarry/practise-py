@@ -46,6 +46,7 @@ exc_cor2.send(11)
 # exc_cor2.send(22)
 # exc_cor2.close()
 
+
 def another_gen_func():
     try:
         yield 1
@@ -53,6 +54,7 @@ def another_gen_func():
         pass
     yield 2
     yield 3
+
 
 gen = another_gen_func()
 print(next(gen))

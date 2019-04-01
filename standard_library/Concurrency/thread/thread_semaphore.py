@@ -71,4 +71,3 @@ s = threading.Semaphore(2)
 for i in range(4):
     t = threading.Thread(target=worker, name=str(i), args=(s, pool))
     t.start()
-

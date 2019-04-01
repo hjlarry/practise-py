@@ -5,9 +5,9 @@ import sys
 
 
 def _mk_init_name(fullname):
-    if fullname.endswith('.__init__'):
+    if fullname.endswith(".__init__"):
         return fullname
-    return fullname + '.__init__'
+    return fullname + ".__init__"
 
 
 def _get_key_name(fullname, db):
@@ -29,7 +29,7 @@ class ShelveFinder:
             # test the path_entry to see if it is a valid shelf
             try:
                 ShelveFinder._maybe_recursing = True
-                with shelve.open(path_entry, 'r'):
+                with shelve.open(path_entry, "r"):
                     pass
             finally:
                 ShelveFinder._maybe_recursing = False
@@ -47,7 +47,7 @@ class ShelveFinder:
     def find_module(self, fullname, path=None):
         path = path or self.path_entry
         print(f"looking for {fullname!r} in {path}")
-        with shelve.open(self.path_entry, 'r') as db:
+        with shelve.open(self.path_entry, "r") as db:
             key_name = _get_key_name(fullname, db)
             if key_name:
                 print(f"found it as {key_name}")
@@ -67,7 +67,7 @@ class ShelveLoader:
     def get_source(self, fullname):
         print(f"loading source for {fullname} from shelf")
         try:
-            with shelve.open(self.path_entry, 'r') as db:
+            with shelve.open(self.path_entry, "r") as db:
                 key_name = _get_key_name(fullname, db)
                 if key_name:
                     return db[key_name]
@@ -79,23 +79,23 @@ class ShelveLoader:
     def get_code(self, fullname):
         source = self.get_source(fullname)
         print(f"compile code for {fullname}")
-        return compile(source, self._get_filename(fullname), 'exec', dont_inherit=True)
+        return compile(source, self._get_filename(fullname), "exec", dont_inherit=True)
 
     def get_data(self, path):
         print(f"looking for data in {self.path_entry} for {path}")
         if not path.startswith(self.path_entry):
             raise IOError
-        path = path[len(self.path_entry) + 1:]
-        key_name = 'data:' + path
+        path = path[len(self.path_entry) + 1 :]
+        key_name = "data:" + path
         try:
-            with shelve.open(self.path_entry, 'r') as db:
+            with shelve.open(self.path_entry, "r") as db:
                 return db[key_name]
         except Exception:
             raise IOError()
 
     def is_package(self, fullname):
         init_name = _mk_init_name(fullname)
-        with shelve.open(self.path_entry, 'r') as db:
+        with shelve.open(self.path_entry, "r") as db:
             return init_name in db
 
     def load_module(self, fullname):
@@ -116,9 +116,9 @@ class ShelveLoader:
         if self.is_package(fullname):
             mod.__package__ = fullname
         else:
-            mod.__package__ = '.'.join(fullname.split('.')[:-1])
+            mod.__package__ = ".".join(fullname.split(".")[:-1])
         if self.is_package(fullname):
-            print('adding path to package')
+            print("adding path to package")
             # Set __path__ for packages so we can find the sub-modules.
             mod.__path__ = [self.path_entry]
         else:
@@ -129,5 +129,5 @@ class ShelveLoader:
         print("done")
         return mod
 
-import pkgutil
 
+import pkgutil

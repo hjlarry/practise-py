@@ -11,10 +11,10 @@ class classproperty:
 
 
 class Subject:
-    _name = 'subject'
+    _name = "subject"
 
     def __init__(self):
-        self._name = 'movie'
+        self._name = "movie"
 
     @classproperty
     def name(cls):
@@ -26,10 +26,10 @@ class Movie:
 
     @name.getter
     def name(cls):
-        return 'movie'
+        return "movie"
 
 
-assert Subject.name == 'subject'
-assert Subject().name == 'subject'
-assert Movie.name == 'movie'
-assert Movie().name == 'movie'
+assert Subject.name == "subject"
+assert Subject().name == "subject"
+assert Movie.name == "movie"
+assert Movie().name == "movie"

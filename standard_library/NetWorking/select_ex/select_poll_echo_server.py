@@ -49,7 +49,7 @@ while True:
         # The POLLHUP flag indicates a client that “hung up” the connection without closing it cleanly.
         # The server stops polling clients that disappear.
         elif flag & select.POLLHUP:
-            print(' closing', client_addr, '(HUP)', file=sys.stderr)
+            print(" closing", client_addr, "(HUP)", file=sys.stderr)
             poller.unregister(s)
             s.close()
         elif flag & select.POLLOUT:
@@ -66,5 +66,3 @@ while True:
             poller.unregister(s)
             s.close()
             del messages_queues[s]
-
-

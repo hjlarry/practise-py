@@ -26,4 +26,3 @@ try:
 finally:
     print(f"{sock.getsockname()} close", file=sys.stderr)
     sock.close()
-

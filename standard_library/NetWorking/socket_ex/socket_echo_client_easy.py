@@ -21,4 +21,3 @@ try:
 finally:
     print("closing")
     sock.close()
-

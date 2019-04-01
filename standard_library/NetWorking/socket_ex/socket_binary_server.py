@@ -9,17 +9,16 @@ sock.bind(server_addr)
 
 sock.listen(1)
 
-unpacker = struct.Struct('I 3s f')
+unpacker = struct.Struct("I 3s f")
 
 while True:
     print("Wait a connection")
     conn, client_addr = sock.accept()
     try:
-        print('connection from ', conn)
+        print("connection from ", conn)
         data = conn.recv(unpacker.size)
-        print('received ', binascii.hexlify(data))
-        print('unpacked ', unpacker.unpack(data))
-            
+        print("received ", binascii.hexlify(data))
+        print("unpacked ", unpacker.unpack(data))
+
     finally:
         conn.close()
-

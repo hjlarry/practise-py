@@ -10,19 +10,19 @@ class ForwardProtocol(asyncio.Protocol):
         self.buffer = []
 
     def connection_made(self, transport):
-        peername = transport.get_extra_info('peername')
-        print('Connection from {}'.format(peername))
+        peername = transport.get_extra_info("peername")
+        print("Connection from {}".format(peername))
         self.transport = transport
         if len(self.buffer):
             self.transport.writelines(self.buffer)
 
     def data_received(self, data):
         message = data.decode()
-        print('Data received: {!r}'.format(message))
+        print("Data received: {!r}".format(message))
         self.peer.write(data)
 
     def connection_lost(self, exc):
-        print('Close the client socket')
+        print("Close the client socket")
         self.peer.close()
 
 
@@ -37,9 +37,9 @@ class PortForward(asyncio.Protocol):
         asyncio.ensure_future(coro)
 
     def data_received(self, data):
-        data = data.decode().replace('localhost:8888', 'httpbin.org').encode()
+        data = data.decode().replace("localhost:8888", "httpbin.org").encode()
 
-        print('Request:', data.decode())
+        print("Request:", data.decode())
         if not self.conn.transport:
             self.conn.buffer.append(data)
         else:
@@ -50,11 +50,11 @@ class PortForward(asyncio.Protocol):
 
 
 # Each client connection will create a new protocol instance
-coro = loop.create_server(lambda: PortForward('httpbin.org', 80), '127.0.0.1', 8888)
+coro = loop.create_server(lambda: PortForward("httpbin.org", 80), "127.0.0.1", 8888)
 server = loop.run_until_complete(coro)
 
 # Serve requests until Ctrl+C is pressed
-print('Serving on {}'.format(server.sockets[0].getsockname()))
+print("Serving on {}".format(server.sockets[0].getsockname()))
 try:
     loop.run_forever()
 except KeyboardInterrupt:

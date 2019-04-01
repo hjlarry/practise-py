@@ -11,7 +11,7 @@ except socket.error as msg:
 
 
 try:
-    message = b'this is a message ahahaha, it will repeated'
+    message = b"this is a message ahahaha, it will repeated"
     print("sending ", message)
     sock.sendall(message)
 
@@ -23,6 +23,5 @@ try:
         print("received ", data)
         amount_received += len(data)
 finally:
-    print('closing')
+    print("closing")
     sock.close()
-

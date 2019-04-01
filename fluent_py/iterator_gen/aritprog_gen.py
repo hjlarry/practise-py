@@ -44,6 +44,7 @@ def artiprog_gen_v2(begin, step, end=None):
         ap_gen = itertools.takewhile(lambda n: n < end, ap_gen)
     return ap_gen
 
+
 ap = artiprog_gen_v2(0, 1, 3)
 print(list(ap))
 ap = artiprog_gen_v2(1, 0.5, 3)

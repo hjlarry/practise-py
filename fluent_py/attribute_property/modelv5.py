@@ -34,6 +34,7 @@ class Quantity(Validated):
             raise ValueError("value must > 0")
         return value
 
+
 class NoneBlank(Validated):
     def validate(self, instance, value):
         value = value.strip()

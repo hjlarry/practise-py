@@ -4,9 +4,19 @@ import csv
 
 
 class Database:
-    def __init__(self, host='127.0.0.1', user='root', passwd='root', db='test', port=3306, autocommit=True):
-        self.conn = MySQLdb.Connection(host=host, user=user, passwd=passwd, db=db, port=port, autocommit=autocommit)
-        self.uri = f'{user}:{passwd}@{host}:{port}/{db}'
+    def __init__(
+        self,
+        host="127.0.0.1",
+        user="root",
+        passwd="root",
+        db="test",
+        port=3306,
+        autocommit=True,
+    ):
+        self.conn = MySQLdb.Connection(
+            host=host, user=user, passwd=passwd, db=db, port=port, autocommit=autocommit
+        )
+        self.uri = f"{user}:{passwd}@{host}:{port}/{db}"
 
     def close(self):
         self.conn.close()
@@ -19,7 +29,7 @@ class Database:
             cursor.execute(query, *args, **kwargs)
         except MySQLdb.IntegrityError as e:
             err = e
-            logging.error('Dumplicate Key:', e)
+            logging.error("Dumplicate Key:", e)
         except MySQLdb.DatabaseError as e:
             err = e
             logging.error(e)
@@ -29,17 +39,17 @@ class Database:
         raise err
 
     def insert(self, table: str, data: dict):
-        keys = ','.join(data)
-        values = ','.join(['%s'] * len(data))
-        sql = f'INSERT INTO {table} ({keys}) VALUES ({values})'
+        keys = ",".join(data)
+        values = ",".join(["%s"] * len(data))
+        sql = f"INSERT INTO {table} ({keys}) VALUES ({values})"
         cursor = self._execute(sql, True, data.values())
         return cursor.lastrowid
 
     def insert_many(self, table: str, key: list, many):
         cursor = self.conn.cursor()
-        keys = ','.join(key)
-        values = ','.join(['%s'] * len(key))
-        sql = f'INSERT INTO {table} ({keys}) VALUES ({values})'
+        keys = ",".join(key)
+        values = ",".join(["%s"] * len(key))
+        sql = f"INSERT INTO {table} ({keys}) VALUES ({values})"
         try:
             cursor.executemany(sql, many)
         except MySQLdb.DatabaseError as e:
@@ -48,10 +58,10 @@ class Database:
         else:
             return cursor.rowcount
 
-    def select(self, table: str, fields: list = '*', where: dict = None):
-        sql = f'SELECT {fields} FROM {table}'
+    def select(self, table: str, fields: list = "*", where: dict = None):
+        sql = f"SELECT {fields} FROM {table}"
         if where:
-            where = ' AND '.join([f"{k}='{v}'" for k, v in where.items()])
+            where = " AND ".join([f"{k}='{v}'" for k, v in where.items()])
             sql = f"{sql} where {where}"
         cursor = self._execute(sql, raw=False)
         return (Row(row) for row in cursor)

@@ -10,16 +10,14 @@ class RPCHandler(asyncore.dispatcher_with_send):  # 客户套接字处理器必�
     def __init__(self, sock, addr):
         super().__init__(sock)
         self.addr = addr
-        self.handlers = {
-            'ping': self.ping
-        }
+        self.handlers = {"ping": self.ping}
         self.rbuf = StringIO()  # 读缓冲区由用户代码维护，写缓冲区由 asyncore 内部提供
 
     def handle_connect(self):  # 新的连接被 accept 后回调方法
-        print(self.addr, 'comes')
+        print(self.addr, "comes")
 
     def handle_close(self):  # 连接关闭之前回调方法
-        print(self.addr, 'bye')
+        print(self.addr, "bye")
         self.close()
 
     def handle_read(self):  # 有读事件到来时回调方法
@@ -42,12 +40,12 @@ class RPCHandler(asyncore.dispatcher_with_send):  # 客户套接字处理器必�
             if len(body) < length:  # 不足一个消息
                 break
             request = json.loads(body)
-            in_ = request['in']
-            params = request['params']
+            in_ = request["in"]
+            params = request["params"]
             print(in_, params)
             handler = self.handlers[in_]
             handler(params)  # 处理消息
-            left = self.rbuf.getvalue()[length + 4:]  # 消息处理完了，缓冲区要截断
+            left = self.rbuf.getvalue()[length + 4 :]  # 消息处理完了，缓冲区要截断
             self.rbuf = StringIO()
             self.rbuf.write(left)
         self.rbuf.seek(0, 2)  # 将游标挪到文件结尾，以便后续读到的内容直接追加...
@@ -64,7 +62,6 @@ class RPCHandler(asyncore.dispatcher_with_send):  # 客户套接字处理器必�
 
 
 class RPCServer(asyncore.dispatcher):  # 服务器套接字处理器必须继承 dispatcher
-
     def __init__(self, host, port):
         super().__init__()
         self.create_socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -90,6 +87,6 @@ class RPCServer(asyncore.dispatcher):  # 服务器套接字处理器必须继承
             RPCHandler(sock, addr)
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     RPCServer("localhost", 8083)
     asyncore.loop()

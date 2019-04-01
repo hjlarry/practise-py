@@ -12,7 +12,7 @@ class Prime:
         if prime > self.max:
             raise StopIteration
         self.v += 1
-        for i in range(2, self.v-1):
+        for i in range(2, self.v - 1):
             if prime % i == 0:
                 return next(self)
         return prime
@@ -37,6 +37,8 @@ def prime(limit):
 
 # Question 3
 from itertools import islice, cycle
+
+
 def roundrobin(*iterables):
     num_active = len(iterables)
     nexts = cycle(iter(it).__next__ for it in iterables)

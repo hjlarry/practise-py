@@ -34,4 +34,3 @@ print(grad.__dict__)
 # SyntaxError: invalid syntax
 # print(grad.2be)
 # 尝试了不同方法，无法简便的识别出2be的无效性
-

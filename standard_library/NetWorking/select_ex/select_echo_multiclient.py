@@ -24,4 +24,3 @@ for message in messages:
         if not data:
             print(f"{s.getsockname()} close", file=sys.stderr)
             s.close()
-

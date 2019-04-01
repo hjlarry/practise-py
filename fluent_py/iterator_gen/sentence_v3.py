@@ -38,4 +38,3 @@ next(gen)
 print(gen.gi_frame.f_lasti, gen.gi_frame.f_back, gen.gi_frame.f_locals)
 next(gen)
 print(gen.gi_frame.f_lasti, gen.gi_frame.f_back, gen.gi_frame.f_locals)
-

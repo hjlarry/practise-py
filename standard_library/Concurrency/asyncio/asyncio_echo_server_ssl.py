@@ -17,8 +17,8 @@ async def echo(reader, writer):
     log.debug("connection accepted")
     while True:
         data = await reader.read(128)
-        terminate = data.endswith(b'\x00')
-        data = data.rstrip(b'\x00')
+        terminate = data.endswith(b"\x00")
+        data = data.rstrip(b"\x00")
         if data:
             log.debug(f"received {data!r}")
             writer.write(data)
@@ -32,7 +32,7 @@ async def echo(reader, writer):
 
 ssl_context = ssl.create_default_context(ssl.Purpose.CLIENT_AUTH)
 ssl_context.check_hostname = False
-ssl_context.load_cert_chain('pymotw.crt', 'pymotw.key')
+ssl_context.load_cert_chain("pymotw.crt", "pymotw.key")
 
 factory = asyncio.start_server(echo, *SERVER_ADDRESS, ssl=ssl_context)
 server = event_loop.run_until_complete(factory)
@@ -45,4 +45,3 @@ finally:
     event_loop.run_until_complete(server.wait_closed())
     log.debug("closing event loop")
     event_loop.close()
-

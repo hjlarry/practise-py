@@ -14,10 +14,10 @@ class CodeBuilder(object):
         self.indent_level = indent
 
     def __str__(self):
-        return ''.join(str(c) for c in self.code)
+        return "".join(str(c) for c in self.code)
 
     def add_line(self, line):
-        self.code.extend([' ' * self.indent_level, line, '\n'])
+        self.code.extend([" " * self.indent_level, line, "\n"])
 
     INDENT_STEP = 4
 
@@ -51,89 +51,92 @@ class Templite(object):
         self.loop_vars = set()
 
         code = CodeBuilder()
-        code.add_line('def render_function(context, do_dots):')
+        code.add_line("def render_function(context, do_dots):")
         code.indent()
         vars_code = code.add_section()
-        code.add_line('result = []')
-        code.add_line('append_result = result.append')
-        code.add_line('extend_result = result.extend')
-        code.add_line('to_str = str')
+        code.add_line("result = []")
+        code.add_line("append_result = result.append")
+        code.add_line("extend_result = result.extend")
+        code.add_line("to_str = str")
 
         bufferd = []
+
         def flush_output():
             if len(bufferd) == 1:
-                code.add_line('append_result(%s)' % bufferd[0])
+                code.add_line("append_result(%s)" % bufferd[0])
             elif len(bufferd) > 1:
-                code.add_line('extend_result([%s])' % ', '.join(bufferd))
+                code.add_line("extend_result([%s])" % ", ".join(bufferd))
             del bufferd[:]
 
         ops_stack = []
         tokens = re.split(r"(?s)({{.*?}}|{%.*?%}|{#.*?#})", text)
         for token in tokens:
-            if token.startswith('{#'):
+            if token.startswith("{#"):
                 # 模板中的注释内容不做处理
                 continue
-            elif token.startswith('{{'):
+            elif token.startswith("{{"):
                 expr = self._expr_code(token[2:-2].strip())
-                bufferd.append('to_str(%s)' % expr)
-            elif token.startswith('{%'):
+                bufferd.append("to_str(%s)" % expr)
+            elif token.startswith("{%"):
                 flush_output()
                 words = token[2:-2].strip().split()
-                if words[0] == 'if':
+                if words[0] == "if":
                     if len(words) != 2:
-                        self._synx_error('Don`t understand for if: %s' % token)
-                    ops_stack.append('if')
-                    code.add_line('if %s:' % self._expr_code(words[1]))
-                elif words[0] == 'for':
-                    if len(words) != 4 or words[2] != 'in':
-                        self._synx_error('Don`t understand for for: %s' % token)
-                    ops_stack.append('for')
+                        self._synx_error("Don`t understand for if: %s" % token)
+                    ops_stack.append("if")
+                    code.add_line("if %s:" % self._expr_code(words[1]))
+                elif words[0] == "for":
+                    if len(words) != 4 or words[2] != "in":
+                        self._synx_error("Don`t understand for for: %s" % token)
+                    ops_stack.append("for")
                     self._variable(words[1], self.loop_vars)
-                    code.add_line('for %s in %s:' % (words[1], self._expr_code(words[3])))
+                    code.add_line(
+                        "for %s in %s:" % (words[1], self._expr_code(words[3]))
+                    )
                     code.indent()
-                elif words[0].startswith('end'):
+                elif words[0].startswith("end"):
                     if len(words) != 1:
-                        self._synx_error('Don`t understand for end: %s' % token)
+                        self._synx_error("Don`t understand for end: %s" % token)
                     end_what = words[0][3:]
                     if not ops_stack:
-                        self._synx_error('too many end : %s' % token)
+                        self._synx_error("too many end : %s" % token)
                     start_what = ops_stack.pop()
                     if end_what != start_what:
-                        self._synx_error('mismatch end tag : %s' % end_what)
+                        self._synx_error("mismatch end tag : %s" % end_what)
                     code.dedent()
                 else:
-                    self._synx_error('unknown start tag: %s' % token)
+                    self._synx_error("unknown start tag: %s" % token)
             else:
                 if token:
                     bufferd.append(repr(token))
 
         if ops_stack:
-            self._synx_error('Unmatch action tag: %s' % ops_stack[-1])
+            self._synx_error("Unmatch action tag: %s" % ops_stack[-1])
         flush_output()
 
         for varname in self.all_vars - self.loop_vars:
-            vars_code.add_line('c_%s = context[%r]' % (varname, varname))
+            vars_code.add_line("c_%s = context[%r]" % (varname, varname))
 
         code.add_line("return ''.join(result)")
         code.dedent()
 
-        self._render_function = code.get_globals()['render_function']
+        self._render_function = code.get_globals()["render_function"]
 
     def _expr_code(self, expr):
-        if '|' in expr:
-            pipes = expr.split('|')
+        if "|" in expr:
+            pipes = expr.split("|")
             code = self._expr_code(pipes[0])
             for func in pipes[1:]:
                 self._variable(func, self.all_vars)
-                code = 'c_%s(%s)' % (func, code)
-        elif '.' in expr:
-            dots = expr.split('.')
+                code = "c_%s(%s)" % (func, code)
+        elif "." in expr:
+            dots = expr.split(".")
             code = self._expr_code(dots[0])
-            args = ', '.join(repr(d) for d in dots[1:])
-            code = 'do_dots(%s, %s)' % (code, args)
+            args = ", ".join(repr(d) for d in dots[1:])
+            code = "do_dots(%s, %s)" % (code, args)
         else:
             self._variable(expr, self.all_vars)
-            code = 'c_%s' % expr
+            code = "c_%s" % expr
         return code
 
     def _synx_error(self, msg):
@@ -141,7 +144,7 @@ class Templite(object):
 
     def _variable(self, name, vars_set):
         if not re.match(r"[_a-zA-Z][_a-zA-Z0-9]*$", name):
-            self._synx_error('not a valid name : %s' % name)
+            self._synx_error("not a valid name : %s" % name)
         vars_set.add(name)
 
     def render(self, context=None):
@@ -159,4 +162,3 @@ class Templite(object):
             if callable(value):
                 value = value()
         return value
-

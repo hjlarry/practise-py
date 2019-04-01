@@ -33,4 +33,3 @@ logging.debug("Waiting before calling event.set()")
 time.sleep(0.3)
 e.set()
 logging.debug("Event is set")
-

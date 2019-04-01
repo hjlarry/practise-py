@@ -29,6 +29,6 @@ for future in as_completed(future_to_num):
     try:
         result = future.result()
     except Exception as e:
-        print(f'raise an exception: {e}')
+        print(f"raise an exception: {e}")
     else:
-        print(f'fib({num}) = {result}')
+        print(f"fib({num}) = {result}")

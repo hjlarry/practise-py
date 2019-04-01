@@ -131,4 +131,3 @@ word_counts.reverse()
 print("TOP 20 WORD")
 top20 = word_counts[:20]
 pprint.pprint(top20)
-

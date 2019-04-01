@@ -8,6 +8,7 @@ def average():
         count += 1
         average = total / count
 
+
 avg_cor = average()
 avg_cor.send(None)
 print(avg_cor.send(100))

@@ -9,7 +9,7 @@ import itertools
 
 class Vector:
     type_code = "d"
-    shortcut_names = 'xyzt'
+    shortcut_names = "xyzt"
 
     def __init__(self, components):
         self._components = array(self.type_code, components)
@@ -22,7 +22,7 @@ class Vector:
         # reprlib.repr是长度过长时使用 ...
         components = reprlib.repr(self._components)
         # components是array的字符串形式，repr用list表示更友好
-        components = components[components.find("["): -1]
+        components = components[components.find("[") : -1]
         return "{}({})".format(class_name, components)
 
     def __str__(self):
@@ -62,17 +62,17 @@ class Vector:
             pos = cls.shortcut_names.find(name)
             if 0 <= pos < len(self._components):
                 return self._components[pos]
-        raise AttributeError(f'{cls.__name__!r} object has no attribute {name}')
+        raise AttributeError(f"{cls.__name__!r} object has no attribute {name}")
 
     def __setattr__(self, name, value):
         cls = type(self)
         if len(name) == 1:
             if name in cls.shortcut_names:
-                error = 'readonly attr {attr_name!r}'
+                error = "readonly attr {attr_name!r}"
             elif name.islower():
                 error = "can`t set attr 'a' to 'z' in {cls_name!r}"
             else:
-                error = ''
+                error = ""
             if error:
                 msg = error.format(cls_name=cls.__name__, attr_name=name)
                 raise AttributeError(msg)
@@ -113,7 +113,7 @@ class Vector:
             coords = self
             outer_fmt = "({})"
         components = (format(c, format_spec) for c in coords)
-        return outer_fmt.format(', '.join(components))
+        return outer_fmt.format(", ".join(components))
 
 
 print(repr(Vector([3.1, 4.2])))
@@ -123,5 +123,5 @@ print(repr(Vector(range(10))))
 v1 = Vector(range(7))
 print(v1[3:5])
 print(v1.y)
-print(format(v1, 'h'))
+print(format(v1, "h"))
 print(format(v1))

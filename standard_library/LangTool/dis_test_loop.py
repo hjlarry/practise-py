@@ -22,4 +22,3 @@ t = timeit.Timer(
 
 iterations = 10
 print("TIME:{:0.4f}".format(t.timeit(iterations) / iterations))
-
