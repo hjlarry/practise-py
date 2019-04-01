@@ -20,9 +20,25 @@ class DBDB:
         self._assert_not_closed()
         return self._tree.set(key, value)
 
+    def __delitem__(self, key):
+        self._assert_not_closed()
+        return self._tree.pop(key)
+
     def commit(self):
         self._assert_not_closed()
         self._tree.commit()
 
     def close(self):
         self._storage.close()
+
+    def __len__(self):
+        return len(self._tree)
+
+    def __contains__(self, key):
+        try:
+            self[key]
+        except KeyError:
+            return False
+        else:
+            return True
+

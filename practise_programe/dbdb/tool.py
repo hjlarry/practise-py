@@ -9,7 +9,7 @@ BAD_KEY = 3
 
 def usage():
     print("Usage:", file=sys.stderr)
-    print("\tpython -m dbdb.tool DBNAME get KEY", file=sys.stderr)
+    print("\tpython3 -m dbdb.tool DBNAME get KEY", file=sys.stderr)
     print("\tpython -m dbdb.tool DBNAME set KEY VALUE", file=sys.stderr)
     print("\tpython -m dbdb.tool DBNAME delete KEY", file=sys.stderr)
 
