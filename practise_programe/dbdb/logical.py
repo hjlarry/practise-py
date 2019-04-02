@@ -1,5 +1,6 @@
 class ValueRef:
     def __init__(self, referent=None, address=0):
+        # 这里的referent实际上就是用户set的value
         self._referent = referent
         self._address = address
 
@@ -15,6 +16,7 @@ class ValueRef:
             self._address = storage.write(self.referent_to_string(self._referent))
 
     def get(self, storage):
+        # 通过读取地址的内容得到BinaryNode
         if self._referent is None and self._address:
             self._referent = self.string_to_referent(storage.read(self._address))
         return self._referent
@@ -59,6 +61,7 @@ class LogicalBase:
         self._tree_ref = self._delete(self._follow(self._tree_ref), key)
 
     def _refresh_tree_ref(self):
+        # 获取最新的树的引用视图为BinaryNodeRef(root_addr)
         self._tree_ref = self.node_ref_class(address=self._storage.get_root_address())
 
     def commit(self):
@@ -67,6 +70,7 @@ class LogicalBase:
         self._storage.commit_root_address(self._tree_ref.address)
 
     def _follow(self, ref):
+        # ref: ValueRef()
         return ref.get(self._storage)
 
     def _get(self, node, key):

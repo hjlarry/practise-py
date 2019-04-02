@@ -85,6 +85,7 @@ class BinaryTree(LogicalBase):
         raise KeyError
 
     def _insert(self, node, key, value_ref):
+        # 递归，递归出口是node是None或key=node.key
         # 总返回一个新建的节点，它与旧节点共享未改变的部分，而非更新旧节点上的数据，使得二叉树不可变
         if node is None:
             new_node = BinaryNode(
