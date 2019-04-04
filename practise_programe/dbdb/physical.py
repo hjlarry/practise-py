@@ -6,6 +6,7 @@ import portalocker
 
 
 class Storage:
+    # Super Block一般用于存储文件的源信息，本例中只是占位并未做处理
     SUPERBLOCK_SIZE = 4096
     INTEGER_FORMAT = "!Q"
     INTEGER_LENGTH = 8
