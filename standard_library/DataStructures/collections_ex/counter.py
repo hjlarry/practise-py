@@ -1,5 +1,6 @@
 import collections
 
+print("一、 Counter构建")
 print(collections.Counter(["a", "b", "c", "a"]))
 print(collections.Counter(a=2, b=3))
 print(collections.Counter({"a": 2, "b": 4}))
@@ -13,8 +14,9 @@ c.update({"a": 1})
 print("dict:", c)
 print()
 
+print("二、 Counter常用操作")
 c = collections.Counter("abc")
-print(c["d"])  # 不会抛 KeyError 异常
+print(c["d"])  # 不会抛 KeyError 异常，而是返回0
 
 c["z"] = 0
 print(c)
