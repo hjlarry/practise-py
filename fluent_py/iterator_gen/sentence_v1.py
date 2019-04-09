@@ -59,4 +59,6 @@ def __subclasshook__(cls, C):
 """
 print(issubclass(Foo, abc.Iterable))
 print(issubclass(Bar, abc.Iterator))
+# 虽然通过协议检查，迭代器是可迭代对象。但在书中的概念上，可迭代对象一定不能是自身的迭代器
+print(issubclass(Bar, abc.Iterable))
 print(issubclass(Sentence, abc.Iterable))
