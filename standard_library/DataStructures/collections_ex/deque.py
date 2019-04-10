@@ -2,27 +2,26 @@ import collections
 import threading
 import time
 
+print("一、 deque基础操作")
 d = collections.deque("abcdefg")
-print(d)
-print(len(d))
-print(d[0], d[-1])
+print("init:", d)
+print("len:", len(d))
+print("head,tail: ", d[0], d[-1])
 d.remove("c")
-print(d)
-print()
+print("remove:", d)
 
 d1 = collections.deque()
 d1.extend("abcdefg")
-print(d1)
+print("extend:", d1)
 d1.append("h")
-print(d1)
+print("append:", d1)
 d2 = collections.deque()
 d2.extendleft(range(6))
-print(d2)
+print("extendleft:", d2)
 d2.appendleft(6)
-print(d2)
-print()
+print("appendleft:", d2)
 
-print("POP:")
+print("pop:", end=" ")
 d = collections.deque("abcdefg")
 while True:
     try:
@@ -30,7 +29,7 @@ while True:
     except IndexError:
         print()
         break
-print("POPLEFT:")
+print("popleft:", end=" ")
 d = collections.deque(range(6))
 while True:
     try:
@@ -40,7 +39,20 @@ while True:
         break
 print()
 
+d = collections.deque(range(10))
+print("init:",d)
+d.rotate(2)
+print("rotate(2):",d)
+d.rotate(-4)
+print("rotate(-4):",d)
+print()
 
+d = collections.deque(maxlen=3)
+for i in range(10):
+    d.append(i)
+print("maxlen deque:",d)
+
+print("二、 在多线程中使用deque")
 candle = collections.deque(range(5))
 
 
@@ -66,15 +78,4 @@ right.join()
 print()
 
 
-d = collections.deque(range(10))
-print(d)
-d.rotate(2)
-print(d)
-d.rotate(-4)
-print(d)
-print()
 
-d = collections.deque(maxlen=3)
-for i in range(10):
-    d.append(i)
-print(d)
