@@ -87,7 +87,7 @@ logging.basicConfig(format="%(message)s", stream=sys.stdout, level=logging.DEBUG
 logger = logging.getLogger("pymotw")
 print("Creating archive:")
 shutil.make_archive(
-    "example", "gztar", root_dir=".", base_dir="test_files", logger=logger
+    "test_files/example", "gztar", root_dir=".", base_dir="test_files", logger=logger
 )
 print("\nArchive contents:")
 with tarfile.open("test_files/example.tar.gz", "r") as t:
