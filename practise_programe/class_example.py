@@ -1,4 +1,5 @@
 from collections import defaultdict
+import weakref
 
 # 示例一、避免__init__中大量的初始化赋值
 class Structure:
@@ -239,6 +240,7 @@ class OpenConnectionState(ConnectionState):
     def close(conn):
         conn.new_state(ClosedConnectionState)
 
+
 c = Connection1()
 print(c._state)
 try:
@@ -251,3 +253,39 @@ c.read()
 c.write("hello")
 c.close()
 print(c._state)
+
+
+# 示例四、 创建缓存实例
+# 创建一个对象时，如果之前使用同样参数创建过这个对象， 则返回它的缓存引用
+class CachedSpamManager:
+    def __init__(self):
+        self._cache = weakref.WeakValueDictionary()
+
+    def get_spam(self, name):
+        if name not in self._cache:
+            s = Spam(name)
+            self._cache[name] = s
+        else:
+            s = self._cache[name]
+        return s
+
+    def clear(self):
+        self._cache.clear()
+
+# 不应直接去初始化，而是用类方法get_spam
+class Spam:
+    manager = CachedSpamManager()
+
+    def __init__(self, name):
+        self.name = name
+
+    @classmethod
+    def get_spam(cls, name):
+        return Spam.manager.get_spam(name)
+
+
+a = Spam.get_spam("foo")
+b = Spam.get_spam("foo")
+c = Spam.get_spam("bar")
+print(a is b)
+print(a is c)
