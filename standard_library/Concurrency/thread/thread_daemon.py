@@ -2,6 +2,7 @@ import logging
 import time
 import threading
 
+
 # 设置为守护线程，则主线程结束时会kill掉守护线程
 # t1.join()则会使守护线程持续执行下去，join参数timeout设置后，若超时线程并未结束，则join会返回，不会继续等待。
 def daemon():
@@ -23,3 +24,4 @@ logging.basicConfig(
 
 t1.start()
 t2.start()
+# t1.join()
