@@ -37,4 +37,3 @@ main_msg["Subject"] = "Simple test message"
 # finally:
 #     server.quit()
 print(os.environ.items())
-import dbm.ndbm
