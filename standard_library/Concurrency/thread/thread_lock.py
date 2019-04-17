@@ -38,7 +38,7 @@ def worker(c):
 logging.basicConfig(
     level=logging.DEBUG, format="[%(levelname)s] (%(threadName)-10s) %(message)s"
 )
-
+logging.info("一、 锁的使用")
 counter = Counter()
 for i in range(2):
     t = threading.Thread(target=worker, args=(counter,), name=str(i))
@@ -46,11 +46,14 @@ for i in range(2):
 
 logging.debug("Waiting for work threads")
 for t in threading.enumerate():
+    # 这里只将工作的线程去阻塞执行了
     if t.getName() == str(0) or t.getName() == str(1):
         t.join()
 logging.debug("Count value %d", counter.value)
+time.sleep(1)
 
-# 下个例子中，do_sth() 会尝试获得三次锁，并计算总共尝试了几次才获得这三次锁。同时，lock_holder() 的循环会不断获取并释放锁，每次都有一小段间隔来模拟「正在加载...」。
+# 下个例子中，do_sth() 会尝试获得三次锁，并计算总共尝试了几次才获得这三次锁。
+# 同时，lock_holder() 的循环会不断获取并释放锁，每次都有一小段间隔来模拟「正在加载...」。
 def lock_holder(lock):
     logging.debug("Starting")
     while True:
@@ -85,22 +88,27 @@ def do_sth(lock):
     logging.debug("Done after %d acquires", num_tries)
 
 
+logging.info("")
+logging.info("二、 锁的尝试获取")
 lock = threading.Lock()
 t1 = threading.Thread(target=lock_holder, name="lock_holder", args=(lock,), daemon=True)
 t2 = threading.Thread(target=do_sth, name="worker", args=(lock,))
 t1.start()
 t2.start()
+t2.join()
+time.sleep(1)
 
-
+logging.info("")
+logging.info("三、 可重入锁和普通锁的简单对比")
 # 获取普通锁不释放，检查是被占用的；获取可重入锁不释放，则一直都可用。
 lock = threading.Lock()
-print("first try,", lock.acquire())
-print("second try,", lock.acquire(0))
+logging.debug(f"first try, {lock.acquire()}")
+logging.debug(f"second try, {lock.acquire(0)}")
 
 rlock = threading.RLock()
-print("first try,", rlock.acquire())
-print("second try,", rlock.acquire(0))
-print("third try,", rlock.acquire(0))
+logging.debug(f"first try, {rlock.acquire()}")
+logging.debug(f"second try, {rlock.acquire(0)}")
+logging.debug(f"third try, {rlock.acquire(0)}")
 
 
 # 锁的上下文管理器，worker_with() 和 worker_no_with() 所实现的功能一模一样的。
@@ -117,6 +125,10 @@ def worker_no_with(lock):
         lock.release()
 
 
+time.sleep(1)
+
+logging.info("")
+logging.info("四、 通过上下文管理器使用锁")
 lock = threading.Lock()
 w = threading.Thread(target=worker_with, args=(lock,))
 nw = threading.Thread(target=worker_no_with, args=(lock,))
