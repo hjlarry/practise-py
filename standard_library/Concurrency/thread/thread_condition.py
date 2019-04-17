@@ -12,6 +12,11 @@ import time
 import threading
 import logging
 
+logging.basicConfig(
+    level=logging.DEBUG, format="%(asctime)s (%(threadName)-2s) %(message)s"
+)
+logging.info("一、 Condition基础使用")
+
 
 def consumer(cond):
     logging.debug("Starting consumer")
@@ -27,9 +32,6 @@ def producer(cond):
         logging.debug("making resource available1")
 
 
-logging.basicConfig(
-    level=logging.DEBUG, format="%(asctime)s (%(threadName)-2s) %(message)s"
-)
 condition = threading.Condition()
 c1 = threading.Thread(target=consumer, args=(condition,), name="c1")
 c2 = threading.Thread(target=consumer, args=(condition,), name="c2")
@@ -39,6 +41,10 @@ time.sleep(1)
 c2.start()
 time.sleep(1)
 p.start()
+time.sleep(1)
+
+logging.info("")
+logging.info("二、 一个对话示例")
 
 
 class XiaoAiLock(threading.Thread):
@@ -49,15 +55,15 @@ class XiaoAiLock(threading.Thread):
 
     def run(self):
         self.lock.acquire()
-        print(f"{self.name}: hello")
+        logging.debug(f"{self.name}: hello")
         self.lock.release()
 
         self.lock.acquire()
-        print(f"{self.name}: 我们来对诗吧")
+        logging.debug(f"{self.name}: 我们来对诗吧")
         self.lock.release()
 
         self.lock.acquire()
-        print(f"{self.name}: 床前明月光")
+        logging.debug(f"{self.name}: 床前明月光")
         self.lock.release()
 
 
@@ -69,25 +75,26 @@ class TianMaoLock(threading.Thread):
 
     def run(self):
         self.lock.acquire()
-        print(f"{self.name}: Hi")
+        logging.debug(f"{self.name}: Hi")
         self.lock.release()
 
         self.lock.acquire()
-        print(f"{self.name}: 好的")
+        logging.debug(f"{self.name}: 好的")
         self.lock.release()
 
         self.lock.acquire()
-        print(f"{self.name}: 疑是地上霜")
+        logging.debug(f"{self.name}: 疑是地上霜")
         self.lock.release()
 
 
+logging.info("只使用可重入锁，不使用Condition时:")
 lock = threading.RLock()
 xiaoai = XiaoAiLock(lock)
 tianmao = TianMaoLock(lock)
 xiaoai.start()
 tianmao.start()
 
-print("Condition Example:")
+logging.info("使用Condition时:")
 
 
 class XiaoAiCond(threading.Thread):
@@ -99,15 +106,15 @@ class XiaoAiCond(threading.Thread):
     def run(self):
         with self.cond:
 
-            print(f"{self.name}: hello")
+            logging.debug(f"{self.name}: hello")
             self.cond.notify()
             self.cond.wait()
 
-            print(f"{self.name}: 我们来对诗吧")
+            logging.debug(f"{self.name}: 我们来对诗吧")
             self.cond.notify()
             self.cond.wait()
 
-            print(f"{self.name}: 床前明月光")
+            logging.debug(f"{self.name}: 床前明月光")
             self.cond.notify()
             self.cond.wait()
 
@@ -121,15 +128,15 @@ class TianMaoCond(threading.Thread):
     def run(self):
         with self.cond:
             self.cond.wait()
-            print(f"{self.name}: Hi")
+            logging.debug(f"{self.name}: Hi")
             self.cond.notify()
 
             self.cond.wait()
-            print(f"{self.name}: 好的")
+            logging.debug(f"{self.name}: 好的")
             self.cond.notify()
 
             self.cond.wait()
-            print(f"{self.name}: 疑是地上霜")
+            logging.debug(f"{self.name}: 疑是地上霜")
             self.cond.notify()
 
 
