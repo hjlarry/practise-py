@@ -1,9 +1,10 @@
 import time
 import threading
 
+print("一、 有否使用Semaphore的对比")
+
 
 def get_detail_url():
-    urls = "request from list page"
     for i in range(20):
         t = threading.Thread(target=get_detail_content, args=(i,))
         t.start()
@@ -16,10 +17,10 @@ def get_detail_content(i):
 
 t = threading.Thread(target=get_detail_url)
 t.start()
+t.join()
 
 
 def get_url_sem(sem):
-    urls = "request from list page"
     for i in range(20):
         sem.acquire()
         t = threading.Thread(target=get_content_sem, args=(i, sem))
@@ -28,7 +29,7 @@ def get_url_sem(sem):
 
 def get_content_sem(i, sem):
     time.sleep(1)
-    print("get detail page content", i)
+    print("use semaphore get detail page content", i)
     sem.release()
 
 
@@ -36,8 +37,11 @@ def get_content_sem(i, sem):
 sem = threading.Semaphore(3)
 t_sem = threading.Thread(target=get_url_sem, args=(sem,))
 t_sem.start()
+t_sem.join()
 
-
+time.sleep(1)
+print()
+print("二、 资源池示例")
 # 有时我们需要允许多个工作函数在同一时间访问同一个资源，但我们也要限制可访问的总数。
 # ActivePool 类只是用来追踪给定时刻下哪些线程在工作的。如果是实际情况中，资源池一般还要分配连接或者其他值给新的活动线程，并且当线程结束后回收这些值。
 class ActivePool:
@@ -68,6 +72,6 @@ def worker(s, pool):
 pool = ActivePool()
 s = threading.Semaphore(2)
 
-for i in range(4):
+for i in range(8):
     t = threading.Thread(target=worker, name=str(i), args=(s, pool))
     t.start()
