@@ -8,6 +8,7 @@ Python 的list,dict等都是线程安全的，它们有「原子操作」，GIL�
 import threading
 import time
 import logging
+import random
 
 logging.basicConfig(
     level=logging.DEBUG, format="[%(levelname)s] (%(threadName)-10s) %(message)s"
@@ -58,3 +59,55 @@ time.sleep(1)
 logging.debug("canceling %s", t2.getName())
 t2.cancel()  # 在delay参数内可以取消执行
 logging.debug("done")
+
+
+logging.info("")
+logging.info("四、 枚举所有线程")
+
+
+def worker():
+    pause = random.randint(1, 5) / 10
+    logging.debug("Daemon Starting sleep %0.2f", pause)
+    time.sleep(pause)
+    logging.debug("Daemon Exit")
+
+
+for i in range(3):
+    t = threading.Thread(target=worker, daemon=True)
+    t.start()
+
+main_thread = threading.main_thread()
+
+logging.debug(threading.enumerate())
+for t in threading.enumerate():
+    if t is main_thread:
+        continue
+    logging.debug("%s joining", t.getName())
+    t.join()
+
+
+logging.info("")
+logging.info("五、 守护线程")
+
+# 设置为守护线程，则主线程结束时会kill掉守护线程
+# t1.join()则会使守护线程持续执行下去，join参数timeout设置后，若超时线程并未结束，则join会返回，不会继续等待。
+def daemon():
+    logging.debug("Daemon Starting")
+    time.sleep(0.2)
+    logging.debug("Daemon Exit")
+
+
+def non_daemon():
+    logging.debug("Starting")
+    logging.debug("Exit")
+
+
+t1 = threading.Thread(target=daemon, daemon=True, name="daemon")
+t2 = threading.Thread(target=non_daemon, name="non-daemon")
+logging.basicConfig(
+    level=logging.DEBUG, format="[%(levelname)s] (%(threadName)-10s) %(message)s"
+)
+
+t1.start()
+t2.start()
+# t1.join()
