@@ -15,6 +15,7 @@ def task(n):
     return n / 10
 
 
+print("一、 future对象")
 ex = futures.ThreadPoolExecutor(max_workers=2)
 f = ex.submit(task, 2)
 print("main:future:", f)
@@ -28,12 +29,13 @@ print("main:future after results", f)
 print("is task finish?", f.done())
 print()
 
+print("二、 使用submit + as_complete")
 # for批量提交至线程池，as_completed实际上是生成器函数，产生任务运行结果了会立即返回
 wait_for = [ex.submit(task, i) for i in range(5, 0, -1)]
 for f in futures.as_completed(wait_for):
     print("main results :", f.result())
 print()
-
+print("三、 使用map")
 # map批量提交至线程池，会直接得到结果并对应好提交的func的顺序一起返回
 results = ex.map(task, range(5, 0, -1))
 print("main:unprocessed results", results)
