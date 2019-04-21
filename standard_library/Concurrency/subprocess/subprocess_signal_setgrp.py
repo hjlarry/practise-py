@@ -23,6 +23,8 @@ import tempfile
 import time
 import sys
 
+print("使用进程组可以解决subprocess_signal_parent_shell的signal_child无法接收到信号的问题")
+
 
 def show_setting_prgrp():
     os.setpgrp()
