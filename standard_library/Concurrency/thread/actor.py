@@ -1,5 +1,6 @@
 from queue import Queue
 from threading import Thread, Event
+from collections import deque
 
 # actor模式是一种最古老的也是最简单的并行和分布式计算解决方案
 # 一个actor就是一个并发执行的任务，只是简单的执行发送给它的消息任务。
@@ -66,6 +67,7 @@ class Actor:
             msg = self.recv()
 
 
+print("一、 发送简单消息")
 # Sample ActorTask
 class PrintActor(Actor):
     def run(self):
@@ -74,14 +76,16 @@ class PrintActor(Actor):
             print("Got:", msg)
 
 
-print("一、 发送简单消息")
-# Sample use
 p = PrintActor()
 p.start()
 p.send("Hello")
 p.send("World")
 p.close()
 p.join()
+
+
+print()
+print("二、 发送方法和参数")
 
 
 class TaggedActor(Actor):
@@ -98,15 +102,16 @@ class TaggedActor(Actor):
         print("Running B", x, y)
 
 
-print()
-print("二、 发送方法和参数")
-# Example
 a = TaggedActor()
 a.start()
 a.send(("A", 1))  # Invokes do_A(1)
 a.send(("B", 2, 3))  # Invokes do_B(2,3)
 a.close()
 a.join()
+
+
+print()
+print("三、 提交任务并得到结果")
 
 
 class Result:
@@ -136,12 +141,74 @@ class Worker(Actor):
             r.set_result(func(*args, **kwargs))
 
 
-print()
-print("三、 提交任务并得到结果")
-# Example use
 worker = Worker()
 worker.start()
 r = worker.submit(pow, 2, 3)
 print(r.result())
 worker.close()
 worker.join()
+
+
+print()
+print("四、 使用生成器代替线程")
+
+
+class ActorScheduler:
+    def __init__(self):
+        self._actors = {}  # Mapping of names to actors
+        self._msg_queue = deque()  # Message queue
+
+    def new_actor(self, name, actor):
+        """
+        Admit a newly started actor to the scheduler and give it a name
+        """
+        self._msg_queue.append((actor, None))
+        self._actors[name] = actor
+
+    def send(self, name, msg):
+        """
+        Send a message to a named actor
+        """
+        actor = self._actors.get(name)
+        if actor:
+            self._msg_queue.append((actor, msg))
+
+    def run(self):
+        """
+        Run as long as there are pending messages.
+        """
+        while self._msg_queue:
+            actor, msg = self._msg_queue.popleft()
+            try:
+                actor.send(msg)
+            except StopIteration:
+                pass
+
+
+def printer():
+    while True:
+        msg = yield
+        print("Got:", msg)
+
+
+def counter(sched):
+    while True:
+        # Receive the current count
+        n = yield
+        if n == 0:
+            break
+        # Send to the printer task
+        sched.send("printer", n)
+        # Send the next count to the counter task (recursive)
+
+        sched.send("counter", n - 1)
+
+
+sched = ActorScheduler()
+# Create the initial actors
+sched.new_actor("printer", printer())
+sched.new_actor("counter", counter(sched))
+
+# Send an initial message to the counter to initiate
+sched.send("counter", 10)
+sched.run()
