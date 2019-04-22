@@ -15,6 +15,7 @@ import tempfile
 import time
 import sys
 
+print("由于父进程创建的子进程是shell，shell再创建的进程才是signal_child，signal_child无法收到信号")
 script = """#!/bin/sh
 echo "Shell script in process $$"
 set -x
