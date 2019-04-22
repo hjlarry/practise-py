@@ -1,7 +1,7 @@
 import asyncio
 import functools
 
-print("*** Waiting for a Future")
+print("一、 Future对象")
 
 
 def mark_done(future, result):
@@ -20,8 +20,8 @@ finally:
     event_loop.close()
 print("final result ", all_done.result())
 
-
-print("*** Future with await")
+print()
+print("二、 await Future对象")
 
 
 def mark_done1(future, result):
@@ -44,7 +44,8 @@ finally:
     event_loop.close()
 
 
-print("*** Future Callbacks")
+print()
+print("三、 为Future添加回调函数")
 
 
 def callback(future, n):
