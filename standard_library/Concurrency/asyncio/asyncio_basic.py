@@ -2,7 +2,7 @@ import asyncio
 import time
 import functools
 
-print("*** Starting a Coroutine")
+print("一、 启动一个协程")
 
 
 async def coroutine():
@@ -15,7 +15,8 @@ try:
 finally:
     event_loop.close()
 
-print("*** Returning Values from Coroutines")
+print()
+print("二、 得到协程的返回值")
 
 
 async def coroutine_result():
@@ -30,7 +31,8 @@ try:
 finally:
     event_loop.close()
 
-print("*** Chaining Coroutines")
+print()
+print("三、 链接多个协程")
 
 
 async def outter():
@@ -54,8 +56,8 @@ try:
 finally:
     event_loop.close()
 
-
-print("*** Scheduling a Callback Soon")
+print()
+print("四、 立即回调")
 
 
 def callback(arg, *, kwargs="default"):
@@ -76,8 +78,8 @@ try:
 finally:
     event_loop.close()
 
-
-print("*** Scheduling a Callback with a Delay")
+print()
+print("五、 延迟回调")
 
 
 def callback1(n):
@@ -98,8 +100,8 @@ try:
 finally:
     event_loop.close()
 
-
-print("*** Scheduling a Callback for a Specific Time")
+print()
+print("六、 在某个特定时间回调")
 
 
 def callback2(n, loop):
