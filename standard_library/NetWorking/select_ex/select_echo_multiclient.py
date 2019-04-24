@@ -14,7 +14,6 @@ for s in socks:
 
 for message in messages:
     outgoing_data = message.encode()
-    # send msgs on both sockets
     for s in socks:
         print(f"{s.getsockname()} sending {outgoing_data}", file=sys.stderr)
         s.send(outgoing_data)
