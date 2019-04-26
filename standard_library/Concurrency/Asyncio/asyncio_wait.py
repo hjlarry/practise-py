@@ -1,6 +1,6 @@
 import asyncio
 
-print("*** Waiting for Multiple Coroutines")
+print("一、 asyncio.wait()返回完成和未完成的协程")
 
 
 async def phase(i):
@@ -21,12 +21,13 @@ async def main(num):
 
 event_loop = asyncio.get_event_loop()
 try:
-    print(1)
     event_loop.run_until_complete(main(3))
 finally:
     event_loop.close()
 
-print("*** Wait timeout")
+
+print()
+print("二、 asyncio.wait()添加timeout参数")
 
 
 async def phase1(i):
@@ -56,13 +57,12 @@ async def main1(num):
 
 event_loop = asyncio.new_event_loop()
 try:
-    print(1)
     event_loop.run_until_complete(main1(3))
 finally:
     event_loop.close()
 
-
-print("*** Gathering Results from Coroutines")
+print()
+print("三、 使用gather收集协程结果")
 # gather比wait层次更高，切具备分组的功能
 async def phase_1():
     print("in phase1")
@@ -89,7 +89,8 @@ try:
 finally:
     event_loop.close()
 
-print("*** Handling Background Operations as They Finish")
+print()
+print("四、使用as_completed在协程完成后执行一些后台操作")
 
 
 async def phase3(i):
