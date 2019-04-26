@@ -16,7 +16,7 @@ async def html_get(url, lock):
         return cache[url]
 
 
-print("*** Locks")
+print("一、 使用asyncio.Lock()")
 
 
 def unlock(lock):
@@ -58,8 +58,8 @@ try:
 finally:
     event_loop.close()
 
-
-print("*** Events")
+print()
+print("二、 使用asyncio.Event()")
 
 
 def set_event(event):
@@ -95,7 +95,8 @@ try:
 finally:
     event_loop.close()
 
-print("*** Conditions")
+print()
+print("三、 使用asyncio.Condition()")
 
 
 async def consumer(condition, n):
@@ -136,7 +137,8 @@ finally:
     event_loop.close()
 
 
-print("*** Queues")
+print()
+print("四、 使用asyncio.Queue()")
 
 
 async def consumer1(n, q):
