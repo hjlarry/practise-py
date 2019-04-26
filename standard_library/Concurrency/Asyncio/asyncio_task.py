@@ -1,6 +1,6 @@
 import asyncio
 
-print("*** Starting a Task")
+print("一、 创建任务")
 
 
 async def task_func():
@@ -22,7 +22,8 @@ finally:
     event_loop.close()
 
 
-print("*** Canceling a Task")
+print()
+print("二、 取消任务示例一")
 
 
 async def task_func1():
@@ -49,7 +50,8 @@ finally:
     event_loop.close()
 
 
-print("*** Canceling a Task example2")
+print()
+print("三、 取消任务示例二")
 
 
 async def task_func2():
@@ -87,39 +89,35 @@ finally:
     event_loop.close()
 
 
-print("*** Creating Tasks from Coroutines")
+print()
+print("四、 通过协程创建任务(ensure_future)")
 
 
 async def wrapped():
-    print(5)
     return "result-wrapped"
 
 
 async def inner(task):
-    print(4)
     print("inner", task)
     result = await task
     print("task return ", result)
 
 
 async def starter():
-    print(2)
     # 实际源码内也调用了create_task
     task = asyncio.ensure_future(wrapped())
-    print(3)
     await inner(task)
-    print(6)
 
 
 event_loop = asyncio.new_event_loop()
 try:
-    print(1)
     event_loop.run_until_complete(starter())
 finally:
     event_loop.close()
 
 
-print("*** Canceling Tasks with ctrl-c")
+print()
+print("五、 通过ctrl-c取消任务")
 
 
 async def get_html(t):
@@ -129,7 +127,7 @@ async def get_html(t):
     return 1
 
 
-task1 = get_html(2)
+task1 = get_html(1)
 task2 = get_html(3)
 task3 = get_html(3)
 tasks = [task1, task2, task3]
