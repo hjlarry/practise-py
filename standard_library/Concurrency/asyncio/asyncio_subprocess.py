@@ -1,15 +1,14 @@
 import asyncio
 import functools
 
-print("*** Using the Protocol Abstraction with the Subprocesses")
+print("一、 使用抽象协议执行子进程")
 
 
 async def run_df(loop):
     print("in run_df")
     cmd_done = asyncio.Future(loop=loop)
     factory = functools.partial(DFProtocol, cmd_done)
-    # use subprocess_exec() to launch the process and tie it to a protocol class
-    # that know how to read the df command output and parse it
+    # 使用subprocess_exec() 可以进入子进程执行，并将其连接至一个协议类以便解析它
     proc = loop.subprocess_exec(factory, "df", "-hl", stdin=None, stderr=None)
     try:
         print("launching process")
@@ -21,8 +20,8 @@ async def run_df(loop):
     return cmd_done.result()
 
 
-# the method of the protocol class are called automaticalley based on I/O events for the subprocess.
-# Because both the stdin and stderr arguments are set to None, those communication channels are not connected to the new process.
+# SubprocessProtocol中的方法会被自动调用，基于子进程的IO事件
+# 本例中由于没有设置stdin和stderr参数，这些通道并没有连接至子进程中
 class DFProtocol(asyncio.SubprocessProtocol):
     FD_NAMES = ["stdin", "stdout", "stderr"]
 
@@ -76,7 +75,7 @@ else:
         print("{Mounted:25}:{Avail}".format(**r))
 
 print()
-print("*** Calling Subprocesses with the Coroutines and Streams")
+print("二、 使用协程和流调用子进程")
 
 
 def _parse_results(output):
@@ -131,7 +130,8 @@ else:
         print("{Mounted:25}:{Avail}".format(**r))
 
 
-print("*** Sending Data to a Subprocess")
+print()
+print("三、 向子进程发送数据")
 
 
 async def to_upper(input):
