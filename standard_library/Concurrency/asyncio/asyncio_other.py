@@ -9,7 +9,7 @@ import time
 import concurrent.futures
 
 
-print("*** Interacting with Domain Name Services")
+print("一、 和DNS服务器交互")
 TARGETS = [
     ("pymotw.com", "https"),
     ("doughellmann.com", "https"),
@@ -45,7 +45,8 @@ try:
 finally:
     event.close()
 
-print("*** Receiving Unix Signals")
+print()
+print("二、 接收Unix信号")
 
 
 def signal_handle(name):
@@ -83,8 +84,8 @@ finally:
     event_loop.close()
 
 print()
-print("*** Combining Coroutines with Threads and Processes")
-print("ThreadPoolExecutor")
+print("三、协程结合多线程多进程")
+print("【ThreadPoolExecutor】")
 
 
 def blocks(n):
@@ -121,7 +122,7 @@ finally:
     event_loop.close()
 
 print()
-print("ProcessPoolExecutor")
+print("【ProcessPoolExecutor】")
 
 
 def blocks1(n):
