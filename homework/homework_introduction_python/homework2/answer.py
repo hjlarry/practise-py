@@ -1,3 +1,5 @@
+import re
+
 # Question 2
 s0_255 = "(25[0-5]|2[0-4]\d|1\d{2}|\d{1,2})"
 s_ip = re.match(s0_255 + "\." + s0_255 + "\." + s0_255 + "\." + s0_255, "0.168.1.1")
@@ -71,10 +73,6 @@ def list_file(level, path, pos=0):
         click.echo("   " * pos + "|--" + dir)
         if os.path.isdir(dir) and level > 0:
             list_file(level - 1, dir, pos + 1)
-
-
-if __name__ == "__main__":
-    main()
 
 
 # Question 6
