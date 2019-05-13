@@ -1,4 +1,6 @@
 import collections
+import time
+import heapq
 
 # https://zhuanlan.zhihu.com/p/64991670
 class Future:
@@ -99,10 +101,16 @@ class Handle:
         self._callback(*self._args)
 
 
+class TimeHandle(Handle):
+    pass
+
+
 class Eventloop:
     def __init__(self):
         self._ready = collections.deque()  # 事件队列
         self._stopping = False
+        self._scheduled = []  # 存放定时任务的队列
+        self._current_handle = None
 
     def stop(self):
         self._stopping = True
@@ -112,6 +120,15 @@ class Eventloop:
         handle = Handle(callback, self, *args)
         self._ready.append(handle)
 
+    def call_later(self, delay, callback, *args):
+        if not delay or delay < 0:
+            self.call_soon(callback, *args)
+        else:
+            when = time.time() + delay
+            time_handle = TimeHandle(when, callback, self, *args)
+            self._scheduled.append(time_handle)
+            heapq.heapify(self._scheduled)
+
     def add_ready(self, handle):
         # 将事件添加到队列里
         if isinstance(handle, Handle):
@@ -120,6 +137,12 @@ class Eventloop:
             raise Exception("only handle is allowed to join in ready")
 
     def run_once(self):
+        if (not self._ready) and self._scheduled:
+            while self._scheduled[0]._when <= time.time():
+                time_handle = heapq.heappop(self._scheduled)
+                self._ready.append(time_handle)
+                if not self._scheduled:
+                    break
         # 执行队列里的事件
         ntodo = len(self._ready)
         for i in range(ntodo):
