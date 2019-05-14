@@ -1,8 +1,17 @@
 import collections
 import time
 import heapq
+import functools
 
 # https://zhuanlan.zhihu.com/p/64991670
+
+_event_loop = None
+
+
+def set_future_result(future, result):
+    future.set_result(result)
+
+
 class Future:
 
     _FINISHED = "finished"
@@ -22,7 +31,7 @@ class Future:
     def _schedule_callbacks(self):
         # 将回调函数添加到事件队列里，eventloop 稍后会运行
         for callback in self._callbacks:
-            self.loop.add_ready(callback)
+            self._loop.add_ready(callback)
         self._callbacks = []
 
     def set_result(self, result):
@@ -67,12 +76,17 @@ class Task(Future):
             if exc is None:
                 result = self._coro.send(None)
             else:
+                print("exception:", exc)
                 result = self._coro.throw(exc)  # 有异常则抛出
         except StopIteration as exc:  # 说明协程已执行完毕，为它设置值
             self.set_result(exc.value)
         else:
             if isinstance(result, Future):
-                if result._blocking:
+                if result._loop is not self._loop:
+                    self._loop.call_soon(
+                        self._step, RuntimeError("future 与 task不在同一个事件循环中")
+                    )
+                elif result._blocking:
                     self._blocking = False
                     result.add_done_callback(self._wakeup, result)
                 else:
@@ -91,6 +105,23 @@ class Task(Future):
             self._step()
 
 
+def sleep(delay, result=None, loop=None):
+    if delay == 0:
+        yield
+        return result
+    future = Future(loop=loop)
+    future._loop.call_later(delay, set_future_result, future, result)
+    yield from future
+
+
+def ensure_task(coro_or_future, loop=None):
+    if isinstance(coro_or_future, Future):
+        return coro_or_future
+    else:
+        task = Task(coro_or_future, loop)
+        return task
+
+
 class Handle:
     # 对函数和参数的简单封装
     def __init__(self, callback, loop, *args):
@@ -101,8 +132,20 @@ class Handle:
         self._callback(*self._args)
 
 
+@functools.total_ordering
 class TimeHandle(Handle):
-    pass
+    def __init__(self, when, callback, loop, *args):
+        super().__init__(callback, loop, *args)
+        self._when = when
+
+    def __hash__(self):
+        return hash(self._when)
+
+    def __lt__(self, other):
+        return self._when < other._when
+
+    def __eq__(self, other):
+        return self._when == other._when
 
 
 class Eventloop:
@@ -155,8 +198,10 @@ class Eventloop:
             if self._stopping:
                 break
 
-
-_event_loop = None
+    def run_until_complete(self, fut):
+        future = ensure_task(fut, self)
+        future.add_done_callback(_complete_eventloop, future)
+        self.run_forever()
 
 
 def get_event_loop():
@@ -164,3 +209,21 @@ def get_event_loop():
     if _event_loop is None:
         _event_loop = Eventloop()
     return _event_loop
+
+
+def _complete_eventloop(fut):
+    fut._loop.stop()
+
+
+def compute(x, y):
+    yield from sleep(1)
+    return x + y
+
+
+def print_sum(x, y):
+    result = yield from compute(x, y)
+    print("%s + %s = %s" % (x, y, result))
+
+
+loop = get_event_loop()
+loop.run_until_complete(print_sum(1, 2))
