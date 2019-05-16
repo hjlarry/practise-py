@@ -1,4 +1,4 @@
-from .handles import Handle
+from .handles import Handle, DelayHandle
 from .eventloop import get_event_loop
 
 
@@ -21,12 +21,16 @@ class Future:
         self.status = self._PENDING
         self._blocking = False
         self._result = None
+        self._delay_callbacks = []
 
     def _schedule_callbacks(self):
         # 将回调函数添加到事件队列里，eventloop 稍后会运行
         for callback in self._callbacks:
             self._loop.add_ready(callback)
         self._callbacks = []
+        for delay_callback in self._delay_callbacks:
+            self._loop.add_delay(delay_callback)
+        self._delay_callbacks = []
 
     def set_result(self, result):
         # 给future设置结果，并将 future 置为结束状态
@@ -41,6 +45,13 @@ class Future:
         else:
             handle = Handle(callback, self._loop, *args)
             self._callbacks.append(handle)
+
+    def add_delay_callback(self, delay, callback, *args):
+        if self.done():
+            self._loop.call_later(delay, callback, self._loop, *args)
+        else:
+            delay_handle = DelayHandle(delay, callback, self._loop, *args)
+            self._delay_callbacks.append(delay_handle)
 
     def done(self):
         return self.status != self._PENDING

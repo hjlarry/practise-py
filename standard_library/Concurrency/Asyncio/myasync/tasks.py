@@ -1,3 +1,4 @@
+import functools
 from .futures import Future, set_future_result
 
 
@@ -56,3 +57,22 @@ def sleep(delay, result=None, loop=None):
     future = Future(loop=loop)
     future._loop.call_later(delay, set_future_result, future, result)
     yield from future
+
+
+def _schedule_task(delay, gen, *args):
+    coro = gen(*args)
+    task = ensure_task(coro)
+    task.add_delay_callback(delay, _schedule_task, delay, gen, *args)
+    task._scheduled = True
+    return task
+
+
+def schedule_task(delay):
+    def decorate(func):
+        @functools.wraps(func)
+        def wrapper(*args):
+            return _schedule_task(delay, func, *args)
+
+        return wrapper
+
+    return decorate

@@ -2,7 +2,7 @@ import collections
 import heapq
 import time
 
-from .handles import Handle, TimeHandle
+from .handles import Handle, TimeHandle, DelayHandle
 
 _event_loop = None
 
@@ -38,6 +38,10 @@ class Eventloop:
         else:
             raise Exception("only handle is allowed to join in ready")
 
+    def add_delay(self, handle):
+        if isinstance(handle, DelayHandle):
+            self.call_later(handle._delay, handle._callback, *handle._args)
+
     def run_once(self):
         if (not self._ready) and self._scheduled:
             while self._scheduled[0]._when <= time.time():
@@ -62,6 +66,12 @@ class Eventloop:
 
         future = ensure_task(fut, self)
         future.add_done_callback(_complete_eventloop, future)
+        self.run_forever()
+
+    def run_not_complete(self, fut):
+        from .tasks import ensure_task
+
+        future = ensure_task(fut, self)
         self.run_forever()
 
 

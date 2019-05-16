@@ -13,6 +13,7 @@ class Handle:
 
 @functools.total_ordering
 class TimeHandle(Handle):
+    # 定时任务
     def __init__(self, when, callback, loop, *args):
         super().__init__(callback, loop, *args)
         self._when = when
@@ -25,3 +26,10 @@ class TimeHandle(Handle):
 
     def __eq__(self, other):
         return self._when == other._when
+
+
+class DelayHandle(Handle):
+    # 间隔任务
+    def __init__(self, delay, callback, loop, *args):
+        super().__init__(callback, loop, *args)
+        self._delay = delay
