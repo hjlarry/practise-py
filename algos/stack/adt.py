@@ -1,4 +1,8 @@
 import abc
+import sys
+import pathlib
+
+sys.path.append(str(pathlib.Path(__file__).parent.parent))
 
 from arrayADT import Array
 from linkListADT import DoubleLinkList
@@ -37,6 +41,9 @@ class ArrayStack(Stack):
         item = self.items[self.count - 1]
         self.count -= 1
         return item
+
+    def is_empty(self):
+        return self.count == 0
 
 
 class LinklistStack(Stack):
