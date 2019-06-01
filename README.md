@@ -1,18 +1,14 @@
-# algos 
-- 整理了一些算法和数据结构的python实现
-- 参考教程一：https://github.com/PegasusWang/python_data_structures_and_algorithms
-- 参考教程二：https://github.com/wangzheng0822/algo
+# design_patterns
+- python中常用的设计模式整理
 
 # fluent_py
-- 《流畅的python》阅读笔记整理
-
-# homeword
-- 爱湃森课程作业练习: https://www.pycourses.com/
+- 《流畅的python》经典示例整理
 
 # learnnote
 - 《python学习笔记》阅读笔记整理
+- python中一些方法、类、属性等特性研究
 
-# practise_programe
+# small_programe
 - 自己参考教程做的一些练习
 
 # sourcecode_research
