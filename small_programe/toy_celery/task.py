@@ -31,7 +31,7 @@ class BaseTask(abc.ABC):
             _task = {"task_id": self.task_id, "args": args, "kwargs": kwargs}
             serialized_task = json.dumps(_task)
             self.broker.enqueue(queue_name=self.task_name, item=serialized_task)
-            print(f"task {task_id} success queued")
+            print(f"task {self.task_id} success queued")
         except Exception:
             raise Exception("unable to publish task to broker")
         return self.task_id
@@ -39,7 +39,8 @@ class BaseTask(abc.ABC):
 
 def get_result(task_id):
     backend = Backend()
-    dequeued_item = json.loads(backend.dequeue(queue_name=task_id))
+    t = backend.dequeue(queue_name=task_id)
+    dequeued_item = json.loads(t)
 
     class Info:
         def __init__(self, state, meta):
