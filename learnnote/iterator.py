@@ -176,44 +176,44 @@
 # sched(t1, t2)
 
 
-# 七、 函数式编程
-# 迭代
-import functools
-import itertools
+# # 七、 函数式编程
+# # 迭代
+# import functools
+# import itertools
 
-x = map(lambda a, b: (a, b), [1, 2, 3], "abcd")
-print(list(x))
-# 聚合
-x = zip((1, 2, 3), "abcd", [1.1, 2.2])
-print(list(x))
-# 累积
-def calc(ret, x):
-    print(f"ret={ret}, x={x}")
-    return ret + x
-
-
-functools.reduce(calc, [1, 2, 3, 4, 5, 6])
-# 过滤
-x = filter(lambda n: n % 2 == 0, range(10))
-print(list(x))
-# 判断
-print(all([1, "a", ""]))
-print(any([1, "a", ""]))
+# x = map(lambda a, b: (a, b), [1, 2, 3], "abcd")
+# print(list(x))
+# # 聚合
+# x = zip((1, 2, 3), "abcd", [1.1, 2.2])
+# print(list(x))
+# # 累积
+# def calc(ret, x):
+#     print(f"ret={ret}, x={x}")
+#     return ret + x
 
 
-def count(n):
-    while True:
-        yield n
-        n += 1
+# functools.reduce(calc, [1, 2, 3, 4, 5, 6])
+# # 过滤
+# x = filter(lambda n: n % 2 == 0, range(10))
+# print(list(x))
+# # 判断
+# print(all([1, "a", ""]))
+# print(any([1, "a", ""]))
 
 
-# 使用itertools才能对迭代器进行切片
-c = count(0)
-for x in itertools.islice(c, 10, 20):
-    print(x)
+# def count(n):
+#     while True:
+#         yield n
+#         n += 1
 
 
-# 展开嵌套的序列
+# # 使用itertools才能对迭代器进行切片
+# c = count(0)
+# for x in itertools.islice(c, 10, 20):
+#     print(x)
+
+
+# 八、 展开嵌套的序列
 from collections import Iterable
 
 
