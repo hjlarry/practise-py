@@ -57,4 +57,3 @@ else:
     print("returncode:", completed.returncode)
     print("stdout is {!r}".format(completed.stdout))
     print("stderr is {!r}".format(completed.stderr))
-

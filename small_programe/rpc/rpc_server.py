@@ -13,7 +13,7 @@ def handle_conn(conn, addr, handlers):
             print(addr, "bye")
             conn.close()
             break  # 退出循环，处理下一个连接
-        length, = struct.unpack("I", length_prefix)
+        (length,) = struct.unpack("I", length_prefix)
         body = conn.recv(length).decode()  # 请求消息体
         request = json.loads(body)
         in_ = request["in"]

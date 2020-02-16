@@ -20,4 +20,3 @@ class Backend:
             return None
         dequed_item = dequed_item[1]
         return dequed_item
-

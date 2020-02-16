@@ -70,4 +70,3 @@ class TestTool:
         self._tool("set", "a", expected)
         actual = self._tool("get", "a")
         eq_(actual, expected)
-

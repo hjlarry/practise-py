@@ -16,4 +16,3 @@ signal.alarm(2)
 print("Before:", time.ctime())
 time.sleep(6)  # 调用过程中信号进入执行
 print("After:", time.ctime())
-

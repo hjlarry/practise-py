@@ -40,7 +40,7 @@ class RPCHandler(asyncore.dispatcher_with_send):
             length_prefix = self.rbuf.read(4).encode()
             if len(length_prefix) < 4:
                 break
-            length, = struct.unpack("I", length_prefix)
+            (length,) = struct.unpack("I", length_prefix)
             body = self.rbuf.read(length)
             if len(body) < length:
                 break

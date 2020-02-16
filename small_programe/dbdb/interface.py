@@ -41,4 +41,3 @@ class DBDB:
             return False
         else:
             return True
-

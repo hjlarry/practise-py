@@ -38,7 +38,7 @@ wrapper = io.TextIOWrapper(input, encoding="utf-8")
 print(wrapper.read())
 
 # I/O系统由一系列的层次构建而成
-f = open('test_files/sth.txt', 'w')
+f = open("test_files/sth.txt", "w")
 # io.TextIOWrapper 是一个编码和解码Unicode的文本处理层
 print(f)
 # io.BufferedWriter 是一个处理二进制数据的带缓冲的I/O层

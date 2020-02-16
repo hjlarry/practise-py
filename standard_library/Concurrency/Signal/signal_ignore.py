@@ -14,4 +14,3 @@ print("忽略了原本的信号SIGINT")
 print("My PID:", os.getpid())
 # pause相当于while true?
 signal.pause()
-

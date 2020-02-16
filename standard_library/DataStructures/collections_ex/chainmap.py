@@ -7,19 +7,19 @@ b = {"b": "B", "c": "D"}
 m = collections.ChainMap(a, b)
 print(f"a={m['a']}")
 print(f"b={m['b']}")
-print(f"c={m['c']}") # 只会读取第一个c
+print(f"c={m['c']}")  # 只会读取第一个c
 print(f"keys={list(m.keys())}")
 print(f"values={list(m.values())}")
-print("Items:", end=' ')
+print("Items:", end=" ")
 for k, v in m.items():
-    print(f"{k} = {v}", end=' ')
+    print(f"{k} = {v}", end=" ")
 print()
 print()
 
-print("maps:",m.maps)
+print("maps:", m.maps)
 print(f"c={m['c']}")
 m.maps = list(reversed(m.maps))
-print("reverse maps:",m.maps)
+print("reverse maps:", m.maps)
 print(f"get another c: c={m['c']}")
 print()
 

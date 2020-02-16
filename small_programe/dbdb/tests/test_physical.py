@@ -41,24 +41,24 @@ class TestStorage:
     def test_commit_root_address(self):
         self.p.commit_root_address(257)
         root_bytes = self._get_f_contents()[:8]
-        eq_(root_bytes, b'\x00\x00\x00\x00\x00\x00\x01\x01')
+        eq_(root_bytes, b"\x00\x00\x00\x00\x00\x00\x01\x01")
 
     def test_get_root_address(self):
         self.f.seek(0)
-        self.f.write(b'\x00\x00\x00\x00\x00\x00\x02\x02')
+        self.f.write(b"\x00\x00\x00\x00\x00\x00\x02\x02")
         root_address = self.p.get_root_address()
         eq_(root_address, 514)
 
     def test_workflow(self):
-        a1 = self.p.write(b'one')
-        a2 = self.p.write(b'two')
+        a1 = self.p.write(b"one")
+        a2 = self.p.write(b"two")
         self.p.commit_root_address(a2)
-        a3 = self.p.write(b'three')
+        a3 = self.p.write(b"three")
         eq_(self.p.get_root_address(), a2)
-        a4 = self.p.write(b'four')
+        a4 = self.p.write(b"four")
         self.p.commit_root_address(a4)
-        eq_(self.p.read(a1), b'one')
-        eq_(self.p.read(a2), b'two')
-        eq_(self.p.read(a3), b'three')
-        eq_(self.p.read(a4), b'four')
+        eq_(self.p.read(a1), b"one")
+        eq_(self.p.read(a2), b"two")
+        eq_(self.p.read(a3), b"three")
+        eq_(self.p.read(a4), b"four")
         eq_(self.p.get_root_address(), a4)

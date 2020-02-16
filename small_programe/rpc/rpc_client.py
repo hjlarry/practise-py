@@ -10,7 +10,7 @@ def rpc(sock: socket.socket, in_, params):
     sock.send(length_prefix)
     sock.sendall(request.encode())  # sendall = send + flush
     length_prefix = sock.recv(4)  # 响应长度前缀
-    length, = struct.unpack("I", length_prefix)
+    (length,) = struct.unpack("I", length_prefix)
     body = sock.recv(length).decode()  # 响应消息体
     response = json.loads(body)
     return response["out"], response["result"]  # 返回响应类型和结果

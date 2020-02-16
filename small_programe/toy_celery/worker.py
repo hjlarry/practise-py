@@ -21,4 +21,3 @@ class Worker:
             except Exception:
                 print("Unable to execute task.")
                 continue
-

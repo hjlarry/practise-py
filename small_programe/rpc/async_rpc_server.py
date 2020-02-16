@@ -35,7 +35,7 @@ class RPCHandler(asyncore.dispatcher_with_send):  # 客户套接字处理器必�
             length_prefix = self.rbuf.read(4).encode()
             if len(length_prefix) < 4:  # 不足一个消息
                 break
-            length, = struct.unpack("I", length_prefix)
+            (length,) = struct.unpack("I", length_prefix)
             body = self.rbuf.read(length)
             if len(body) < length:  # 不足一个消息
                 break

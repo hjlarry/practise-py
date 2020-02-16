@@ -40,17 +40,17 @@ while True:
 print()
 
 d = collections.deque(range(10))
-print("init:",d)
+print("init:", d)
 d.rotate(2)
-print("rotate(2):",d)
+print("rotate(2):", d)
 d.rotate(-4)
-print("rotate(-4):",d)
+print("rotate(-4):", d)
 print()
 
 d = collections.deque(maxlen=3)
 for i in range(10):
     d.append(i)
-print("maxlen deque:",d)
+print("maxlen deque:", d)
 
 print("二、 在多线程中使用deque")
 candle = collections.deque(range(5))
@@ -76,6 +76,3 @@ right.start()
 left.join()
 right.join()
 print()
-
-
-

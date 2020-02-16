@@ -31,4 +31,3 @@ time.sleep(0.1)
 print(time.ctime(), "Wait for  ", alarm_thread.name)
 alarm_thread.join()
 print(time.ctime(), "Exiting normally  ")
-
