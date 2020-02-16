@@ -272,6 +272,7 @@ class CachedSpamManager:
     def clear(self):
         self._cache.clear()
 
+
 # 不应直接去初始化，而是用类方法get_spam
 class Spam:
     manager = CachedSpamManager()

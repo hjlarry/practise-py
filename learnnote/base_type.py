@@ -206,4 +206,3 @@ u1 = User2(1)
 u2 = User2(1)
 s2 = set((u1, u2))
 print(s2)
-
