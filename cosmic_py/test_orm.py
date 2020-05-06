@@ -1,7 +1,7 @@
 import models
 
 
-def test_orderline_mapper_can_load_lines(session):  # (1)
+def test_orderline_mapper_can_load_lines(session):
     session.execute(
         "INSERT INTO order_lines (orderid, sku, qty) VALUES "
         '("order1", "RED-CHAIR", 12),'

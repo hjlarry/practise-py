@@ -1,3 +1,4 @@
+from sqlalchemy import MetaData, Table, Column, Integer, String
 from sqlalchemy.orm import mapper, relationship
 
 import models
