@@ -17,8 +17,9 @@ class Batch:
         self.eta = eta
         self._purchased_quantity = qty
         self._allocations = set()
+
     def __repr__(self):
-        return f'<Batch {self.reference}>'
+        return f"<Batch {self.reference}>"
 
     def allocate(self, line: OrderLine):
         if self.can_allocate(line):
