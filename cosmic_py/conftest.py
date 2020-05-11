@@ -4,7 +4,9 @@ from pathlib import Path
 
 import requests
 from sqlalchemy import create_engine
+from sqlalchemy.exc import OperationalError
 from sqlalchemy.orm import sessionmaker, clear_mappers
+
 
 from orm import metadata, start_mappers
 import config
@@ -47,7 +49,7 @@ def wait_for_webapp_to_come_up():
     while time.time() < deadline:
         try:
             return requests.get(url)
-        except ConnectionError:
+        except requests.ConnectionError:
             time.sleep(0.5)
     pytest.fail("API never came up")
 
