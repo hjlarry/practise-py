@@ -1,6 +1,6 @@
 import pytest
 
-from respository import AbstractRepository
+from repository import AbstractRepository
 import models
 import services
 
