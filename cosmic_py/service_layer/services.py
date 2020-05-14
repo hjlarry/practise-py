@@ -1,3 +1,6 @@
+from typing import Optional
+from datetime import date
+
 from domain import models
 from adapters.repository import AbstractRepository
 
@@ -8,6 +11,14 @@ class InvalidSku(Exception):
 
 def is_valid_sku(sku, batches):
     return sku in {b.sku for b in batches}
+
+
+def add_batch(
+    ref: str, sku: str, qty: int, eta: Optional[date], repo: AbstractRepository, session
+):
+    batch = models.Batch(ref, sku, qty, eta)
+    repo.add(batch)
+    session.commit()
 
 
 def allocate(
