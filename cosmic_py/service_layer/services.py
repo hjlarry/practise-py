@@ -1,5 +1,5 @@
-import models
-from repository import AbstractRepository
+from domain import models
+from adapters.repository import AbstractRepository
 
 
 class InvalidSku(Exception):
