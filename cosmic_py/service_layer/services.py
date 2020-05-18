@@ -2,7 +2,7 @@ from typing import Optional
 from datetime import date
 
 from domain import models
-from adapters.repository import AbstractRepository
+from .unit_of_work import AbstractUnitOfWork
 
 
 class InvalidSku(Exception):
@@ -14,20 +14,20 @@ def is_valid_sku(sku, batches):
 
 
 def add_batch(
-    ref: str, sku: str, qty: int, eta: Optional[date], repo: AbstractRepository, session
+    ref: str, sku: str, qty: int, eta: Optional[date], uow: AbstractUnitOfWork
 ):
     batch = models.Batch(ref, sku, qty, eta)
-    repo.add(batch)
-    session.commit()
+    with uow:
+        uow.batches.add(batch)
+        uow.commit()
 
 
-def allocate(
-    orderid: str, sku: str, qty: int, repo: AbstractRepository, session
-) -> str:
-    batches = repo.list()
+def allocate(orderid: str, sku: str, qty: int, uow: AbstractUnitOfWork) -> str:
     line = models.OrderLine(orderid, sku, qty)
-    if not is_valid_sku(line.sku, batches):
-        raise InvalidSku(f"Invalid sku {line.sku}")
-    batchref = models.allocate(line, batches)
-    session.commit()
+    with uow:
+        batches = uow.batches.list()
+        if not is_valid_sku(line.sku, batches):
+            raise InvalidSku(f"Invalid sku {line.sku}")
+        batchref = models.allocate(line, batches)
+        uow.commit()
     return batchref
