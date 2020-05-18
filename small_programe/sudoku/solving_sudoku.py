@@ -1,6 +1,7 @@
 import itertools
 from sudoku import print_answers
 
+
 def is_full(challange, m=3):
     for i, j in itertools.product(range(m ** 2), repeat=2):
         if challange[i][j] is None:
@@ -102,14 +103,16 @@ def try_candidate(challange, id, m=3):
     return False
 
 
-testing = [[None,None,None,3,None,6,None,None,None],
-           [None,1,None,8,None,None,None,None,9],
-           [5, 6,None,None,4,None,8,3,None],
-           [None,None,8,None,None,None,None,2,None],
-           [None,None,None,7,6,None,None,None,None],
-           [4,None,None,None,None,None,5,None,None],
-           [6,None,2,4,None,None,None,9,1],
-           [None,None,None,None,2,9,None,None,None],
-           [None,8,None,None,1,None,None,None,6]]
+testing = [
+    [None, None, None, 3, None, 6, None, None, None],
+    [None, 1, None, 8, None, None, None, None, 9],
+    [5, 6, None, None, 4, None, 8, 3, None],
+    [None, None, 8, None, None, None, None, 2, None],
+    [None, None, None, 7, 6, None, None, None, None],
+    [4, None, None, None, None, None, 5, None, None],
+    [6, None, 2, 4, None, None, None, 9, 1],
+    [None, None, None, None, 2, 9, None, None, None],
+    [None, 8, None, None, 1, None, None, None, 6],
+]
 result = solving_soduku(testing)
 print_answers(result)

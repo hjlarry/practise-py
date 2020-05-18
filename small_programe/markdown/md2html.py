@@ -340,7 +340,6 @@ class MDParser:
             j += 1
         return s
 
-    
     # 处理链接
     @staticmethod
     def handle_img_link(s):

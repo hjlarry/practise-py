@@ -83,6 +83,7 @@ def print_answers(board):
         else:
             print(spacer)
 
+
 if __name__ == "__main__":
     board = make_board()
     print_board(board)

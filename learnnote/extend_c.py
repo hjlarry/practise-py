@@ -19,10 +19,7 @@ extend.each(ctypes.byref(nums), len_nums)
 
 
 class data_t(ctypes.Structure):
-    _fields_ = [
-        ("x", ctypes.c_int),
-        ("y", ctypes.c_int),
-    ]
+    _fields_ = [("x", ctypes.c_int), ("y", ctypes.c_int)]
 
 
 d = data_t()
