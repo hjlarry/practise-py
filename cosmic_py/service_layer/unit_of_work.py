@@ -25,7 +25,9 @@ class AbstractUnitOfWork(abc.ABC):
         raise NotImplementedError
 
 
-DEFAULT_SESSION_FACTORY = sessionmaker(bind=create_engine(config.get_postgres_uri()))
+DEFAULT_SESSION_FACTORY = sessionmaker(
+    bind=create_engine(config.get_postgres_uri(), isolation_level="REPEATABLE READ",)
+)
 
 
 class SqlAlchemyUnitOfWork(AbstractUnitOfWork):
