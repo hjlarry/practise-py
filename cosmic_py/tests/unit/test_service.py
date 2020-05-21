@@ -5,22 +5,19 @@ from service_layer import services, unit_of_work
 
 
 class FakeRepository(AbstractRepository):
-    def __init__(self, batches):
-        self.batches = set(batches)
+    def __init__(self, products):
+        self._products = set(products)
 
     def add(self, batch):
-        self.batches.add(batch)
+        self._products.add(batch)
 
-    def get(self, reference):
-        return next(b for b in self.batches if b.reference == reference)
-
-    def list(self):
-        return list(self.batches)
+    def get(self, sku):
+        return next((p for p in self._products if p.sku == sku), None)
 
 
 class FakeUnitOfWork(unit_of_work.AbstractUnitOfWork):
     def __init__(self):
-        self.batches = FakeRepository([])
+        self.products = FakeRepository([])
         self.committed = False
 
     def commit(self):
@@ -40,7 +37,7 @@ class FakeSession:
 def test_add_batch():
     uow = FakeUnitOfWork()
     services.add_batch("b1", "CRUNCHY-ARMCHAIR", 100, None, uow)
-    assert uow.batches.get("b1") is not None
+    assert uow.products.get("CRUNCHY-ARMCHAIR") is not None
     assert uow.committed
 
 
