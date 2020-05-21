@@ -1,5 +1,3 @@
-# `pytest .` to run
-
 from datetime import date
 
 from domain.models import Batch, OrderLine
