@@ -1,7 +1,7 @@
 from datetime import date, timedelta
 import pytest
 
-from domain.models import Batch, OrderLine, OutOfStock, Product
+from domain.models import Batch, OrderLine, Product
 from domain import events
 
 today = date.today()

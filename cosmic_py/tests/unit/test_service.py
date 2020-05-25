@@ -6,12 +6,13 @@ from service_layer import services, unit_of_work
 
 class FakeRepository(AbstractRepository):
     def __init__(self, products):
+        super().__init__()
         self._products = set(products)
 
-    def add(self, batch):
+    def _add(self, batch):
         self._products.add(batch)
 
-    def get(self, sku):
+    def _get(self, sku):
         return next((p for p in self._products if p.sku == sku), None)
 
 
@@ -20,7 +21,7 @@ class FakeUnitOfWork(unit_of_work.AbstractUnitOfWork):
         self.products = FakeRepository([])
         self.committed = False
 
-    def commit(self):
+    def _commit(self):
         self.committed = True
 
     def rollback(self):
