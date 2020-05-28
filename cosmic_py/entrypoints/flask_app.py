@@ -2,9 +2,9 @@ from datetime import datetime
 from flask import Flask, jsonify, request
 
 import config
-from service_layer import services, unit_of_work
+from service_layer import handlers, unit_of_work
 from adapters import repository, orm
-from domain import models
+from domain import models, events
 
 orm.start_mappers()
 app = Flask(__name__)
@@ -14,10 +14,13 @@ app = Flask(__name__)
 def allocate_endpoint():
     uow = unit_of_work.SqlAlchemyUnitOfWork()
     try:
-        batchref = services.allocate(
-            request.json["orderid"], request.json["sku"], request.json["qty"], uow
+        batchref = handlers.allocate(
+            events.AllocationRequired(
+                request.json["orderid"], request.json["sku"], request.json["qty"]
+            ),
+            uow,
         )
-    except services.InvalidSku as e:
+    except handlers.InvalidSku as e:
         return jsonify({"message": str(e)}), 400
 
     return jsonify({"batchref": batchref}), 201
@@ -29,7 +32,10 @@ def add_batch():
     eta = request.json["eta"]
     if eta is not None:
         eta = datetime.fromisoformat(eta).date()
-    services.add_batch(
-        request.json["ref"], request.json["sku"], request.json["qty"], eta, uow
+    handlers.add_batch(
+        events.BatchCreated(
+            request.json["ref"], request.json["sku"], request.json["qty"], eta
+        ),
+        uow,
     )
     return "OK", 201

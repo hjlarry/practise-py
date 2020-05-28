@@ -1,6 +1,7 @@
 import email
 
 from domain import events
+from .unit_of_work import AbstractUnitOfWork
 
 
 def send_out_of_stock_notification(event: events.OutOfStock):
@@ -14,6 +15,10 @@ HANDLERS = {
 }
 
 
-def handle(event: events.Event):
-    for handler in HANDLERS[type(event)]:
-        handler(event)
+def handle(event: events.Event, uow: AbstractUnitOfWork):
+    queue = [event]
+    while queue:
+        event = queue.pop(0)
+        for handler in HANDLERS[type(event)]:
+            handler(event, uow=uow)
+            queue.extend(uow.collect_new_events())
