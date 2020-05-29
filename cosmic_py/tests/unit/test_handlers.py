@@ -1,4 +1,5 @@
 import pytest
+from datetime import date
 
 from adapters.repository import AbstractRepository
 from service_layer import unit_of_work, messagebus, handlers
@@ -15,6 +16,12 @@ class FakeRepository(AbstractRepository):
 
     def _get(self, sku):
         return next((p for p in self._products if p.sku == sku), None)
+
+    def _get_by_batchref(self, batchref):
+        return next(
+            (p for p in self._products for b in p.batches if b.reference == batchref),
+            None,
+        )
 
 
 class FakeUnitOfWork(unit_of_work.AbstractUnitOfWork):
@@ -68,3 +75,35 @@ class TestAllocate:
         messagebus.handle(events.BatchCreated("b1", "OMINOUS-MIRROR", 100, None), uow)
         messagebus.handle(events.AllocationRequired("o1", "OMINOUS-MIRROR", 10), uow)
         assert uow.committed is True
+
+
+class TestChangeBatchQuantity:
+    def test_change_available_quantity(self):
+        uow = FakeUnitOfWork()
+        messagebus.handle(
+            events.BatchCreated("batch1", "ADORABLE-SETTEE", 100, None), uow
+        )
+        [batch] = uow.products.get(sku="ADORABLE-SETTEE").batches
+        messagebus.handle(events.BatchQuantityChanged("batch1", 40), uow)
+        assert batch.available_quantity == 40
+
+    def test_reallocates_if_necessary(self):
+        uow = FakeUnitOfWork()
+        event_history = [
+            events.BatchCreated("batch1", "INDIFFERENT-TABLE", 50, None),
+            events.BatchCreated("batch2", "INDIFFERENT-TABLE", 50, date.today()),
+            events.AllocationRequired("order1", "INDIFFERENT-TABLE", 20),
+            events.AllocationRequired("order2", "INDIFFERENT-TABLE", 20),
+        ]
+        for e in event_history:
+            messagebus.handle(e, uow)
+        [batch1, batch2] = uow.products.get(sku="INDIFFERENT-TABLE").batches
+        assert batch1.available_quantity == 10
+        assert batch2.available_quantity == 50
+
+        messagebus.handle(events.BatchQuantityChanged("batch1", 25), uow)
+
+        # order1 or order2 will be deallocated, so we'll have 25 - 20
+        assert batch1.available_quantity == 5
+        # and 20 will be reallocated to the next batch
+        assert batch2.available_quantity == 30
