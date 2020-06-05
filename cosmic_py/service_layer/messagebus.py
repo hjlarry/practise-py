@@ -1,3 +1,9 @@
+"""
+When a user wants to make the system do something, we represent their request as a command. 
+That command should modify a single aggregate and either succeed or fail in totality. 
+Any other bookkeeping, cleanup, and notification we need to do can happen via an event. 
+"""
+
 from domain import events, commands
 from typing import Union, List
 import logging
@@ -9,6 +15,7 @@ Message = Union[commands.Command, events.Event]
 
 EVENT_HANDLERS = {
     events.OutOfStock: [handlers.send_out_of_stock_notification],
+    events.Allocated: [handlers.publish_allocated_event],
 }
 COMMAND_HANDLERS = {
     commands.CreateBatch: handlers.add_batch,
