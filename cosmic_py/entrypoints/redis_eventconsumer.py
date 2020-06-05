@@ -2,6 +2,9 @@ import redis
 import logging
 import json
 
+import sys
+
+sys.path.append("/code")
 
 import config
 from adapters import orm
@@ -25,3 +28,7 @@ def handle_change_batch_quantity(m):
     data = json.loads(m["data"])
     cmd = commands.ChangeBatchQuantity(ref=data["batchref"], qty=data["qty"])
     messagebus.handle(cmd, uow=unit_of_work.SqlAlchemyUnitOfWork())
+
+
+if __name__ == "__main__":
+    main()

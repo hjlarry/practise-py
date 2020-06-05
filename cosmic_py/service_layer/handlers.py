@@ -3,7 +3,7 @@ from datetime import date
 import email
 
 from domain import models, commands, events
-from adapters.redis_eventpublisher import redis_eventpublisher
+from adapters import redis_eventpublisher
 from .unit_of_work import AbstractUnitOfWork
 
 
@@ -45,5 +45,5 @@ def change_batch_quantity(cmd: commands.ChangeBatchQuantity, uow: AbstractUnitOf
         uow.commit()
 
 
-def publish_allocated_event(event: events.AllStock, uow: AbstractUnitOfWork):
+def publish_allocated_event(event: events.Allocated, uow: AbstractUnitOfWork):
     redis_eventpublisher.publish("line_allocated", event)
