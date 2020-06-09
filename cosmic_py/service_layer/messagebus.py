@@ -19,6 +19,7 @@ EVENT_HANDLERS = {
         handlers.publish_allocated_event,
         handlers.add_allocation_to_read_model,
     ],
+    events.Deallocated: [handlers.remove_allocation_to_read_model, handlers.reallocate],
 }
 COMMAND_HANDLERS = {
     commands.CreateBatch: handlers.add_batch,

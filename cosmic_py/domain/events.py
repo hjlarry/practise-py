@@ -19,3 +19,9 @@ class Allocated(Event):
     qty: int
     batchref: str
 
+
+@dataclass
+class Deallocated(Event):
+    orderid: str
+    sku: str
+    qty: int
