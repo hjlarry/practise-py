@@ -47,3 +47,12 @@ def change_batch_quantity(cmd: commands.ChangeBatchQuantity, uow: AbstractUnitOf
 
 def publish_allocated_event(event: events.Allocated, uow: AbstractUnitOfWork):
     redis_eventpublisher.publish("line_allocated", event)
+
+
+def add_allocation_to_read_model(event: events.Allocated, uow: AbstractUnitOfWork):
+    with uow:
+        uow.session.execute(
+            "INSERT INTO allocations_view (orderid, sku, batchref) VALUES (:orderid, :sku, :batchref)",
+            dict(orderid=event.orderid, sku=event.sku, batchref=event.batchref),
+        )
+        uow.commit()
