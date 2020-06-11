@@ -1,6 +1,7 @@
 from datetime import date
 import pytest
 from sqlalchemy.orm import clear_mappers
+from unittest import mock
 
 from service_layer import unit_of_work, messagebus
 from domain import commands
@@ -16,7 +17,7 @@ def sqlite_bus(sqlite_session_factory):
     bus = bootstrap.bootstrap(
         start_orm=True,
         uow=unit_of_work.SqlAlchemyUnitOfWork(sqlite_session_factory),
-        send_mail=lambda *args: None,
+        notifications=mock.Mock(),
         publish=lambda *args: None,
     )
     yield bus

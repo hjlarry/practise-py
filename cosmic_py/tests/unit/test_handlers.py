@@ -1,13 +1,14 @@
 import pytest
 from datetime import date
+from collections import defaultdict
 
-from adapters.repository import AbstractRepository
+from adapters import repository, notifications
 from service_layer import unit_of_work, messagebus, handlers
 from domain import commands
 import bootstrap
 
 
-class FakeRepository(AbstractRepository):
+class FakeRepository(repository.AbstractRepository):
     def __init__(self, products):
         super().__init__()
         self._products = set(products)
@@ -44,21 +45,35 @@ class FakeSession:
         self.committed = True
 
 
+class FakeNotifications(notifications.AbstractNotifications):
+    def __init__(self):
+        self.sent = defaultdict(list)
+
+    def send(self, destination, message):
+        self.sent[destination].append(message)
+
+
 def bootstrap_test_app():
     return bootstrap.bootstrap(
         start_orm=False,
         uow=FakeUnitOfWork(),
-        send_mail=lambda *args: None,
+        notifications=FakeNotifications(),
         publish=lambda *args: None,
     )
 
 
 class TestAddBatch:
-    def test_add_batch(self):
+    def test_for_new_product(self):
         bus = bootstrap_test_app()
         bus.handle(commands.CreateBatch("b1", "CRUNCHY-ARMCHAIR", 100, None))
         assert bus.uow.products.get("CRUNCHY-ARMCHAIR") is not None
         assert bus.uow.committed
+
+    def test_for_existing_product(self):
+        bus = bootstrap_test_app()
+        bus.handle(commands.CreateBatch("b1", "GARISH-RUG", 100, None))
+        bus.handle(commands.CreateBatch("b2", "GARISH-RUG", 99, None))
+        assert "b2" in [b.reference for b in bus.uow.products.get("GARISH-RUG").batches]
 
 
 class TestAllocate:
@@ -80,6 +95,20 @@ class TestAllocate:
         bus.handle(commands.CreateBatch("b1", "OMINOUS-MIRROR", 100, None))
         bus.handle(commands.Allocate("o1", "OMINOUS-MIRROR", 10))
         assert bus.uow.committed is True
+
+    def test_sends_email_on_out_of_stock_error(self):
+        fake_notifs = FakeNotifications()
+        bus = bootstrap.bootstrap(
+            start_orm=False,
+            uow=FakeUnitOfWork(),
+            notifications=fake_notifs,
+            publish=lambda *args: None,
+        )
+        bus.handle(commands.CreateBatch("b1", "POPULAR-CURTAINS", 9, None))
+        bus.handle(commands.Allocate("o1", "POPULAR-CURTAINS", 10))
+        assert fake_notifs.sent["stock@made.com"] == [
+            f"Out of stock for POPULAR-CURTAINS",
+        ]
 
 
 class TestChangeBatchQuantity:

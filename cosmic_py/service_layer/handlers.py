@@ -1,10 +1,9 @@
 from typing import Optional
 from datetime import date
 from dataclasses import asdict
-import email
 
 from domain import models, commands, events
-from adapters import redis_eventpublisher
+from adapters import redis_eventpublisher, notifications
 from . import unit_of_work
 
 
@@ -40,9 +39,9 @@ def reallocate(event: events.Deallocated, uow: unit_of_work.AbstractUnitOfWork):
 
 
 def send_out_of_stock_notification(
-    event: events.OutOfStock, uow: unit_of_work.AbstractUnitOfWork
+    event: events.OutOfStock, notifications: notifications.AbstractNotifications
 ):
-    email.send(
+    notifications.send(
         "stock@made.com", f"Out of stock for {event.sku}",
     )
 
