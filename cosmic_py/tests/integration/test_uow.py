@@ -6,6 +6,8 @@ from domain import models
 from service_layer import unit_of_work
 from ..random_refs import random_sku, random_batchref, random_orderid
 
+pytestmark = pytest.mark.usefixtures("mappers")
+
 
 def insert_batch(session, ref, sku, qty, eta, product_version=1):
     session.execute(

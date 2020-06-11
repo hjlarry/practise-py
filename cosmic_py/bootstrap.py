@@ -9,7 +9,7 @@ from service_layer import unit_of_work, handlers, messagebus
 def bootstrap(
     start_orm: bool = True,
     uow: unit_of_work.AbstractUnitOfWork = unit_of_work.SqlAlchemyUnitOfWork(),
-    send_mail: Callable = email.send_mail,
+    send_mail: Callable = email.message_from_string,
     publish: Callable = redis_eventpublisher.publish,
 ) -> messagebus.MessageBus:
     if start_orm:
