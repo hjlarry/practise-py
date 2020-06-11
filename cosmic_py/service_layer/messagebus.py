@@ -13,20 +13,6 @@ from . import unit_of_work, handlers
 logger = logging.getLogger(__name__)
 Message = Union[commands.Command, events.Event]
 
-EVENT_HANDLERS = {
-    events.OutOfStock: [handlers.send_out_of_stock_notification],
-    events.Allocated: [
-        handlers.publish_allocated_event,
-        handlers.add_allocation_to_read_model,
-    ],
-    events.Deallocated: [handlers.remove_allocation_to_read_model, handlers.reallocate],
-}
-COMMAND_HANDLERS = {
-    commands.CreateBatch: handlers.add_batch,
-    commands.Allocate: handlers.allocate,
-    commands.ChangeBatchQuantity: handlers.change_batch_quantity,
-}
-
 
 class MessageBus:
     def __init__(

@@ -3,7 +3,7 @@ from typing import Callable
 import email
 
 from adapters import orm, redis_eventpublisher
-from service_layer import unit_of_work, messagebus, handlers
+from service_layer import unit_of_work, handlers, messagebus
 
 
 def bootstrap(
@@ -11,7 +11,7 @@ def bootstrap(
     uow: unit_of_work.AbstractUnitOfWork = unit_of_work.SqlAlchemyUnitOfWork(),
     send_mail: Callable = email.send_mail,
     publish: Callable = redis_eventpublisher.publish,
-):
+) -> messagebus.MessageBus:
     if start_orm:
         orm.start_mappers()
     dependencies = {"uow": uow, "send_mail": send_mail, "publish": publish}
@@ -19,12 +19,17 @@ def bootstrap(
         event_type: [
             inject_dependices(handler, dependencies) for handler in event_handlers
         ]
-        for event_type, event_handlers in messagebus.EVENT_HANDLERS.items()
+        for event_type, event_handlers in handlers.EVENT_HANDLERS.items()
     }
     injected_event_commands = {
         command_type: inject_dependices(handler, dependencies)
-        for command_type, handler in messagebus.COMMAND_HANDLERS.items()
+        for command_type, handler in handlers.COMMAND_HANDLERS.items()
     }
+    return messagebus.MessageBus(
+        uow=uow,
+        event_handlers=injected_event_handlers,
+        command_handlers=injected_event_commands,
+    )
 
 
 def inject_dependices(handler, dependencies):

@@ -26,4 +26,3 @@ class CreateBatch(Command):
 class ChangeBatchQuantity(Command):
     ref: str
     qty: int
-
