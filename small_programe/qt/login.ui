@@ -20,15 +20,15 @@
       <x>170</x>
       <y>80</y>
       <width>541</width>
-      <height>141</height>
+      <height>168</height>
      </rect>
     </property>
     <layout class="QVBoxLayout" name="verticalLayout">
      <item>
-      <widget class="QTextEdit" name="username"/>
+      <widget class="QTextEdit" name="username_input"/>
      </item>
      <item>
-      <widget class="QTextEdit" name="password"/>
+      <widget class="QTextEdit" name="password_input"/>
      </item>
     </layout>
    </widget>
@@ -58,7 +58,7 @@
      <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; font-size:36pt;&quot;&gt;密    码&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
     </property>
    </widget>
-   <widget class="QPushButton" name="submit">
+   <widget class="QPushButton" name="submit_btn">
     <property name="geometry">
      <rect>
       <x>510</x>
@@ -76,7 +76,7 @@
      <string>提交</string>
     </property>
    </widget>
-   <widget class="QTextBrowser" name="display">
+   <widget class="QTextBrowser" name="display_area">
     <property name="geometry">
      <rect>
       <x>70</x>
@@ -114,7 +114,7 @@
     </widget>
     <addaction name="menua"/>
     <addaction name="actionb"/>
-    <addaction name="actionc"/>
+    <addaction name="exit"/>
    </widget>
    <addaction name="menu"/>
   </widget>
@@ -124,9 +124,9 @@
     <string>b</string>
    </property>
   </action>
-  <action name="actionc">
+  <action name="exit">
    <property name="text">
-    <string>c</string>
+    <string>exit</string>
    </property>
   </action>
   <action name="actionbb">
@@ -136,5 +136,22 @@
   </action>
  </widget>
  <resources/>
- <connections/>
+ <connections>
+  <connection>
+   <sender>exit</sender>
+   <signal>triggered()</signal>
+   <receiver>MainWindow</receiver>
+   <slot>close()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>-1</x>
+     <y>-1</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>382</x>
+     <y>266</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
 </ui>

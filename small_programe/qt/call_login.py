@@ -5,8 +5,15 @@ from login import Ui_MainWindow
 
 class MyMainForm(QMainWindow, Ui_MainWindow):
     def __init__(self, parent=None):
-        super(MyMainForm, self).__init__(parent)
+        super().__init__(parent)
         self.setupUi(self)
+        # 添加登录按钮信号和槽
+        self.submit_btn.clicked.connect(self.display)
+
+    def display(self):
+        username = self.username_input.toPlainText()
+        password = self.password_input.toPlainText()
+        self.display_area.setText("登录成功!\n" + "用户名是: " + username + ",密码是： " + password)
 
 
 if __name__ == "__main__":
