@@ -60,30 +60,40 @@ class Ui_MainWindow(object):
         MainWindow.setStatusBar(self.statusbar)
         self.actionb = QtWidgets.QAction(MainWindow)
         self.actionb.setObjectName("actionb")
-        self.exit = QtWidgets.QAction(MainWindow)
-        self.exit.setObjectName("exit")
+        self.exit_btn = QtWidgets.QAction(MainWindow)
+        self.exit_btn.setObjectName("exit_btn")
         self.actionbb = QtWidgets.QAction(MainWindow)
         self.actionbb.setObjectName("actionbb")
         self.menua.addAction(self.menuaa.menuAction())
         self.menua.addAction(self.actionbb)
         self.menu.addAction(self.menua.menuAction())
         self.menu.addAction(self.actionb)
-        self.menu.addAction(self.exit)
+        self.menu.addAction(self.exit_btn)
         self.menubar.addAction(self.menu.menuAction())
 
         self.retranslateUi(MainWindow)
-        self.exit.triggered.connect(MainWindow.close)
+        self.exit_btn.triggered.connect(MainWindow.close)
         QtCore.QMetaObject.connectSlotsByName(MainWindow)
 
     def retranslateUi(self, MainWindow):
         _translate = QtCore.QCoreApplication.translate
         MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:36pt;\">用户名</span></p></body></html>"))
-        self.label_2.setText(_translate("MainWindow", "<html><head/><body><p><span style=\" font-size:36pt;\">密    码</span></p></body></html>"))
+        self.label.setText(
+            _translate(
+                "MainWindow",
+                '<html><head/><body><p><span style=" font-size:36pt;">用户名</span></p></body></html>',
+            )
+        )
+        self.label_2.setText(
+            _translate(
+                "MainWindow",
+                '<html><head/><body><p><span style=" font-size:36pt;">密    码</span></p></body></html>',
+            )
+        )
         self.submit_btn.setText(_translate("MainWindow", "提交"))
         self.menu.setTitle(_translate("MainWindow", "测试一下"))
         self.menua.setTitle(_translate("MainWindow", "a"))
         self.menuaa.setTitle(_translate("MainWindow", "aa"))
         self.actionb.setText(_translate("MainWindow", "b"))
-        self.exit.setText(_translate("MainWindow", "exit"))
+        self.exit_btn.setText(_translate("MainWindow", "exit_btn"))
         self.actionbb.setText(_translate("MainWindow", "bb"))
