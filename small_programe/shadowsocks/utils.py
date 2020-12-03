@@ -1,7 +1,11 @@
 import random
 import base64
+import asyncio
+import logging
+import socket
 
 IDENTITY_PASSWORD = bytearray(range(256))
+logger = logging.getLogger(__name__)
 
 
 class InvalidPasswordErr(Exception):
@@ -56,3 +60,38 @@ class Cipher:
         for i, v in enumerate(encodePwd):
             decodePwd[v] = i
         return cls(encodePwd, decodePwd)
+
+
+class SecureSocket:
+    def __init__(self, loop: asyncio.AbstractEventLoop, cipher: Cipher) -> None:
+        self.loop = loop or asyncio.get_event_loop()
+        self.cipher = cipher
+
+    async def decodeRead(self, conn: socket.socket) -> bytearray:
+        data = await self.loop.sock_recv(conn, 1024)
+        logger.debug(f"{conn.getsockname()} decodeRead {data}")
+        bs = bytearray(data)
+        self.cipher.decode(bs)
+        return bs
+
+    async def encodeWrite(self, conn: socket.socket, bs: bytearray) -> None:
+        logger.debug(f"{conn.getsockname()} encodeWrite {bytes(bs)}")
+        bs = bs.copy()
+        self.cipher.encode(bs)
+        await self.loop.sock_sendall(conn, bs)
+
+    async def encodeCopy(self, dst: socket.socket, src: socket.socket) -> None:
+        logger.debug(f"{dst.getsockname()} encodeCopy to  {src.getsockname()}")
+        while True:
+            data = await self.loop.sock_recv(src, 1024)
+            if not data:
+                break
+            await self.encodeWrite(dst, bytearray(data))
+
+    async def decodeCopy(self, dst: socket.socket, src: socket.socket) -> None:
+        logger.debug(f"{dst.getsockname()} decodeCopy to  {src.getsockname()}")
+        while True:
+            bs = await self.decodeRead(src)
+            if not bs:
+                break
+            await self.loop.sock_sendall(dst, bs)
