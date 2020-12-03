@@ -1,8 +1,10 @@
+from __future__ import annotations
 import random
 import base64
 import asyncio
 import logging
 import socket
+
 
 IDENTITY_PASSWORD = bytearray(range(256))
 logger = logging.getLogger(__name__)
