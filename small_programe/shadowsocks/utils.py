@@ -35,3 +35,24 @@ def randomPwd() -> bytearray:
     pwd = IDENTITY_PASSWORD.copy()
     random.shuffle(pwd)
     return pwd
+
+
+class Cipher:
+    def __init__(self, encodePwd: bytearray, decodePwd: bytearray) -> None:
+        self.encodePwd = encodePwd.copy()
+        self.decodePwd = decodePwd.copy()
+
+    def encode(self, bs: bytearray) -> None:
+        for i, v in enumerate(bs):
+            bs[i] = self.encodePwd[v]
+
+    def decode(self, bs: bytearray) -> None:
+        for i, v in enumerate(bs):
+            bs[i] = self.decodePwd[v]
+
+    @classmethod
+    def NewCipher(cls, encodePwd: bytearray) -> Cipher:
+        decodePwd = encodePwd.copy()
+        for i, v in enumerate(encodePwd):
+            decodePwd[v] = i
+        return cls(encodePwd, decodePwd)
