@@ -3,7 +3,7 @@ import socket
 import typing
 import logging
 
-from utils import SecureSocket, Cipher
+from utils import SecureSocket, Cipher, randomPwd, dumpsPwd
 
 logger = logging.getLogger(__name__)
 
@@ -13,7 +13,7 @@ class Server(SecureSocket):
         self,
         loop: asyncio.AbstractEventLoop,
         pwd: bytearray,
-        listenAddr: str,
+        listenAddr: tuple,
     ) -> None:
         super().__init__(loop=loop, cipher=Cipher.NewCipher(pwd))
         self.listenAddr = listenAddr
@@ -101,3 +101,21 @@ class Server(SecureSocket):
             conn.close()
 
         task.add_done_callback(cleanup)
+
+
+def run_server():
+    loop = asyncio.get_event_loop()
+    listenAddr = ("0.0.0.0", 8388)
+    pwd = randomPwd()
+    server = Server(loop=loop, pwd=pwd, listenAddr=listenAddr)
+
+    def didListen(address):
+        print("Listen to %s:%d\n" % address)
+        print(f"password is {dumpsPwd(pwd)}")
+
+    asyncio.ensure_future(server.listen(didListen))
+    loop.run_forever()
+
+
+if __name__ == "__main__":
+    run_server()

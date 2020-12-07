@@ -2,8 +2,9 @@ import asyncio
 import typing
 import socket
 import logging
+import argparse
 
-from utils import SecureSocket, Cipher
+from utils import SecureSocket, Cipher, loadsPwd
 
 logger = logging.getLogger(__name__)
 
@@ -62,3 +63,26 @@ class Local(SecureSocket):
                 f"connect to remote server {self.remoteAddr} err: {e} "
             )
         return remoteConn
+
+
+def run_server(pwd):
+    loop = asyncio.get_event_loop()
+    listenAddr = ("127.0.0.1", 1080)
+    remoteAddr = ("127.0.0.1", 8388)
+    server = Local(loop=loop, pwd=pwd, listenAddr=listenAddr, remoteAddr=remoteAddr)
+
+    def didListen(address):
+        print("Listen to %s:%d\n" % address)
+
+    asyncio.ensure_future(server.listen(didListen))
+    loop.run_forever()
+
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(
+        description="A light tunnel proxy that helps you bypass firewalls"
+    )
+    parser.add_argument("-p", action="store", help="password")
+    args = parser.parse_args()
+    pwd = loadsPwd(args.p)
+    run_server(pwd)
