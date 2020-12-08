@@ -1,3 +1,9 @@
+"""
+ss-local 的职责是在本机启动和监听着一个服务，本地软件的网络请求都先发送到 ss-local
+ss-local 收到来自本地软件的网络请求后，把要传输的原数据根据用户配置的加密方法和密码进行加密，再转发到墙外的服务器去
+python3 local.py -p [password]
+"""
+
 import asyncio
 import typing
 import socket
@@ -22,6 +28,7 @@ class Local(SecureSocket):
         self.remoteAddr = remoteAddr
 
     async def listen(self, didListen: typing.Callable = None) -> None:
+        """监听方法，接收来自本地浏览器的连接"""
         with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as listener:
             listener.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
             listener.bind(self.listenAddr)
@@ -39,6 +46,7 @@ class Local(SecureSocket):
 
     async def handleConn(self, conn: socket.socket) -> None:
         remoteServer = await self.dialRemote()
+        # 数据转发
         local2remote = asyncio.ensure_future(self.decodeCopy(conn, remoteServer))
         remote2local = asyncio.ensure_future(self.encodeCopy(remoteServer, conn))
         task = asyncio.ensure_future(

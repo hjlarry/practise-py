@@ -32,12 +32,14 @@ def loadsPwd(pwd: str) -> bytearray:
 
 
 def dumpsPwd(pwd: bytearray) -> str:
+    """密码字节数组转为字符串，便于用户使用"""
     if not validatePwd(pwd):
         raise InvalidPasswordErr
     return base64.urlsafe_b64encode(pwd).decode("utf8", errors="strict")
 
 
 def randomPwd() -> bytearray:
+    """生成随机字节数组，这个数组由0~255这些数字组成，长度固定256"""
     pwd = IDENTITY_PASSWORD.copy()
     random.shuffle(pwd)
     return pwd
@@ -58,6 +60,12 @@ class Cipher:
 
     @classmethod
     def NewCipher(cls, encodePwd: bytearray) -> Cipher:
+        """
+        编码的密码和解码的密码是一组反函数，例如密钥为:
+        0   1   2   3   4   5   ...
+        186 118 82  201 235 236 ...
+        如果原数据为[5, 0, 1, 2, 3]，则加密后为[236,186,118,82,201]，同理也可以解密回来
+        """
         decodePwd = encodePwd.copy()
         for i, v in enumerate(encodePwd):
             decodePwd[v] = i
@@ -65,11 +73,14 @@ class Cipher:
 
 
 class SecureSocket:
+    """加密传输的socket"""
+
     def __init__(self, loop: asyncio.AbstractEventLoop, cipher: Cipher) -> None:
         self.loop = loop or asyncio.get_event_loop()
         self.cipher = cipher
 
     async def decodeRead(self, conn: socket.socket) -> bytearray:
+        """从conn里读取加密过的数据，然后解密放在bs字节数组中"""
         data = await self.loop.sock_recv(conn, 1024)
         logger.debug(f"{conn.getsockname()} decodeRead {data}")
         bs = bytearray(data)
@@ -77,12 +88,14 @@ class SecureSocket:
         return bs
 
     async def encodeWrite(self, conn: socket.socket, bs: bytearray) -> None:
+        """把bs字节数组中的数据加密后通过conn发送出去"""
         logger.debug(f"{conn.getsockname()} encodeWrite {bytes(bs)}")
         bs = bs.copy()
         self.cipher.encode(bs)
         await self.loop.sock_sendall(conn, bs)
 
     async def encodeCopy(self, dst: socket.socket, src: socket.socket) -> None:
+        """不断从src中读取数据，然后加密后写入dst"""
         logger.debug(f"{dst.getsockname()} encodeCopy to  {src.getsockname()}")
         while True:
             data = await self.loop.sock_recv(src, 1024)
@@ -91,6 +104,7 @@ class SecureSocket:
             await self.encodeWrite(dst, bytearray(data))
 
     async def decodeCopy(self, dst: socket.socket, src: socket.socket) -> None:
+        """不断从src中读取数据，然后解密，再发送至dst中"""
         logger.debug(f"{dst.getsockname()} decodeCopy to  {src.getsockname()}")
         while True:
             bs = await self.decodeRead(src)
