@@ -2,12 +2,10 @@ from __future__ import annotations
 import random
 import base64
 import asyncio
-import logging
 import socket
 
 
 IDENTITY_PASSWORD = bytearray(range(256))
-logger = logging.getLogger(__name__)
 
 
 class InvalidPasswordErr(Exception):
@@ -82,21 +80,21 @@ class SecureSocket:
     async def decodeRead(self, conn: socket.socket) -> bytearray:
         """从conn里读取加密过的数据，然后解密放在bs字节数组中"""
         data = await self.loop.sock_recv(conn, 1024)
-        logger.debug(f"{conn.getsockname()} decodeRead {data}")
+        print(f"{conn.getsockname()} decodeRead {data}")
         bs = bytearray(data)
         self.cipher.decode(bs)
         return bs
 
     async def encodeWrite(self, conn: socket.socket, bs: bytearray) -> None:
         """把bs字节数组中的数据加密后通过conn发送出去"""
-        logger.debug(f"{conn.getsockname()} encodeWrite {bytes(bs)}")
+        print(f"{conn.getsockname()} encodeWrite {bytes(bs)}")
         bs = bs.copy()
         self.cipher.encode(bs)
         await self.loop.sock_sendall(conn, bs)
 
     async def encodeCopy(self, dst: socket.socket, src: socket.socket) -> None:
         """不断从src中读取数据，然后加密后写入dst"""
-        logger.debug(f"{dst.getsockname()} encodeCopy to  {src.getsockname()}")
+        print(f"{dst.getsockname()} encodeCopy to  {src.getsockname()}")
         while True:
             data = await self.loop.sock_recv(src, 1024)
             if not data:
@@ -105,7 +103,7 @@ class SecureSocket:
 
     async def decodeCopy(self, dst: socket.socket, src: socket.socket) -> None:
         """不断从src中读取数据，然后解密，再发送至dst中"""
-        logger.debug(f"{dst.getsockname()} decodeCopy to  {src.getsockname()}")
+        print(f"{dst.getsockname()} decodeCopy to  {src.getsockname()}")
         while True:
             bs = await self.decodeRead(src)
             if not bs:

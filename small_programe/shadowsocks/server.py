@@ -9,11 +9,8 @@ python3 server.py
 import asyncio
 import socket
 import typing
-import logging
 
 from utils import SecureSocket, Cipher, randomPwd, dumpsPwd
-
-logger = logging.getLogger(__name__)
 
 
 class Server(SecureSocket):
@@ -34,13 +31,13 @@ class Server(SecureSocket):
             listener.listen(socket.SOMAXCONN)
             listener.setblocking(False)
 
-            logger.info(f"Listen to {self.listenAddr}")
+            print(f"Listen to {self.listenAddr}")
             if didListen:
                 didListen(listener.getsockname())
 
             while True:
                 conn, addr = await self.loop.sock_accept(listener)
-                logger.info(f"Receive {addr}")
+                print(f"Receive {addr}")
                 asyncio.ensure_future(self.handleConn(conn))
 
     async def handleConn(self, conn: socket.socket) -> None:
@@ -139,7 +136,7 @@ class Server(SecureSocket):
             asyncio.gather(conn2dst, dst2conn, loop=self.loop, return_exceptions=True)
         )
 
-        def cleanup():
+        def cleanup(task):
             dstServer.close()
             conn.close()
 

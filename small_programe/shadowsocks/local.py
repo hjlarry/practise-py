@@ -7,12 +7,9 @@ python3 local.py -p [password]
 import asyncio
 import typing
 import socket
-import logging
 import argparse
 
 from utils import SecureSocket, Cipher, loadsPwd
-
-logger = logging.getLogger(__name__)
 
 
 class Local(SecureSocket):
@@ -35,13 +32,13 @@ class Local(SecureSocket):
             listener.listen(socket.SOMAXCONN)
             listener.setblocking(False)
 
-            logger.info(f"Listen to {self.listenAddr}")
+            print(f"Listen to {self.listenAddr}")
             if didListen:
                 didListen(listener.getsockname())
 
             while True:
                 conn, addr = await self.loop.sock_accept(listener)
-                logger.info(f"Receive {addr}")
+                print(f"Receive {addr}")
                 asyncio.ensure_future(self.handleConn(conn))
 
     async def handleConn(self, conn: socket.socket) -> None:
@@ -55,7 +52,7 @@ class Local(SecureSocket):
             )
         )
 
-        def cleanup():
+        def cleanup(task):
             remoteServer.close()
             conn.close()
 
