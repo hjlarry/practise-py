@@ -1,34 +1,35 @@
 # 策略模式
 from abc import ABC, abstractmethod
-from collections import namedtuple
+from typing import Callable, NamedTuple, Optional, Sequence
+from decimal import Decimal
 
-Customer = namedtuple("Customer", "name fidelity")
+
+class Customer(NamedTuple):
+    name: str
+    fidelity: int
 
 
-class LineItem:
-    def __init__(self, product, quantity, price):
-        self.product = product
-        self.quantity = quantity
-        self.price = price
+class LineItem(NamedTuple):
+    product: str
+    quantity: int
+    price: Decimal
 
-    def total(self):
+    def total(self) -> Decimal:
         return self.quantity * self.price
 
 
-class Order:
-    def __init__(self, customer, cart, promotion=None):
-        self.customer = customer
-        self.cart = list(cart)
-        self.promotion = promotion
+class Order(NamedTuple):
+    customer: Customer
+    cart: Sequence[LineItem]
+    promotion: Optional[Callable[["Order"], Decimal]] = None
 
-    def total(self):
-        if not hasattr(self, "__total"):
-            self.__total = sum(item.total() for item in self.cart)
-        return self.__total
+    def total(self) -> Decimal:
+        totals = (item.total() for item in self.cart)
+        return sum(totals, start=Decimal(0))
 
-    def due(self):
+    def due(self) -> Decimal:
         if self.promotion is None:
-            discount = 0
+            discount = Decimal(0)
         elif isinstance(self.promotion, Promotion):  # 对应类实现的策略模式
             discount = self.promotion.discount(self)
         else:
@@ -42,75 +43,87 @@ class Order:
 # 使用类实现策略模式
 class Promotion(ABC):
     @abstractmethod
-    def discount(self, order):
+    def discount(self, order: Order) -> Decimal:
         """返回折扣金额"""
 
 
 class FidelityPromo(Promotion):
-    def discount(self, order):
+    def discount(self, order: Order) -> Decimal:
         """第一个策略，积分大于1000则95折"""
-        return order.total() * 0.05 if order.customer.fidelity >= 1000 else 0
+        rate = Decimal(0.05)
+        if order.customer.fidelity >= 1000:
+            return order.total() * rate
+        return Decimal(0)
 
 
 class BulkItemPromo(Promotion):
-    def discount(self, order):
+    def discount(self, order: Order) -> Decimal:
         """第二个策略，单品数量大于20则9折"""
-        discount = 0
+        discount = Decimal(0)
         for item in order.cart:
             if item.quantity >= 20:
-                discount += item.total() * 0.1
+                discount += item.total() * Decimal(0.1)
         return discount
 
 
 class LargeOrderPromo(Promotion):
-    def discount(self, order):
+    def discount(self, order: Order) -> Decimal:
         """第三个策略，不同物品种类大于10则93折"""
         distinct_items = {item.product for item in order.cart}
         if len(distinct_items) >= 10:
-            return order.total() * 0.07
-        return 0
+            return order.total() * Decimal(0.07)
+        return Decimal(0)
 
 
 joe = Customer("John", 0)
 ann = Customer("Ann", 1000)
 cart = [
-    LineItem("banana", 4, 0.5),
-    LineItem("apple", 10, 1.5),
-    LineItem("watermellon", 5, 5.0),
+    LineItem("banana", 4, Decimal(0.5)),
+    LineItem("apple", 10, Decimal(1.5)),
+    LineItem("watermellon", 5, Decimal(5.0)),
 ]
 print(Order(joe, cart, FidelityPromo()))
 print(Order(ann, cart, FidelityPromo()))
-banana_cart = [LineItem("banana", 30, 0.5), LineItem("apple", 10, 1.5)]
+banana_cart = [
+    LineItem("banana", 30, Decimal(0.5)),
+    LineItem("apple", 10, Decimal(1.5)),
+]
 print(Order(joe, banana_cart, BulkItemPromo()))
-long_order = [LineItem(str(item_code), 1, 1.0) for item_code in range(10)]
+long_order = [LineItem(str(item_code), 1, Decimal(1.0)) for item_code in range(10)]
 print(Order(joe, long_order, LargeOrderPromo()))
 
 
 # 使用函数实现策略模式
-def fidelity_promo(order):
-    return order.total() * 0.05 if order.customer.fidelity >= 1000 else 0
+def fidelity_promo(order: Order) -> Decimal:
+    rate = Decimal(0.05)
+    if order.customer.fidelity >= 1000:
+        return order.total() * rate
+    return Decimal(0)
 
 
-def bulk_item_promo(order):
-    discount = 0
+def bulk_item_promo(order: Order) -> Decimal:
+    discount = Decimal(0)
     for item in order.cart:
         if item.quantity >= 20:
-            discount += item.total() * 0.1
+            discount += item.total() * Decimal(0.1)
     return discount
 
 
-def large_order_promo(order):
+def large_order_promo(order: Order) -> Decimal:
     distinct_items = {item.product for item in order.cart}
     if len(distinct_items) >= 10:
-        return order.total() * 0.07
-    return 0
+        return order.total() * Decimal(0.07)
+    return Decimal(0)
 
 
 print(Order(joe, cart, fidelity_promo))
 print(Order(ann, cart, fidelity_promo))
-banana_cart = [LineItem("banana", 30, 0.5), LineItem("apple", 10, 1.5)]
+banana_cart = [
+    LineItem("banana", 30, Decimal(0.5)),
+    LineItem("apple", 10, Decimal(1.5)),
+]
 print(Order(joe, banana_cart, bulk_item_promo))
-long_order = [LineItem(str(item_code), 1, 1.0) for item_code in range(10)]
+long_order = [LineItem(str(item_code), 1, Decimal(1.0)) for item_code in range(10)]
 print(Order(joe, long_order, large_order_promo))
 
 
