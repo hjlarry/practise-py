@@ -1,9 +1,9 @@
 import itertools
 import time
-from threading import Thread, Event
+from multiprocessing import Process, Event, synchronize
 
 
-def spin(msg: str, done: Event) -> None:
+def spin(msg: str, done: synchronize.Event) -> None:
     for char in itertools.cycle("|/-\\"):
         status = f"\r{char} {msg}"
         print(status, end="", flush=True)
@@ -21,7 +21,7 @@ def slow_function() -> int:
 
 def supervisor():
     done = Event()
-    spinner = Thread(target=spin, args=("thinking", done))
+    spinner = Process(target=spin, args=("thinking", done))
     print(f"spinner obj: {spinner}")
     spinner.start()
     result = slow_function()
