@@ -1,5 +1,6 @@
 import asyncio
 import itertools
+from primes import is_prime, is_prime_nap
 
 
 async def spin(msg: str) -> None:
@@ -15,8 +16,9 @@ async def spin(msg: str) -> None:
 
 
 async def slow_function() -> int:
-    # 假装io等待
-    await asyncio.sleep(3)
+    # await asyncio.sleep(3)
+    # is_prime(5_000_111_000_222_021)
+    await is_prime_nap(5_000_111_000_222_021)
     return 42
 
 
