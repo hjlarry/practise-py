@@ -1,43 +1,39 @@
-import threading
 import itertools
-import sys
 import time
+from threading import Thread, Event
 
 
-class Signal:
-    go = True
-
-
-def spin(msg, signal):
-    write, flush = sys.stdout.write, sys.stdout.flush
+def spin(msg: str, done: Event) -> None:
     for char in itertools.cycle("|/-\\"):
-        status = char + " " + msg
-        write(status)
-        flush()
-        # 使用退格符移回光标
-        write("\x08" * len(status))
-        time.sleep(0.1)
-        if not signal.go:
+        status = f"\r{char} {msg}"
+        print(status, end="", flush=True)
+        if done.wait(0.1):
             break
-    write(" " * len(status) + "\x08" * len(status))
+    blanks = " " * len(status)
+    print(f"\r{blanks}\r", end="")
 
 
-def slow_function():
+def slow_function() -> int:
     # 假装io等待
     time.sleep(3)
     return 42
 
 
 def supervisor():
-    signal = Signal()
-    spinner = threading.Thread(target=spin, args=("thinking", signal))
+    done = Event()
+    spinner = Thread(target=spin, args=("thinking", done))
     print("spinner obj", spinner)
     spinner.start()
     result = slow_function()
-    signal.go = False
+    done.set()
     spinner.join()
     return result
 
 
-result = supervisor()
-print("Answer:", result)
+def main():
+    result = supervisor()
+    print(f"Answer: {result}")
+
+
+if __name__ == "__main__":
+    main()
