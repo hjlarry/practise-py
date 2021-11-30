@@ -1,41 +1,35 @@
-import os
 import time
-import sys
+from pathlib import Path
+from typing import Callable
+
 import requests
 
 POP20_CC = ("CN IN US ID BR PK NG BD RU JP MX PH VN ET EG DE IR TR CD FR").split()
-BASE_URL = "http://flupy.org/data/flags"
-DEST_DIR = "downloads/"
+BASE_URL = "https://fluentpython.com/data/flags"
+DEST_DIR = Path(__file__).parent / "downloaded"
 
 
-def save_flag(img, filename):
-    path = os.path.join(DEST_DIR, filename)
-    with open(path, "wb") as fp:
-        fp.write(img)
+def save_flag(img: bytes, filename: str) -> None:
+    (DEST_DIR / filename).write_bytes(img)
 
 
-def get_flag(cc):
-    resp = requests.get(f"{BASE_URL}/{cc.lower()}/{cc.lower()}.gif")
+def get_flag(cc: str) -> bytes:
+    resp = requests.get(f"{BASE_URL}/{cc}/{cc}.gif".lower())
     return resp.content
 
 
-def show(text):
-    print(text, end=" ")
-    sys.stdout.flush()
-
-
-def download_many(cc_list):
+def download_many(cc_list: list[str]) -> int:
     for cc in sorted(cc_list):
         image = get_flag(cc)
-        show(cc)
-        save_flag(image, cc.lower() + ".gif")
+        save_flag(image, f"{cc}.gif")
+        print(cc, end=" ", flush=True)
     return len(cc_list)
 
 
-def main(download_many):
-    t0 = time.time()
-    count = download_many(POP20_CC)
-    elapsed = time.time() - t0
+def main(downloader: Callable[[list[str]], int]):
+    t0 = time.perf_counter()
+    count = downloader(POP20_CC)
+    elapsed = time.perf_counter() - t0
     print(f"\n{count} flags download in {elapsed:.2f}s")
 
 
