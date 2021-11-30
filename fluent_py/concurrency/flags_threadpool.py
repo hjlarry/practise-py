@@ -1,20 +1,17 @@
 from concurrent import futures
 
-from flags import save_flag, get_flag, show, main
-
-MAX_WORKERS = 20
+from flags import save_flag, get_flag, main
 
 
-def download_one(cc):
+def download_one(cc: str) -> str:
     image = get_flag(cc)
-    show(cc)
-    save_flag(image, cc.lower() + ".gif")
+    save_flag(image, f"{cc}.gif")
+    print(cc, end=" ", flush=True)
     return cc
 
 
-def download_many(cc_list):
-    workers = min(MAX_WORKERS, len(cc_list))
-    with futures.ThreadPoolExecutor(workers) as executor:
+def download_many(cc_list: list[str]):
+    with futures.ThreadPoolExecutor() as executor:
         res = executor.map(download_one, sorted(cc_list))
     return len(list(res))
 
