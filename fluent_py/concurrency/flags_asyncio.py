@@ -1,28 +1,30 @@
 import asyncio
-import aiohttp
-from flags import BASE_URL, save_flag, show, main
+from httpx import AsyncClient
+from flags import BASE_URL, save_flag, main
 
 
-async def get_flag(cc):
-    resp = await aiohttp.request("GET", f"{BASE_URL}/{cc.lower()}/{cc.lower()}.gif")
-    image = await resp.read()
-    return image
+async def get_flag(client: AsyncClient, cc: str) -> bytes:
+    url = f"{BASE_URL}/{cc}/{cc}.gif".lower()
+    resp = await client.get(url, timeout=6.1, follow_redirects=True)
+    return resp.read()
 
 
-async def download_one(cc):
-    image = await get_flag(cc)
-    show(cc)
+async def download_one(client: AsyncClient, cc: str) -> str:
+    image = await get_flag(client, cc)
     save_flag(image, cc.lower() + ".gif")
+    print(cc, end=" ", flush=True)
     return cc
 
 
-def download_many(cc_list):
-    loop = asyncio.get_event_loop()
-    to_dos = [download_one(cc) for cc in sorted(cc_list)]
-    wait_coro = asyncio.wait(to_dos)
-    res, _ = loop.run_until_complete(wait_coro)
-    loop.close()
+async def supervisor(cc_list: list[str]) -> int:
+    async with AsyncClient() as client:
+        to_do = [download_one(client, cc) for cc in sorted(cc_list)]
+        res = await asyncio.gather(*to_do)
     return len(res)
+
+
+def download_many(cc_list: list[str]) -> int:
+    return asyncio.run(supervisor(cc_list))
 
 
 if __name__ == "__main__":
