@@ -5,19 +5,20 @@ import string
 import argparse
 from collections import namedtuple
 from enum import Enum
+from pathlib import Path
 
 Result = namedtuple("Result", "status data")
-HTTPStatus = Enum("Status", "ok not_found error")
+DownloadStatus = Enum("Status", "ok not_found error")
 POP20_CC = ("CN IN US ID BR PK NG BD RU JP MX PH VN ET EG DE IR TR CD FR").split()
 DEFAULT_CONCUR_REQ = 1
 MAX_CONCUR_REQ = 1
 SERVERS = {
-    "REMOTE": "http://flupy.org/data/flags",
+    "REMOTE": "https://www.fluentpython.com/data/flags",
     "LOCAL": "http://localhost:8001/flags",
 }
 DEFAULT_SERVER = "REMOTE"
-DEST_DIR = "downloads/"
-COUNTRY_CODES_FILE = "country_codes.txt"
+DEST_DIR = Path(__file__).parent / "downloaded"
+COUNTRY_CODES_FILE = Path("country_codes.txt")
 
 
 def save_flag(img, filename):
@@ -42,12 +43,12 @@ def initial_report(cc_list, actual_req, server_label):
 def final_report(cc_list, counter, start_time):
     elapsed = time.time() - start_time
     print("-" * 20)
-    plural = "" if counter[HTTPStatus.ok] == 1 else "s"
-    print(f"{counter[HTTPStatus.ok]} flag{plural} downloaded")
-    if counter[HTTPStatus.not_found]:
-        print(counter[HTTPStatus.not_found], "not found")
-    if counter[HTTPStatus.error]:
-        print(counter[HTTPStatus.error], "error")
+    plural = "" if counter[DownloadStatus.ok] == 1 else "s"
+    print(f"{counter[DownloadStatus.ok]} flag{plural} downloaded")
+    if counter[DownloadStatus.not_found]:
+        print(counter[DownloadStatus.not_found], "not found")
+    if counter[DownloadStatus.error]:
+        print(counter[DownloadStatus.error], "error")
     print(f"Elapsed time: {elapsed:.2f}s")
 
 
