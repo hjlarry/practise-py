@@ -1,36 +1,32 @@
-import warnings
-import osconfeed
-import shelve
+import json
 
-DB_NAME = "schedule1_db"
+JSON_PATH = "osconfeed.json"
 
 
 class Record:
     def __init__(self, **kwargs):
         self.__dict__.update(kwargs)
 
+    def __repr__(self):
+        cls_name = self.__class__.__name__
+        return f"<{cls_name}  serial={self.serial!r}>"
 
-def load_db(db):
-    raw_data = osconfeed.load()
-    warnings.warn("loading " + DB_NAME)
-    for collection, rec_list in raw_data["Schedule"].items():
+
+def load(path=JSON_PATH):
+    records = {}
+    with open(path) as fp:
+        raw_data = json.load(fp)
+    for collection, raw_records in raw_data["Schedule"].items():
         # 将 events 这样的转换为 event
         record_type = collection[:-1]
-        for record in rec_list:
-            key = f"{record_type}.{record['serial']}"
-            record["serial"] = key
-            db[key] = Record(**record)
+        for raw_record in raw_records:
+            key = f"{record_type}.{raw_record['serial']}"
+            records[key] = Record(**raw_record)
+    return records
 
 
-db = shelve.open(DB_NAME)
-# 判断数据库是否填充的一个方法
-if "conference.115" not in db:
-    load_db(db)
-
-speaker = db["speaker.3471"]
-print(speaker.name)
-print(speaker.twitter)
-event = db["event.33950"]
-print(event)
-print(event.speakers)
-db.close()
+if __name__ == "__main__":
+    records = load()
+    speaker = records["speaker.3471"]
+    print(speaker.name)
+    print(speaker.twitter)
