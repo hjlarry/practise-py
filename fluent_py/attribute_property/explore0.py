@@ -1,15 +1,15 @@
+import json
 from collections import abc
-from osconfeed import load
 
 
 class FrozenJson:
-    def __init__(self, raw_data):
-        self.__data = dict(raw_data)
+    def __init__(self, mapping):
+        self.__data = dict(mapping)
 
     def __getattr__(self, name):
-        if hasattr(self.__data, name):
+        try:
             return getattr(self.__data, name)
-        else:
+        except AttributeError:
             return FrozenJson.build(self.__data[name])
 
     @classmethod
@@ -22,14 +22,15 @@ class FrozenJson:
             return obj
 
 
-raw_feed = load()
-feed = FrozenJson(raw_feed)
-print(len(feed.Schedule.speakers))
-print(feed.Schedule.keys())
-print(feed.Schedule.events[40].name)
-# 未处理key error
-# print(feed.not_exist)
-# 未处理保留字
-# print(feed.class)
-grad = FrozenJson({"name": "hehe", "class": 1982})
-print(getattr(grad, "class"))
+if __name__ == "__main__":
+    raw_feed = json.load(open("osconfeed.json"))
+    feed = FrozenJson(raw_feed)
+    print(len(feed.Schedule.speakers))
+    print(feed.Schedule.keys())
+    print(feed.Schedule.events[40].name)
+    # 未处理key error
+    # print(feed.not_exist)
+    # 未处理保留字
+    # print(feed.class)
+    grad = FrozenJson({"name": "hehe", "class": 1982})
+    print(getattr(grad, "class"))
