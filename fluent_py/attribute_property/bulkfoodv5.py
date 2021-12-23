@@ -1,6 +1,6 @@
 from modelv5 import NoneBlank, Quantity
 
-
+# 描述符往往被用来抽象在一个其他模块中，提升其泛用性
 class LineItem:
     description = NoneBlank()
     weight = Quantity()
