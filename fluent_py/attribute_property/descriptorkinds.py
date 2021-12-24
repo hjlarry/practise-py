@@ -80,8 +80,15 @@ print(obj.none_over)
 del obj.none_over
 obj.none_over
 print()
-
+# 描述符可以被类属性直接覆盖
+obj = Managed()
+Managed.over = 1  # type:ignore
+Managed.over_no_get = 2  # type:ignore
+Managed.none_over = 3  # type:ignore
+print(obj.over, obj.over_no_get, obj.none_over)
+print()
+# 方法是描述符
 print(obj.spam)
 print(Managed.spam)
-obj.spam = 7
+obj.spam = 7  # type:ignore
 print(obj.spam)
