@@ -1,12 +1,20 @@
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from io import BytesIO
 import logging
+import mimetypes
+import os
 import urllib
+from datetime import datetime
 
 
 class RequestDispatcher(BaseHTTPRequestHandler):
     def __init__(self, request: bytes, client_address: tuple[str, int], server) -> None:
-        self._middlewares = [ServerHandle(), Index(), NotFound()]
+        self._middlewares = [
+            ServerHandle(),
+            Index(),
+            StaticFile(os.path.dirname(__file__) + "/static"),
+            NotFound(),
+        ]
         self._catchall = GenericError()
         super().__init__(request, client_address, server)
 
@@ -29,12 +37,12 @@ class Request:
 
     @property
     def path(self) -> str:
-        path, _ = urllib.parse.splitquery(self._handler.path)
-        return path
+        result = urllib.parse.urlparse(self._handler.path)
+        return result.path
 
     def query_string(self, key: str, default: str = None) -> str:
-        _, qs = urllib.parse.splitquery(self._handler.path)
-        args = dict(urllib.parse.parse_qsl(qs))
+        result = urllib.parse.urlparse(self._handler.path)
+        args = dict(urllib.parse.parse_qsl(result.query))
         return args.get(key, default)
 
 
@@ -66,6 +74,10 @@ class Response:
             self._handler.send_header(k, v)
         self._handler.end_headers()
         self._handler.wfile.write(resp_data)
+
+    def data(self, content: bytes):
+        self._data.write(content)
+        return self
 
 
 class HttpContext:
@@ -109,6 +121,59 @@ class GenericError(Middleware):
             logging.getLogger("Server").error(str(ctx.error))
         ctx.response.status(500).html("<h1>Internal Server Error</h1>")
         return True
+
+
+class StaticFile(Middleware):
+    def __init__(self, root_path: str) -> None:
+        self._root_path = root_path
+
+    def handle(self, ctx: HttpContext) -> bool:
+        full_path = os.path.normpath(self._root_path + ctx.request.path)
+        if os.path.isfile(full_path):
+            self.send_file(ctx.response, full_path)
+            return True
+        elif os.path.isdir(full_path):
+            if self.process_index(ctx.response, full_path):
+                return True
+            else:
+                html = self.build_dir_html(full_path)
+                ctx.response.html(html)
+                return True
+        return False
+
+    def send_file(self, resp: Response, file_path: str):
+        content_type = mimetypes.guess_type(file_path)[0] or "application/octec-stream"
+        with open(file_path, "rb") as f:
+            resp.header("Content-Type", content_type).data(f.read())
+
+    def process_index(self, resp: Response, dir_path: str):
+        index_names = ["index.html", "index.htm", "default.html", "default.htm"]
+        for name in index_names:
+            index_path = os.path.join(dir_path, name)
+            if os.path.isfile(index_path):
+                self.send_file(resp, index_path)
+                return True
+        return False
+
+    def build_dir_html(self, dir_path: str) -> str:
+        lines = []
+        lines.append(f"<h1>Direcdtory of {os.path.split(dir_path)[1]}:</h1>")
+        lines.append("<hr/>")
+        lines.append("<table>")
+        lines.append("<thead><tr><th>Name</th><th>Size</th><th>Time</th></tr></thead>")
+        lines.append("<tbody>")
+        for file_name in os.listdir(dir_path):
+            full_path = os.path.join(dir_path, file_name)
+            lines.append("<tr>")
+            lines.append(f"<td>{file_name}</td>")
+            stat = os.stat(full_path)
+            size_str = str(stat.st_size) if os.path.isfile(full_path) else ""
+            lines.append(f"<td>{size_str}</td>")
+            lines.append(f"<td>{datetime.fromtimestamp(stat.st_mtime)}</td>")
+            lines.append("</tr>")
+        lines.append("</tbody>")
+        lines.append("</table>")
+        return "\n".join(lines)
 
 
 def main():
