@@ -4,6 +4,7 @@ import logging
 import mimetypes
 import os
 import urllib
+import re
 from datetime import datetime
 
 
@@ -11,6 +12,7 @@ class RequestDispatcher(BaseHTTPRequestHandler):
     def __init__(self, request: bytes, client_address: tuple[str, int], server) -> None:
         self._middlewares = [
             ServerHandle(),
+            routing,
             Index(),
             StaticFile(os.path.dirname(__file__) + "/static"),
             NotFound(),
@@ -174,6 +176,44 @@ class StaticFile(Middleware):
         lines.append("</tbody>")
         lines.append("</table>")
         return "\n".join(lines)
+
+
+class Routing(Middleware):
+    def __init__(self) -> None:
+        self._routes = []
+
+    def handle(self, ctx: HttpContext) -> bool:
+        for pattern, handler in self._routes:
+            kwargs = self.match(ctx.request.path, pattern)
+            if kwargs is not None:
+                handler(ctx.request, ctx.response, **kwargs)
+                return True
+        return False
+
+    def match(self, url_path: str, pattern: str) -> dict:
+        re_pattern = "^" + re.sub(r"<(\w+)>", r"(?P<\1>\\w+)", pattern) + "$"
+        m = re.match(re_pattern, url_path)
+        return m.groupdict() if m else None
+
+    def route(self, path: str):
+        def wrapper(f):
+            self._routes.append((path, f))
+            return f
+
+        return wrapper
+
+
+routing = Routing()
+
+
+@routing.route("/aindex")
+def another_index(req, resp):
+    resp.html("<h1>Another Index</h1>")
+
+
+@routing.route("/user/<name>")
+def username(req, resp, name):
+    resp.html(f"<h1>hello {name}</h1>")
 
 
 def main():
