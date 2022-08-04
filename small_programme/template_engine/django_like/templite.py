@@ -64,7 +64,7 @@ class Templite:
             <h1>Hello {{name|upper}}!</h1>
             {% for topic in topics %}
                 <p>You are interested in {{topic}}.</p>
-            {% endif %}
+            {% endfor %}
             ''',
             {'upper': str.upper},
         )
@@ -98,6 +98,7 @@ class Templite:
         bufferd = []
 
         def flush_output():
+            # 把buffered的内容放到代码生成器
             if len(bufferd) == 1:
                 code.add_line("append_result(%s)" % bufferd[0])
             elif len(bufferd) > 1:
@@ -111,9 +112,11 @@ class Templite:
                 # 模板中的注释内容不做处理
                 continue
             elif token.startswith("{{"):
+                # 直接执行的表达式
                 expr = self._expr_code(token[2:-2].strip())
                 bufferd.append("to_str(%s)" % expr)
             elif token.startswith("{%"):
+                # 动作标签，需要进一步拆分和解析
                 flush_output()
                 words = token[2:-2].strip().split()
                 if words[0] == "if":
@@ -121,13 +124,14 @@ class Templite:
                         self._synx_error("Don't understand if", token)
                     ops_stack.append("if")
                     code.add_line("if %s:" % self._expr_code(words[1]))
+                    code.indent()
                 elif words[0] == "for":
                     if len(words) != 4 or words[2] != "in":
                         self._synx_error("Don't understand for", token)
                     ops_stack.append("for")
                     self._variable(words[1], self.loop_vars)
                     code.add_line(
-                        "for %s in %s:" % (words[1], self._expr_code(words[3]))
+                        "for c_%s in %s:" % (words[1], self._expr_code(words[3]))
                     )
                     code.indent()
                 elif words[0].startswith("end"):
@@ -135,19 +139,20 @@ class Templite:
                         self._synx_error("Don't understand end", token)
                     end_what = words[0][3:]
                     if not ops_stack:
-                        self._synx_error("too many end : %s" % token)
+                        self._synx_error("Too many ends", token)
                     start_what = ops_stack.pop()
                     if end_what != start_what:
-                        self._synx_error("mismatch end tag : %s" % end_what)
+                        self._synx_error("Mismatched end tag", end_what)
                     code.dedent()
                 else:
                     self._synx_error("Don't understand tag", words[0])
             else:
+                # 文字内容，如果不为空则直接输出
                 if token:
                     bufferd.append(repr(token))
 
         if ops_stack:
-            self._synx_error("Unmatch action tag,", ops_stack[-1])
+            self._synx_error("Unmatched action tag", ops_stack[-1])
         flush_output()
 
         for varname in self.all_vars - self.loop_vars:
@@ -159,6 +164,7 @@ class Templite:
         self._render_function = code.get_globals()["render_function"]
 
     def _expr_code(self, expr):
+        # 给`expr`生成一个python表达式
         if "|" in expr:
             pipes = expr.split("|")
             code = self._expr_code(pipes[0])
@@ -175,21 +181,25 @@ class Templite:
             code = "c_%s" % expr
         return code
 
-    def _synx_error(self, msg):
-        raise TempliteSyntaxError(msg)
+    def _synx_error(self, msg, thing):
+        """Raise a syntax error using `msg`, and showing `thing`."""
+        raise TempliteSyntaxError("%s: %r" % (msg, thing))
 
     def _variable(self, name, vars_set):
+        # 校验若name合法，则添加到vars_set中去
         if not re.match(r"[_a-zA-Z][_a-zA-Z0-9]*$", name):
             self._synx_error("Not a valid name", name)
         vars_set.add(name)
 
     def render(self, context=None):
+        # 使用context字典来渲染模板
         render_context = dict(self.context)
         if context:
             render_context.update(context)
         return self._render_function(render_context, self._do_dots)
 
-    def _do_dots(self, value, **dots):
+    def _do_dots(self, value, *dots):
+        # 执行getattr操作
         for dot in dots:
             try:
                 value = getattr(value, dot)
@@ -198,3 +208,22 @@ class Templite:
             if callable(value):
                 value = value()
         return value
+
+
+if __name__ == "__main__":
+    templite = Templite(
+        """
+                <h1>Hello {{name|upper}}!</h1>
+                {% for topic in topics %}
+                    <p>You are interested in {{topic}}.</p>
+                {% endfor %}
+                """,
+        {"upper": str.upper},
+    )
+    text = templite.render(
+        {
+            "name": "Ned",
+            "topics": ["Python", "Geometry", "Juggling"],
+        }
+    )
+    print(text)

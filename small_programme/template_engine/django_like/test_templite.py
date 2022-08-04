@@ -29,7 +29,7 @@ class TempliteTest(unittest.TestCase):
 
     def assertSynErr(self, msg):
         pat = "^" + re.escape(msg) + "$"
-        return self.assertRaisesRegexp(TempliteSyntaxError, pat)
+        return self.assertRaisesRegex(TempliteSyntaxError, pat)
 
     def test_passthrough(self):
         # Strings without variables are passed through unchanged.
