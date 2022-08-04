@@ -5,10 +5,15 @@
 """
 import re
 
-from exceptions import TempliteSyntaxError
+
+class TempliteSyntaxError(ValueError):
+    """Raised when a template has a syntax error."""
+
+    pass
 
 
-class CodeBuilder(object):
+# 源码构造器
+class CodeBuilder:
     def __init__(self, indent=0):
         self.code = []
         self.indent_level = indent
@@ -34,6 +39,7 @@ class CodeBuilder(object):
         self.code.append(section)
         return section
 
+    # 执行代码，并返回global字典
     def get_globals(self):
         assert self.indent_level == 0
         python_source = str(self)
@@ -42,14 +48,44 @@ class CodeBuilder(object):
         return global_namespace
 
 
-class Templite(object):
+class Templite:
+    """A simple template renderer, for a nano-subset of Django syntax.
+    Supported constructs are extended variable access::
+        {{var.modifer.modifier|filter|filter}}
+    loops::
+        {% for var in list %}...{% endfor %}
+    and ifs::
+        {% if var %}...{% endif %}
+    Comments are within curly-hash markers::
+        {# This will be ignored #}
+    Construct a Templite with the template text, then use `render` against a
+    dictionary context to create a finished string::
+        templite = Templite('''
+            <h1>Hello {{name|upper}}!</h1>
+            {% for topic in topics %}
+                <p>You are interested in {{topic}}.</p>
+            {% endif %}
+            ''',
+            {'upper': str.upper},
+        )
+        text = templite.render({
+            'name': "Ned",
+            'topics': ['Python', 'Geometry', 'Juggling'],
+        })
+    """
+
     def __init__(self, text, *contexts):
+        """Construct a Templite with the given `text`.
+        `contexts` are dictionaries of values to use for future renderings.
+        These are good for filters and global values.
+        """
         self.context = {}
         for context in contexts:
             self.context.update(context)
         self.all_vars = set()
         self.loop_vars = set()
 
+        # 以源码的形式构造一个函数，然后编译并保存它，再执行它来渲染模板
         code = CodeBuilder()
         code.add_line("def render_function(context, do_dots):")
         code.indent()
@@ -82,12 +118,12 @@ class Templite(object):
                 words = token[2:-2].strip().split()
                 if words[0] == "if":
                     if len(words) != 2:
-                        self._synx_error("Don`t understand for if: %s" % token)
+                        self._synx_error("Don't understand if", token)
                     ops_stack.append("if")
                     code.add_line("if %s:" % self._expr_code(words[1]))
                 elif words[0] == "for":
                     if len(words) != 4 or words[2] != "in":
-                        self._synx_error("Don`t understand for for: %s" % token)
+                        self._synx_error("Don't understand for", token)
                     ops_stack.append("for")
                     self._variable(words[1], self.loop_vars)
                     code.add_line(
@@ -96,7 +132,7 @@ class Templite(object):
                     code.indent()
                 elif words[0].startswith("end"):
                     if len(words) != 1:
-                        self._synx_error("Don`t understand for end: %s" % token)
+                        self._synx_error("Don't understand end", token)
                     end_what = words[0][3:]
                     if not ops_stack:
                         self._synx_error("too many end : %s" % token)
@@ -105,13 +141,13 @@ class Templite(object):
                         self._synx_error("mismatch end tag : %s" % end_what)
                     code.dedent()
                 else:
-                    self._synx_error("unknown start tag: %s" % token)
+                    self._synx_error("Don't understand tag", words[0])
             else:
                 if token:
                     bufferd.append(repr(token))
 
         if ops_stack:
-            self._synx_error("Unmatch action tag: %s" % ops_stack[-1])
+            self._synx_error("Unmatch action tag,", ops_stack[-1])
         flush_output()
 
         for varname in self.all_vars - self.loop_vars:
@@ -144,7 +180,7 @@ class Templite(object):
 
     def _variable(self, name, vars_set):
         if not re.match(r"[_a-zA-Z][_a-zA-Z0-9]*$", name):
-            self._synx_error("not a valid name : %s" % name)
+            self._synx_error("Not a valid name", name)
         vars_set.add(name)
 
     def render(self, context=None):
