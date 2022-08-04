@@ -1,3 +1,23 @@
+"""
+来源: https://shuhari.dev/blog/2020/05/500lines-rewrite-web-server (500lines的更新版)
+
+第一步：基于python标准库的http.server实现基础服务
+
+第二步：构建中间件的设计模式，添加ServerHandle、Index、NotFound、GenericError这些中间件，支持访问：
+http://127.0.0.1:8081/  
+http://127.0.0.1:8081/nopage
+http://127.0.0.1:8081/?err=1
+
+第三步：通过StaticFile中间件构建静态文件服务，支持访问:
+http://127.0.0.1:8081/test_index_dir
+http://127.0.0.1:8081/test_no_index
+http://127.0.0.1:8081/test_no_index/1.jpg
+
+第四步：通过routing中间件实现类flask的路由模式，支持访问：
+http://127.0.0.1:8081/aindex
+http://127.0.0.1:8081/user/someusername
+"""
+
 from http.server import BaseHTTPRequestHandler, HTTPServer
 from io import BytesIO
 import logging
