@@ -17,6 +17,26 @@ class TemplateTest(unittest.TestCase):
         ]:
             self.render(text, {}, text)
 
+    def test_expr_single(self):
+        self.render("hello {{name}}", {"name": "world"}, "hello world")
+
+    def test_expr_array(self):
+        self.render("hello {{names[0]}}", {"names": ["wang"]}, "hello wang")
+
+    def test_expr_dict(self):
+        self.render("hello {{names['guest']}}", {"names": {"guest": 123}}, "hello 123")
+
+    def test_expr_multi(self):
+        self.render(
+            "Hello, {{name}} in {{year}}",
+            {"name": "he", "year": 2020},
+            "Hello, he in 2020",
+        )
+
+    def test_expr_variable_missing(self):
+        with self.assertRaises(NameError):
+            self.render("{{name}}", {}, "")
+
 
 class TokenTest(unittest.TestCase):
     def test_single_variable(self):
