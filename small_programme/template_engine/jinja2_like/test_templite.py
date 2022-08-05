@@ -1,7 +1,7 @@
 import unittest
 
 
-from templite import Template
+from templite import Template, tokenize, Text, Expr
 
 
 class TemplateTest(unittest.TestCase):
@@ -16,6 +16,18 @@ class TemplateTest(unittest.TestCase):
             "This is a multi line message\n this is line2 of the message",
         ]:
             self.render(text, {}, text)
+
+
+class TokenTest(unittest.TestCase):
+    def test_single_variable(self):
+        tokens = tokenize("Hello, {{name}}!")
+        self.assertEqual(tokens, [Text("Hello, "), Expr("name"), Text("!")])
+
+    def test_two_variables(self):
+        tokens = tokenize("Hello, {{name}} in {{year}}")
+        self.assertEqual(
+            tokens, [Text("Hello, "), Expr("name"), Text(" in "), Expr("year")]
+        )
 
 
 if __name__ == "__main__":
