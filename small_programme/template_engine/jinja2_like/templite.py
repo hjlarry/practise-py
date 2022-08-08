@@ -1,4 +1,3 @@
-from distutils.command.build import build
 import re
 from typing import Callable
 
@@ -177,7 +176,7 @@ class For(Token):
     def parse(self, content: str):
         m = re.match(r"for\s+(\w+)\s+in\s+(\w+)", content)
         if not m:
-            raise SyntaxError(f"invalid block:{content}")
+            raise SyntaxError(f"invalid for block:{content}")
         self._var_name, self._target = m.group(1), m.group(2)
 
     def generate_code(self, builder: CodeBuilder):
@@ -202,6 +201,71 @@ class EndFor(Token):
 
     def __repr__(self) -> str:
         return "EndFor"
+
+
+class If(Token):
+    name = "if"
+
+    def __init__(self, expr: str = None) -> None:
+        self._expr = expr
+
+    def parse(self, content: str):
+        m = re.match(r"if\s+(\w+)", content)
+        if not m:
+            raise SyntaxError(f"invalid if block:{content}")
+        self._expr = m.group(1)
+
+    def generate_code(self, builder: CodeBuilder):
+        builder.add_code(f"if {self._expr}:")
+        builder.indent()
+        builder.push_control(self)
+
+    def __repr__(self) -> str:
+        return f"If({self._expr})"
+
+
+class Elif(Token):
+    def __init__(self, expr: str = None) -> None:
+        self._expr = expr
+
+    def parse(self, content: str):
+        m = re.match(r"elif\s+(\w+)", content)
+        if not m:
+            raise SyntaxError(f"invalid else if block:{content}")
+        self._expr = m.group(1)
+
+    def generate_code(self, builder: CodeBuilder):
+        builder.unindent()
+        builder.add_code(f"elif {self._expr}:")
+        builder.indent()
+
+    def __repr__(self) -> str:
+        return f"Elif({self._expr})"
+
+
+class Else(Token):
+    def parse(self, content: str):
+        pass
+
+    def generate_code(self, builder: CodeBuilder):
+        builder.unindent()
+        builder.add_code("else:")
+        builder.indent()
+
+    def __repr__(self) -> str:
+        return "Else"
+
+
+class EndIf(Token):
+    def parse(self, content: str):
+        pass
+
+    def generate_code(self, builder: CodeBuilder):
+        builder.unindent()
+        builder.end_block(If)
+
+    def __repr__(self) -> str:
+        return "EndIf"
 
 
 def tokenize(text: str) -> list[Token]:
@@ -231,6 +295,10 @@ def create_control_token(text: str) -> Token():
     token_types = {
         "for": For,
         "endfor": EndFor,
+        "if": If,
+        "elif": Elif,
+        "else": Else,
+        "endif": EndIf,
     }
     if keyword not in token_types:
         raise SyntaxError(f"Unknown control token {text}")

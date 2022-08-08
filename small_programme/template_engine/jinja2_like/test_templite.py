@@ -10,6 +10,10 @@ from templite import (
     For,
     EndFor,
     parse_expr,
+    If,
+    Elif,
+    Else,
+    EndIf,
 )
 
 
@@ -102,6 +106,17 @@ class TemplateTest(unittest.TestCase):
                 "{% for msg in messages %}{{msg}}", {"messages": ["a", "b", "c"]}, ""
             )
 
+    def test_render_if_tag(self):
+        source = "{%if flag%}OK{% endif %}"
+        self.render(source, {"flag": True}, "OK")
+        self.render(source, {"flag": False}, "")
+
+    def test_render_if_else(self):
+        source = "{%if flag1 %}flag1{%elif flag2 %}flag2{%else%}none{% endif %}"
+        self.render(source, {"flag1": True, "flag2": False}, "flag1")
+        self.render(source, {"flag1": False, "flag2": True}, "flag2")
+        self.render(source, {"flag1": False, "flag2": False}, "none")
+
 
 class TokenTest(unittest.TestCase):
     def test_single_variable(self):
@@ -143,6 +158,38 @@ class TokenTest(unittest.TestCase):
                 Text("Loop "),
                 Expr("row"),
                 EndFor(),
+            ],
+        )
+
+    def test_tokenize_invalid_control(self):
+        with self.assertRaises(SyntaxError):
+            tokenize("{% nokeyword %}")
+
+    def test_parse_if(self):
+        tokens = tokenize("{% if flag %}ok {% endif %}")
+        self.assertEqual(
+            tokens,
+            [
+                If("flag"),
+                Text("ok "),
+                EndIf(),
+            ],
+        )
+
+    def test_parse_if_else(self):
+        tokens = tokenize(
+            "{%if flag1 %}flag1{%elif flag2 %}flag2{%else%}none{% endif %}"
+        )
+        self.assertEqual(
+            tokens,
+            [
+                If("flag1"),
+                Text("flag1"),
+                Elif("flag2"),
+                Text("flag2"),
+                Else(),
+                Text("none"),
+                EndIf(),
             ],
         )
 
