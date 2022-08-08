@@ -1,3 +1,4 @@
+from distutils.command.build import build
 import re
 from typing import Callable
 
@@ -5,6 +6,7 @@ OUTPUT_VAR = "_output_"
 INDENT = 1
 UNINDENT = -1
 INDENT_SPACE = 2
+INDEX_VAR = "index"
 
 
 class Template:
@@ -21,6 +23,7 @@ class Template:
             builder = CodeBuilder()
             for token in tokens:
                 token.generate_code(builder)
+            builder.check_code()
             source_code = builder.source()
             self._code = compile(source_code, "", "exec")
 
@@ -29,6 +32,7 @@ class Template:
         exec_ctx = ctx.copy()
         output = []
         exec_ctx[OUTPUT_VAR] = output
+        exec_ctx["LoopVar"] = LoopVar
         exec(self._code, self._global_vars, exec_ctx)
         return "".join(output)
 
@@ -46,9 +50,17 @@ class TemplateEngine:
         return Template(text, filters=self._filters)
 
 
+class LoopVar:
+    def __init__(self, index: int) -> None:
+        self.index = index
+        self.index0 = index
+        self.index1 = index + 1
+
+
 class CodeBuilder:
     def __init__(self) -> None:
         self.codes = []
+        self._block_stack = []
 
     def add_code(self, line: str):
         self.codes.append(line)
@@ -79,6 +91,21 @@ class CodeBuilder:
 
     def source(self) -> str:
         return "\n".join(self.code_lines())
+
+    def push_control(self, ctrl):
+        self._block_stack.append(ctrl)
+
+    def check_code(self):
+        if self._block_stack:
+            last_control = self._block_stack.pop(-1)
+            raise SyntaxError(f"{last_control.name} has no end tag!")
+
+    def end_block(self, begin_token_type):
+        block_name = begin_token_type.name
+        if not self._block_stack:
+            raise SyntaxError(f"End of block {block_name} does not match start tag")
+        top_block = self._block_stack.pop(-1)
+        return top_block
 
 
 class Token:
@@ -141,6 +168,8 @@ class Comment(Token):
 
 
 class For(Token):
+    name = "for"
+
     def __init__(self, var_name: str = None, target: str = None) -> None:
         self._var_name = var_name
         self._target = target
@@ -151,6 +180,14 @@ class For(Token):
             raise SyntaxError(f"invalid block:{content}")
         self._var_name, self._target = m.group(1), m.group(2)
 
+    def generate_code(self, builder: CodeBuilder):
+        builder.add_code(
+            f"for {INDEX_VAR}, {self._var_name} in enumerate({self._target}):"
+        )
+        builder.indent()
+        builder.push_control(self)
+        builder.add_code(f"loop = LoopVar({INDEX_VAR})")
+
     def __repr__(self) -> str:
         return f"For({self._var_name} in {self._target})"
 
@@ -158,6 +195,10 @@ class For(Token):
 class EndFor(Token):
     def parse(self, content: str):
         pass
+
+    def generate_code(self, builder: CodeBuilder):
+        builder.unindent()
+        builder.end_block(For)
 
     def __repr__(self) -> str:
         return "EndFor"

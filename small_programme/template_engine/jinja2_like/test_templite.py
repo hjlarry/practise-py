@@ -71,6 +71,37 @@ class TemplateTest(unittest.TestCase):
     def test_comment(self):
         self.render("Hello, {# This is a comment. #}World!", {}, "Hello, World!")
 
+    def test_comment_with_expr(self):
+        self.render(
+            "Hello, {# This is a comment. #}{{name}}!",
+            {"name": "Alice"},
+            "Hello, Alice!",
+        )
+
+    def test_render_for_loop(self):
+        self.render(
+            "{% for msg in messages %}Item {{msg}}!{% endfor %}",
+            {"messages": ["a", "b", "c"]},
+            "Item a!Item b!Item c!",
+        )
+
+    def test_render_for_loop_with_index(self):
+        self.render(
+            "{% for msg in messages %}{{loop.index1}}.{{msg}}!{% endfor %}",
+            {"messages": ["a", "b", "c"]},
+            "1.a!2.b!3.c!",
+        )
+
+    def test_render_for_loop_no_start_tag(self):
+        with self.assertRaises(SyntaxError):
+            self.render("{% endfor %}", {"messages": ["a", "b", "c"]}, "")
+
+    def test_render_for_loop_no_end_tag(self):
+        with self.assertRaises(SyntaxError):
+            self.render(
+                "{% for msg in messages %}{{msg}}", {"messages": ["a", "b", "c"]}, ""
+            )
+
 
 class TokenTest(unittest.TestCase):
     def test_single_variable(self):
