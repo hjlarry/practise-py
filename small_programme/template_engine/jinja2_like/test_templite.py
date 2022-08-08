@@ -1,7 +1,16 @@
 import unittest
 
 
-from templite import TemplateEngine, tokenize, Text, Expr, Comment, parse_expr
+from templite import (
+    TemplateEngine,
+    tokenize,
+    Text,
+    Expr,
+    Comment,
+    For,
+    EndFor,
+    parse_expr,
+)
 
 
 class TemplateTest(unittest.TestCase):
@@ -90,9 +99,21 @@ class TokenTest(unittest.TestCase):
             self.assertEqual(parsed_filters, filters)
             self.assertEqual(parsed_varname, varname)
 
-    def test_comments(self):
+    def test_parse_comment(self):
         tokens = tokenize("Hello, {# name #} abc")
         self.assertEqual(tokens, [Text("Hello, "), Comment("name"), Text(" abc")])
+
+    def test_parse_for_loop(self):
+        tokens = tokenize("{% for row in rows %}Loop {{ row }}{% endfor %}")
+        self.assertEqual(
+            tokens,
+            [
+                For("row", "rows"),
+                Text("Loop "),
+                Expr("row"),
+                EndFor(),
+            ],
+        )
 
 
 if __name__ == "__main__":

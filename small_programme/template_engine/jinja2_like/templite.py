@@ -2,6 +2,9 @@ import re
 from typing import Callable
 
 OUTPUT_VAR = "_output_"
+INDENT = 1
+UNINDENT = -1
+INDENT_SPACE = 2
 
 
 class Template:
@@ -15,9 +18,10 @@ class Template:
     def _generate_code(self):
         if not self._code:
             tokens = tokenize(self._text)
-            code_lines = [x.generate_code() for x in tokens]
-            code_lines = [x for x in code_lines if x]
-            source_code = "\n".join(code_lines)
+            builder = CodeBuilder()
+            for token in tokens:
+                token.generate_code(builder)
+            source_code = builder.source()
             self._code = compile(source_code, "", "exec")
 
     def render(self, ctx: dict) -> str:
@@ -42,11 +46,46 @@ class TemplateEngine:
         return Template(text, filters=self._filters)
 
 
+class CodeBuilder:
+    def __init__(self) -> None:
+        self.codes = []
+
+    def add_code(self, line: str):
+        self.codes.append(line)
+
+    def add_expr(self, expr: str):
+        code = f"{OUTPUT_VAR}.append(str({expr}))"
+        self.codes.append(code)
+
+    def add_text(self, text: str):
+        code = f"{OUTPUT_VAR}.append({repr(text)})"
+        self.codes.append(code)
+
+    def indent(self):
+        self.codes.append(INDENT)
+
+    def unindent(self):
+        self.codes.append(UNINDENT)
+
+    def code_lines(self):
+        indent = 0
+        for code in self.codes:
+            if isinstance(code, str):
+                prefix = " " * indent * INDENT_SPACE
+                line = prefix + code
+                yield line
+            elif code in (INDENT, UNINDENT):
+                indent += code
+
+    def source(self) -> str:
+        return "\n".join(self.code_lines())
+
+
 class Token:
     def parse(self, content: str):
         raise NotImplementedError()
 
-    def generate_code(self) -> str:
+    def generate_code(self, builder: CodeBuilder):
         raise NotImplementedError()
 
     def __eq__(self, other: object) -> bool:
@@ -60,8 +99,8 @@ class Text(Token):
     def parse(self, content: str):
         self._content = content
 
-    def generate_code(self) -> str:
-        return f"{OUTPUT_VAR}.append({repr(self._content)})"
+    def generate_code(self, builder: CodeBuilder):
+        builder.add_text(self._content)
 
     def __repr__(self) -> str:
         return f"Text({self._content})"
@@ -75,11 +114,11 @@ class Expr(Token):
     def parse(self, content: str):
         self._varname, self._filters = parse_expr(content)
 
-    def generate_code(self) -> str:
+    def generate_code(self, builder: CodeBuilder):
         result = self._varname
         for filter_name in self._filters[::-1]:
             result = f"{filter_name}({result})"
-        return f"{OUTPUT_VAR}.append(str({result}))"
+        builder.add_expr(result)
 
     def __repr__(self) -> str:
         if self._filters:
@@ -94,15 +133,38 @@ class Comment(Token):
     def parse(self, content: str):
         self._content = content
 
-    def generate_code(self):
-        return None
+    def generate_code(self, builder: CodeBuilder):
+        pass
 
     def __repr__(self) -> str:
         return f"Comment({self._content})"
 
 
+class For(Token):
+    def __init__(self, var_name: str = None, target: str = None) -> None:
+        self._var_name = var_name
+        self._target = target
+
+    def parse(self, content: str):
+        m = re.match(r"for\s+(\w+)\s+in\s+(\w+)", content)
+        if not m:
+            raise SyntaxError(f"invalid block:{content}")
+        self._var_name, self._target = m.group(1), m.group(2)
+
+    def __repr__(self) -> str:
+        return f"For({self._var_name} in {self._target})"
+
+
+class EndFor(Token):
+    def parse(self, content: str):
+        pass
+
+    def __repr__(self) -> str:
+        return "EndFor"
+
+
 def tokenize(text: str) -> list[Token]:
-    segments = re.split(r"({{.*?}}|{#.*?#})", text)
+    segments = re.split(r"({{.*?}}|{#.*?#}|{%.*?%})", text)
     return [create_token(s) for s in segments if s]
 
 
@@ -111,10 +173,27 @@ def create_token(text: str) -> Token:
         token, content = Expr(), text[2:-2].strip()
     elif text.startswith("{#") and text.endswith("#}"):
         token, content = Comment(), text[2:-2].strip()
+    elif text.startswith("{%") and text.endswith("%}"):
+        content = text[2:-2].strip()
+        token = create_control_token(content)
     else:
         token, content = Text(), text
     token.parse(content)
     return token
+
+
+def create_control_token(text: str) -> Token():
+    m = re.match(r"^(\w+)", text)
+    if not m:
+        raise SyntaxError(f"Unknown token {text}")
+    keyword = m.group(1)
+    token_types = {
+        "for": For,
+        "endfor": EndFor,
+    }
+    if keyword not in token_types:
+        raise SyntaxError(f"Unknown control token {text}")
+    return token_types[keyword]()
 
 
 def extract_last_filter(text: str) -> tuple[str, str]:
