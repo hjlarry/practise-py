@@ -1,7 +1,7 @@
 import unittest
 
 
-from templite import TemplateEngine, tokenize, Text, Expr, parse_expr
+from templite import TemplateEngine, tokenize, Text, Expr, Comment, parse_expr
 
 
 class TemplateTest(unittest.TestCase):
@@ -59,6 +59,9 @@ class TemplateTest(unittest.TestCase):
                 "Hello, A!",
             )
 
+    def test_comment(self):
+        self.render("Hello, {# This is a comment. #}World!", {}, "Hello, World!")
+
 
 class TokenTest(unittest.TestCase):
     def test_single_variable(self):
@@ -86,6 +89,10 @@ class TokenTest(unittest.TestCase):
             parsed_varname, parsed_filters = parse_expr(expr)
             self.assertEqual(parsed_filters, filters)
             self.assertEqual(parsed_varname, varname)
+
+    def test_comments(self):
+        tokens = tokenize("Hello, {# name #} abc")
+        self.assertEqual(tokens, [Text("Hello, "), Comment("name"), Text(" abc")])
 
 
 if __name__ == "__main__":

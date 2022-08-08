@@ -87,14 +87,30 @@ class Expr(Token):
         return f"Expr({self._varname})"
 
 
+class Comment(Token):
+    def __init__(self, content: str = None):
+        self._content = content
+
+    def parse(self, content: str):
+        self._content = content
+
+    def generate_code(self):
+        return None
+
+    def __repr__(self) -> str:
+        return f"Comment({self._content})"
+
+
 def tokenize(text: str) -> list[Token]:
-    segments = re.split(r"({{.*?}})", text)
+    segments = re.split(r"({{.*?}}|{#.*?#})", text)
     return [create_token(s) for s in segments if s]
 
 
 def create_token(text: str) -> Token:
     if text.startswith("{{") and text.endswith("}}"):
         token, content = Expr(), text[2:-2].strip()
+    elif text.startswith("{#") and text.endswith("#}"):
+        token, content = Comment(), text[2:-2].strip()
     else:
         token, content = Text(), text
     token.parse(content)
