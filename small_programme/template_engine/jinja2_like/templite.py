@@ -1,6 +1,5 @@
 import re
 
-
 OUTPUT_VAR = "_output_"
 
 
@@ -76,3 +75,24 @@ def create_token(text: str) -> Token:
         token, content = Text(), text
     token.parse(content)
     return token
+
+
+def extract_last_filter(text: str) -> tuple[str, str]:
+    m = re.search(r"(\|\s*[A-Za-z0-9_]+\s*)$", text)
+    if m:
+        suffix = m.group(1)
+        filter = suffix[1:].strip()
+        var_name = text[: -len(suffix)].strip()
+        return var_name, filter
+    return text, None
+
+
+def parse_expr(text: str) -> tuple[str, list[str]]:
+    var_name, filters = text, []
+    while True:
+        var_name, filter_ = extract_last_filter(var_name)
+        if filter_:
+            filters.insert(0, filter_)
+        else:
+            break
+    return var_name, filters

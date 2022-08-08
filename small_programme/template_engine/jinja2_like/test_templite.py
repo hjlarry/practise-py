@@ -1,7 +1,7 @@
 import unittest
 
 
-from templite import Template, tokenize, Text, Expr
+from templite import Template, tokenize, Text, Expr, parse_expr
 
 
 class TemplateTest(unittest.TestCase):
@@ -48,6 +48,22 @@ class TokenTest(unittest.TestCase):
         self.assertEqual(
             tokens, [Text("Hello, "), Expr("name"), Text(" in "), Expr("year")]
         )
+
+    def test_parse_repr(self):
+        cases = [
+            ("name", "name", []),
+            ("name | upper", "name", ["upper"]),
+            ("name | upper | strip", "name", ["upper", "strip"]),
+            (
+                "'a string with | inside' | upper | strip",
+                "'a string with | inside'",
+                ["upper", "strip"],
+            ),
+        ]
+        for expr, varname, filters in cases:
+            parsed_varname, parsed_filters = parse_expr(expr)
+            self.assertEqual(parsed_filters, filters)
+            self.assertEqual(parsed_varname, varname)
 
 
 if __name__ == "__main__":
