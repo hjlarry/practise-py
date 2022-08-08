@@ -1,17 +1,22 @@
 import re
+from typing import Callable
 
 OUTPUT_VAR = "_output_"
 
 
 class Template:
-    def __init__(self, text: str) -> None:
+    def __init__(self, text: str, filters: dict = None):
         self._text = text
         self._code = None
+        self._global_vars = {}
+        if filters:
+            self._global_vars.update(filters)
 
     def _generate_code(self):
         if not self._code:
             tokens = tokenize(self._text)
             code_lines = [x.generate_code() for x in tokens]
+            code_lines = [x for x in code_lines if x]
             source_code = "\n".join(code_lines)
             self._code = compile(source_code, "", "exec")
 
@@ -20,8 +25,21 @@ class Template:
         exec_ctx = ctx.copy()
         output = []
         exec_ctx[OUTPUT_VAR] = output
-        exec(self._code, None, exec_ctx)
+        exec(self._code, self._global_vars, exec_ctx)
         return "".join(output)
+
+
+class TemplateEngine:
+    def __init__(self):
+        self._filters = {}
+        self.register_filter("upper", lambda x: x.upper())
+        self.register_filter("strip", lambda x: x.strip())
+
+    def register_filter(self, name: str, filter_: Callable):
+        self._filters[name] = filter_
+
+    def create(self, text: str) -> Template:
+        return Template(text, filters=self._filters)
 
 
 class Token:
@@ -36,7 +54,7 @@ class Token:
 
 
 class Text(Token):
-    def __init__(self, content: str = None) -> None:
+    def __init__(self, content: str = None):
         self._content = content
 
     def parse(self, content: str):
@@ -50,16 +68,22 @@ class Text(Token):
 
 
 class Expr(Token):
-    def __init__(self, content: str = None) -> None:
+    def __init__(self, content: str = None):
         self._varname = content
+        self._filters = []
 
     def parse(self, content: str):
-        self._varname = content
+        self._varname, self._filters = parse_expr(content)
 
     def generate_code(self) -> str:
-        return f"{OUTPUT_VAR}.append(str({self._varname}))"
+        result = self._varname
+        for filter_name in self._filters[::-1]:
+            result = f"{filter_name}({result})"
+        return f"{OUTPUT_VAR}.append(str({result}))"
 
     def __repr__(self) -> str:
+        if self._filters:
+            return f"Expr({self._varname} | {' | '.join(self._filters)})"
         return f"Expr({self._varname})"
 
 

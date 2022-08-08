@@ -1,12 +1,17 @@
 import unittest
 
 
-from templite import Template, tokenize, Text, Expr, parse_expr
+from templite import TemplateEngine, tokenize, Text, Expr, parse_expr
 
 
 class TemplateTest(unittest.TestCase):
-    def render(self, text: str, ctx: dict, expected: str):
-        rendered = Template(text).render(ctx)
+    def render(self, text: str, ctx: dict, expected: str, filters: dict = None):
+        engine = TemplateEngine()
+        if filters:
+            for filter_name, fn in filters.items():
+                engine.register_filter(filter_name, fn)
+        template = engine.create(text)
+        rendered = template.render(ctx)
         self.assertEqual(expected, rendered)
 
     def test_plain_text(self):
@@ -36,6 +41,23 @@ class TemplateTest(unittest.TestCase):
     def test_expr_variable_missing(self):
         with self.assertRaises(NameError):
             self.render("{{name}}", {}, "")
+
+    def test_expr_with_addition_filter(self):
+        first = lambda x: x[0]
+        self.render(
+            "Hello, {{ name | upper | first}}!",
+            {"name": "alice"},
+            "Hello, A!",
+            filters={"first": first},
+        )
+
+    def test_expr_filter_missing(self):
+        with self.assertRaises(NameError):
+            self.render(
+                "Hello, {{ name | upper | first}}!",
+                {"name": "alice"},
+                "Hello, A!",
+            )
 
 
 class TokenTest(unittest.TestCase):
