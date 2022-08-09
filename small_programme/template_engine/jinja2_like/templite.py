@@ -1,3 +1,7 @@
+"""
+https://shuhari.dev/blog/2020/05/500lines-rewrite-template-engine
+"""
+
 import re
 from typing import Callable
 
